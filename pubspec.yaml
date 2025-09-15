@@ -40,7 +40,7 @@ dependencies:
   easy_localization: ^3.0.7
   bloc: ^8.1.4
   flutter_bloc: ^8.1.6
-  syncfusion_flutter_datepicker: ^27.2.3
+  syncfusion_flutter_datepicker: ^31.1.19
   hijri_calendar: ^1.0.7+7
   awesome_dialog: ^3.2.1
   hijri: ^3.0.0
