@@ -1,0 +1,548 @@
+import 'dart:convert';
+
+import 'package:adary/core/conts/api.dart';
+import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/data/datasources/db.dart';
+import 'package:adary/features/adary/data/models/circular_model.dart';
+import 'package:adary/features/adary/data/models/class_health.dart';
+import 'package:adary/features/adary/data/models/class_room.dart';
+import 'package:adary/features/adary/data/models/classes.dart';
+import 'package:adary/features/adary/data/models/health_model.dart';
+import 'package:adary/features/adary/data/models/model18.dart';
+import 'package:adary/features/adary/data/models/model_19.dart';
+import 'package:adary/features/adary/data/models/model_20.dart';
+import 'package:adary/features/adary/data/models/note_entity_model.dart';
+import 'package:adary/features/adary/data/models/note_teacher.dart';
+import 'package:adary/features/adary/data/models/pagination_model.dart';
+import 'package:adary/features/adary/data/models/student_model.dart';
+import 'package:adary/features/adary/data/models/task_model.dart';
+import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
+import 'package:adary/features/adary/data/models/teacher_circular.dart';
+import 'package:adary/features/adary/data/models/teacher_model.dart';
+import 'package:adary/features/adary/data/models/user_app.dart';
+import 'package:adary/features/adary/data/models/visits_model.dart';
+import 'package:adary/features/adary/data/models/week_plan.dart';
+import 'package:adary/features/adary/data/models/weekly_pan.dart';
+import 'package:adary/features/adary/domain/entities/base_enity.dart';
+import 'package:adary/features/adary/domain/entities/circular_entity.dart';
+import 'package:adary/features/adary/domain/entities/class_entity.dart';
+import 'package:adary/features/adary/domain/entities/delay_entity.dart';
+import 'package:adary/features/adary/domain/entities/delete_entity.dart';
+import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
+import 'package:adary/features/adary/domain/entities/health_entity.dart';
+import 'package:adary/features/adary/domain/entities/login_entity.dart';
+import 'package:adary/features/adary/domain/entities/note_entity.dart';
+import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
+import 'package:adary/features/adary/domain/entities/student_entity.dart';
+import 'package:adary/features/adary/domain/entities/task_entity.dart';
+import 'package:adary/features/adary/domain/entities/teacher_circular_entity.dart';
+import 'package:adary/features/adary/domain/entities/teacher_task.dart';
+import 'package:adary/features/adary/domain/entities/teachers_entity.dart';
+import 'package:adary/features/adary/domain/entities/visits_entity.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:http/http.dart' as http;
+
+class DbImp implements Db {
+  final Dio dio;
+
+  DbImp({required this.dio});
+
+  @override
+  Future<List<NoteModel>> getNotes() async {
+    final response = await dio.get('${Api.notes}list_all/');
+    return AppUtils.generateList(response.data, NoteModel.fromJson);
+  }
+
+  @override
+  Future<List<Teacher>> getTeacher() async {
+    if (AppUtils.appUser!.isFollowerActive) {
+      final response = await dio.get(Api.teachers);
+      return AppUtils.generateList(response.data, Teacher.fromJson);
+    } else {
+      final response = await dio.get('dashboard-mobile/set-absent-teachers/0/');
+      return AppUtils.generateList(
+          response.data['data']['teachers_list'], Teacher.fromJson);
+    }
+  }
+
+  @override
+  Future<void> createNotTeacher(TeachersEntity data) async {
+    final response =
+        await dio.post(Api.monitorNote, data: data.monitorNoteEntity.toJson());
+    final id = response.data['id'];
+    List<Map<String, dynamic>> jsonList = data.list
+        .map((teacherNote) => (teacherNote..monitorNote = id).toJson())
+        .toList();
+    await dio.post(Api.ceateNotTeacher, data: jsonEncode(jsonList));
+  }
+
+  @override
+  Future<void> updateNoteTeacher(TeachersEntity data) async {
+    final response =
+        await dio.post(Api.monitorNote, data: data.monitorNoteEntity.toJson());
+    final id = response.data['id'];
+    await dio.patch("${Api.ceateNotTeachers}${data.list.first.id}/",
+        data: (data.list.first..monitorNote = id).toJson());
+  }
+
+  @override
+  Future<void> createCircular(CircularEntity data) async {
+    final response = await dio.post(Api.circulars, data: await data.getform());
+    if (!data.selectAll) {
+      List<Map<String, dynamic>> jsonList = data.teachers
+          .map((teacher) => TeacherCircularEntity(
+                  administrativeCirculars: response.data['id'],
+                  isSignature: false,
+                  teacher: teacher.id)
+              .toJson())
+          .toList();
+
+      await dio.post(
+          '${Api.circulars}${response.data['id']}/teacher-circulars/',
+          data: jsonEncode(jsonList));
+    }
+  }
+
+  @override
+  Future<List<Classes>> getClasses() async {
+    final response = await dio.get(Api.classes);
+    return AppUtils.generateList(response.data, Classes.fromJson);
+  }
+
+  @override
+  Future<void> createStudent(BaseEnity entity) async {
+    await dio.post(Api.students, data: entity.toJson());
+  }
+
+  @override
+  Future<void> crateModel18(BaseEnity entity) async {
+    await dio.post(Api.model18, data: entity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<Model18Model>> getModel18(
+      PaginationEntity entity) async {
+    final response = await dio.get('${Api.model18}?page=${entity.page}');
+    return PageinationModel.fromJson(response.data, Model18Model.fromJson);
+  }
+
+  @override
+  Future<void> doenlaodFileDelay(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download(
+        "${Api.model18}${entity.id}/download/", entity.pathDownload);
+  }
+
+  @override
+  Future<void> deleteDelay(DeleteEntity entity) async {
+    await dio.delete('${Api.model18}${entity.id}/');
+  }
+
+  @override
+  Future<void> updateDelay(Model18 enity) async {
+    await dio.patch('${Api.model18}${enity.id}/', data: enity.toJson());
+  }
+
+  @override
+  Future<void> crateModel19(BaseEnity entity) async {
+    await dio.post(Api.model19, data: entity.toJson());
+  }
+
+  @override
+  Future<void> deleteModel19(DeleteEntity entity) async {
+    await dio.delete('${Api.model19}${entity.id}/');
+  }
+
+  @override
+  Future<void> doenlaodFileModel19(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download(
+        "${Api.model19}${entity.id}/download/", entity.pathDownload);
+  }
+
+  @override
+  Future<PageinationModel<Model19Model>> getModel19(
+      PaginationEntity entity) async {
+    final response = await dio.get('${Api.model19}?page=${entity.page}');
+    return PageinationModel.fromJson(response.data, Model19Model.fromJson);
+  }
+
+  @override
+  Future<void> updateModel19(Model19 enity) async {
+    await dio.patch('${Api.model19}${enity.id}', data: enity.toJson());
+  }
+
+  @override
+  Future<void> crateModel20(BaseEnity entity) async {
+    await dio.post(Api.model20, data: entity.toJson());
+  }
+
+  @override
+  Future<void> deleteModel20(DeleteEntity entity) async {
+    await dio.delete('${Api.model20}${entity.id}/');
+  }
+
+  @override
+  Future<void> doenlaodFileModel20(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download(
+        "${Api.model20}${entity.id}/download/", entity.pathDownload);
+  }
+
+  @override
+  Future<PageinationModel<Model20Model>> getModel20(
+      PaginationEntity entity) async {
+    final response = await dio.get('${Api.model20}?page=${entity.page}');
+    return PageinationModel.fromJson(response.data, Model20Model.fromJson);
+  }
+
+  @override
+  Future<void> updateModel20(Model20 enity) async {
+    await dio.patch('${Api.model20}${enity.id}', data: enity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<StudentModel>> getStudents(
+      PaginationEntity entity) async {
+    var url = '${Api.studentsPage}?page=${entity.page}';
+    if (entity.classId != null) {
+      url += '&&class_id=${entity.classId!}';
+    }
+    final response = await dio.get(url);
+    return PageinationModel.fromJson(response.data, StudentModel.fromJson);
+  }
+
+  @override
+  Future<List<Classroom>> getClassRooms() async {
+    final response = await dio.get(Api.classRoom);
+    return AppUtils.generateList(response.data, Classroom.fromMap);
+  }
+
+  @override
+  Future<void> addClass(ClassEntity student) async {
+    await dio.post(Api.classes, data: student.toJson());
+  }
+
+  @override
+  Future<void> deleteClass(DeleteEntity student) async {
+    await dio.delete("${Api.classes}${student.id}/");
+  }
+
+  @override
+  Future<void> deleteStudent(DeleteEntity student) async {
+    await dio.delete("${Api.students}${student.id}/");
+  }
+
+  @override
+  Future<void> updateClass(ClassEntity student) async {
+    await dio.patch("${Api.classes}${student.id}/", data: student.toJson());
+  }
+
+  @override
+  Future<void> updatestudent(StudentEntity student) async {
+    await dio.patch("${Api.students}${student.id}/", data: student.toJson());
+  }
+
+  @override
+  Future<PageinationModel<VisitModel>> getVisits(
+      PaginationEntity entity) async {
+    final response = await dio.get("${Api.visits}?page=${entity.page}");
+
+    return PageinationModel.fromJson(response.data, VisitModel.fromJson);
+  }
+
+  @override
+  Future<void> addVisit(BaseEnity entity) async {
+    await dio.post(Api.visits, data: entity.toJson());
+  }
+
+  @override
+  Future<void> deleteVisit(DeleteEntity entity) async {
+    await dio.delete("${Api.visits}${entity.id}/");
+  }
+
+  @override
+  Future<void> updateVisit(VisitEntity entity) async {
+    await dio.patch("${Api.visits}${entity.id}/", data: entity.toJson());
+  }
+
+  @override
+  Future<void> addHealths(BaseEnity entity) async {
+    await dio.post(Api.healths, data: entity.toJson());
+  }
+
+  @override
+  Future<void> deketeHealth(DeleteEntity entity) async {
+    await dio.delete("${Api.healths}${entity.id}/");
+  }
+
+  @override
+  Future<PageinationModel<HealthCondition>> gethealths(
+      PaginationEntity entity) async {
+    final response = await dio
+        .get("${Api.healths}?page=${entity.page}&class_id=${entity.classId}");
+
+    return PageinationModel.fromJson(response.data, HealthCondition.fromJson);
+  }
+
+  @override
+  Future<void> updateHealth(HealthEntity entity) async {
+    await dio.patch("${Api.healths}${entity.id}/", data: entity.toJson());
+  }
+
+  @override
+  Future<List<ClassHealth>> classsHealth() async {
+    final response = await dio.get(Api.classsHealth);
+    return AppUtils.generateList(response.data, ClassHealth.fromMap);
+  }
+
+  @override
+  Future<void> addNore(BaseEnity entity) async {
+    await dio.post(Api.notes, data: entity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<NoteModel>> notes(PaginationEntity entity) async {
+    final response = await dio.get("${Api.notes}?page=${entity.page}");
+
+    return PageinationModel.fromJson(response.data, NoteModel.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<NotesTeacher>> noteTeacher(
+      PaginationEntity entity) async {
+    final response = await dio.get(
+        "${Api.ceateNotTeachers}?page=${entity.page}&created_at_after=${entity.startDate}&created_at_before=${entity.endDate}&teacher=${entity.teacher}&monitor_note_note=${entity.note}");
+
+    return PageinationModel.fromJson(response.data, NotesTeacher.fromJson);
+  }
+
+  @override
+  Future<void> deleteNote(DeleteEntity entity) async {
+    await dio.delete(
+      "${Api.notes}${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> deleteNoteTeacher(DeleteEntity entity) async {
+    await dio.delete(
+      "${Api.ceateNotTeachers}${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> updateNote(NoteEntity entity) async {
+    await dio.patch("${Api.notes}${entity.id}/", data: entity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<AdministrativeCircular>> circulars(
+      PaginationEntity entity) async {
+    final response = await dio.get("${Api.circulars}?page=${entity.page}");
+
+    return PageinationModel.fromJson(
+        response.data, AdministrativeCircular.fromJson);
+  }
+
+  @override
+  Future<void> deleteCircular(DeleteEntity entity) async {
+    await dio.delete(
+      "${Api.circulars}${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> updateCircular(CircularEntity entity) async {
+    final response = await dio.patch("${Api.circulars}${entity.id}/",
+        data: await entity.getform());
+    if (!entity.selectAll) {
+      List<Map<String, dynamic>> jsonList = entity.teachers
+          .map((teacher) => TeacherCircularEntity(
+                  administrativeCirculars: response.data['id'],
+                  isSignature: false,
+                  teacher: teacher.id)
+              .toJson())
+          .toList();
+
+      await dio.post(
+          '${Api.circulars + response.data['id'].toString()}/teacher-circulars/',
+          data: jsonEncode(jsonList));
+    }
+  }
+
+  @override
+  Future<PageinationModel<TeacherCircular>> teachersCirculars(
+      PaginationEntity entity) async {
+    final response = await dio.get(
+        "${Api.circulars}${entity.classId}/teacher-circulars/?page=${entity.page}");
+
+    return PageinationModel.fromJson(response.data, TeacherCircular.fromJson);
+  }
+
+  @override
+  Future<List<TeacherCircular>> getAllTeachers(PaginationEntity entity) async {
+    final response = await dio
+        .get("${Api.circulars}${entity.classId}/teacher-circulars/list_all/");
+    return AppUtils.generateList(response.data, TeacherCircular.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<Plan>> getWeekPan(PaginationEntity entity) async {
+// &created_at_afte=${entity.startDate}&created_at_before=${entity.endDate}&teacher=${entity.classId}
+    final response = await dio.get(
+        "api/weekly-plan/week-info/${entity.classId}/?page=${entity.page}");
+
+    return PageinationModel.fromJson(response.data, Plan.fromJson);
+  }
+
+  @override
+  Future<void> deletePlan(DeleteEntity entity) async {
+    await dio.delete(
+      "api/weekly-plan/plan/delete/${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> exportPdfTeacherNote(PaginationEntity entity) async {
+    EasyLoading.show();
+    await dio.download(
+        "${Api.ceateNotTeacher}export-pdf/?created_at_after=${entity.startDate}&created_at_before=${entity.endDate}&teacher=${entity.teacher}&monitor_note_note=${entity.note}",
+        entity.savePath);
+  }
+
+  @override
+  Future<void> exportPdfHealthsNote(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download("${Api.healths}/export-pdf/", entity.pathDownload);
+  }
+
+  @override
+  Future<void> exportPdfVisitssNote(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download("${Api.visits}/export-pdf/", entity.pathDownload);
+  }
+
+  @override
+  Future<void> exportPdfCirculersNote(FileDownloadEneity entity) async {
+    EasyLoading.show();
+    await dio.download("${Api.circulars}/export-pdf/", entity.pathDownload);
+  }
+
+  @override
+  Future<void> login(LoginEntity entity) async {
+    // await AppUtils.instance.login(entity);
+    final respone = await dio.post(Api.login, data: entity.toJson());
+    if (respone.data['success']) {
+      await AppUtils.instance.login(LoginEntity(
+          username: respone.data['data']['username'],
+          password: respone.data['data']['app-key']));
+
+      final response = await dio.get(Api.me);
+      await AppUtils.instance.setUser(AppUser.fromJson({
+        ...response.data['data'],
+        'app-key': respone.data['data']['app-key'],
+      }));
+    }
+
+    // await AppUtils.instance.setUser(AppUser.fromJson(respone.data['data']));
+  }
+
+  @override
+  Future<PageinationModel<DailyTaskModel>> taskTeacher(
+      PaginationEntity entity) async {
+    final response = await dio
+        .get('${Api.dellayTask}?page=${entity.page}&filter=${entity.endDate}');
+    return PageinationModel.fromJson(response.data, DailyTaskModel.fromJson);
+  }
+
+  @override
+  Future<List<TaskModel>> getTadks() async {
+    final response = await dio.get(Api.taskList);
+    return AppUtils.generateList(response.data['results'], TaskModel.fromJson);
+  }
+
+  @override
+  Future<void> addTaskTeacher(BaseEnity entity) async {
+    await dio.post(Api.createTask, data: entity.toJson());
+  }
+
+  @override
+  Future<void> addtask(BaseEnity entity) async {
+    await dio.post(Api.taskList, data: entity.toJson());
+  }
+
+  @override
+  Future<void> removeTask(DeleteEntity entity) async {
+    await dio.delete(
+      "${Api.taskList}${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> removeTaskTeacher(DeleteEntity entity) async {
+    await dio.delete(
+      "${Api.dellayTask}${entity.id}/",
+    );
+  }
+
+  @override
+  Future<void> updateTask(BaseEnity entity) async {
+    await dio.patch("${Api.taskList}${(entity as TaskEntity).id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> updateTaskTeacher(BaseEnity entity) async {
+    await dio.patch("${Api.dellayTask}${(entity as TeacherTask).id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> me() async {
+    final response = await dio.get(Api.me);
+
+    AppUtils.instance
+        .setUser(AppUser.fromJsom2(AppUtils.appUser!, response.data['data']));
+  }
+
+  @override
+  Future<void> loadCalendart() async {
+    final year = [2025, 2024, 2026];
+    const url = "https://api.aladhan.com/v1/gToHCalendar/";
+    for (var i = 0; i < 2; i++) {
+      for (var month = 1; month <= 12; month++) {
+        final response = await http.get(Uri.parse('$url$month/${year[i]}'));
+        // AppUtils.log(response.statusCode.toString());
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+
+          if (data['status'] == 'OK' && data['data'] != null) {
+            for (var entry in data['data']) {
+              String gregorianDate = entry['gregorian']['date'] ?? '';
+              String hijriDate = entry['hijri']['date'] ?? '';
+
+              if (gregorianDate.isNotEmpty && hijriDate.isNotEmpty) {
+                AppUtils.datesMap[gregorianDate] = {
+                  "day": hijriDate,
+                  "month": entry['hijri']['month']['ar']
+                };
+              }
+            }
+          }
+        } else {
+          print('Failed to load data for month $month');
+        }
+      }
+    }
+    AppUtils.instance.saveDatesMapToStorage();
+  }
+
+  @override
+  Future<PageinationModel<WeeklyPan>> getWeeks(PaginationEntity entity) async {
+    final response = await dio.get(
+        '${Api.weekly}?page=${entity.page}&teacher_id=${entity.teacher}&start_date=${entity.startDate ?? ''}&end_date=${entity.endDate ?? ''}');
+    return PageinationModel.fromJson(response.data, WeeklyPan.fromJson);
+  }
+}

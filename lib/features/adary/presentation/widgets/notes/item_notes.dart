@@ -1,0 +1,127 @@
+import 'package:adary/core/bloc/base_bloc.dart';
+import 'package:adary/core/conts/app_colors.dart';
+import 'package:adary/core/conts/icons.dart';
+import 'package:adary/core/share/widgets/btn_icon.dart';
+import 'package:adary/core/share/widgets/container_btns.dart';
+import 'package:adary/core/share/widgets/expansion_widget.dart';
+import 'package:adary/features/adary/data/models/note_entity_model.dart';
+import 'package:adary/features/adary/domain/entities/delete_entity.dart';
+
+import 'package:adary/features/adary/presentation/bloc/note/note_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/add_note_page.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
+class ItemNotes extends StatelessWidget {
+  const ItemNotes(
+      {super.key, required this.visitModel, required this.pagingController});
+  final NoteModel visitModel;
+  final PagingController pagingController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ExpansionWidget(
+          body: [
+            Text(
+              '${'arraging'.tr()} :${visitModel.arranging ?? 0}',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CheckboxListTile(
+              activeColor: AppColors.checkbox,
+              value: visitModel.howSession,
+              onChanged: (v) {},
+              title: Text(
+                'session_active'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const Divider(),
+            CheckboxListTile(
+              activeColor: AppColors.checkbox,
+              value: visitModel.activeWhatsapp,
+              onChanged: (v) {},
+              title: Text(
+                'whatsapp_active'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const Divider(),
+            CheckboxListTile(
+              // checkColor: AppColors.checkbox,
+              activeColor: AppColors.checkbox,
+              value: visitModel.activeNotification,
+              onChanged: (v) {},
+              title: Text(
+                'notification_active'.tr(),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            ContainerBtns(
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  BtnIcon(
+                      label: 'delete'.tr(),
+                      icon: AppIcon.rash,
+                      onTap: () {
+                        AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.warning,
+                            titleTextStyle: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            title: 'delete_note'.tr(),
+                            desc: 'delete_note_des'.tr(),
+                            btnCancelText: 'no'.tr(),
+                            btnOkText: 'delete'.tr(),
+                            btnCancelOnPress: () {},
+                            btnOkOnPress: () {
+                              BaseBloc.get<NoteBloc>(context).add(
+                                  DeleteNoteEvent(
+                                      entity: DeleteEntity(
+                                          id: visitModel.id ?? 0)));
+                            }).show();
+                      }),
+                  BtnIcon(
+                      label: 'edit'.tr(),
+                      icon: AppIcon.edit,
+                      onTap: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddNotePage(
+                              noteModel: visitModel,
+                              pagingController: pagingController,
+                            );
+                          },
+                        );
+                      })
+                ],
+              ),
+            )
+          ],
+          title: [
+            Text(
+              visitModel.description,
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color:
+                      visitModel.typeNote == 'n' ? Colors.red : Colors.green),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
+  }
+}
