@@ -36,7 +36,7 @@ class ThemeApp {
         color: Colors.grey,
       )),
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: Colors.grey.shade100,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
