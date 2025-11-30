@@ -1,0 +1,6 @@
+=NONE, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=76439781, downTime=76439704, deviceId=4, source=0x1002, displayId=0 }
+I/flutter ( 3160): {classroom_id: 101766, classroom_name: 1م/1, table: {0: {1: {day: الأحد, day_num: 0, class_number: 1, special_timing: التوقيت الأساسي, cell_id: 3311099, cell_text: الرياضيات
+I/flutter ( 3160): عماد علي, is_empty: false, is_active: true}, 2: {day: الأحد, day_num: 0, class_number: 2, special_timing: التوقيت الأساسي, cell_id: 3311100, cell_text: الدراسات الإسلامية
+I/flutter ( 3160): محمد عبدالقادر, is_empty: false, is_active: true}, 3: {day: الأحد, day_num: 0, class_number: 3, special_timing: التوقيت الأساسي, cell_id: 3311101, cell_text: التربية البدنية
+I/flutter ( 3160): حمود جامل, is_empty: false, is_active: true}, 4: {day: الأحد, day_num: 0, class_number: 4, special_timing: التوقيت الأساسي, cell_id: 3311102, cell_text: اللغة العربية
+I/flutter ( 3160): رامي ابراهيم, is_empty: false, is_active: true}, 5: {day: الأحد, day_num: 0, class_number: 5, special_timing: التوقيت الأساسي, cell_id: 3311103, cell_

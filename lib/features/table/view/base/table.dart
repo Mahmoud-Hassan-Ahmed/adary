@@ -18,6 +18,7 @@ class AppTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(table);
     var orientation = MediaQuery.of(context).orientation;
     return SizedBox(
         height: orientation == Orientation.portrait
@@ -132,6 +133,48 @@ class AppTable extends StatelessWidget {
                                                       style: AlMaraia.copyWith(
                                                           fontSize: 17),
                                                     ),
+                                                    if (table["table"]["$index"]
+                                                                    [
+                                                                    "${day + 1}"]
+                                                                ["cell_ids"] ==
+                                                            null ||
+                                                        table["table"]["$index"]
+                                                                        [
+                                                                        "${day + 1}"]
+                                                                    ["cell_ids"]
+                                                                .length >
+                                                            0)
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Text(
+                                                            table["table"]["$index"]
+                                                                        [
+                                                                        "${day + 1}"]
+                                                                    [
+                                                                    "start_time"]
+                                                                .toString(),
+                                                          ),
+                                                          const SizedBox(
+                                                              width:
+                                                                  8), // space between times
+                                                          const Text('-'),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Text(
+                                                            table["table"]["$index"]
+                                                                        [
+                                                                        "${day + 1}"]
+                                                                    ["end_time"]
+                                                                .toString(),
+                                                          ),
+                                                        ],
+                                                      )
                                                   ],
                                                 ),
                                               )));

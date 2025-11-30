@@ -234,21 +234,20 @@ class _InstructorState extends State<Instructor> {
                                   .classesNamesAndNumbers.length,
                               itemBuilder: (context, index) {
                                 return _tableRow(
-                                    session: teacherPageController
-                                        .classesNamesAndNumbers[index]
+                                    session: teacherPageController.classesNamesAndNumbers[index]
                                         .toString(),
+                                    startTime: table["table"]["${Get.find<CalednerController>().selectedDayIndex}"]
+                                        ["${index + 1}"]['start_time'],
+                                    endTime: table["table"]["${Get.find<CalednerController>().selectedDayIndex}"]
+                                        ["${index + 1}"]['end_time'],
                                     subject: StringHanler.cutString(
-                                        txt: table["table"][
-                                                    "${Get.find<CalednerController>().selectedDayIndex}"]
+                                        txt: table["table"]["${Get.find<CalednerController>().selectedDayIndex}"]
                                                 ["${index + 1}"]["cell_text"][0]
                                             .toString(),
                                         isName: true,
                                         pattern: "\n"),
                                     className: StringHanler.cutString(
-                                        txt: table["table"]
-                                                    ["${Get.find<CalednerController>().selectedDayIndex}"]
-                                                ["${index + 1}"]["cell_text"][0]
-                                            .toString(),
+                                        txt: table["table"]["${Get.find<CalednerController>().selectedDayIndex}"]["${index + 1}"]["cell_text"][0].toString(),
                                         isName: false,
                                         pattern: "\n"));
                               });
@@ -331,20 +330,44 @@ class _InstructorState extends State<Instructor> {
 
   Widget _tableRow(
       {required String session,
+      required String startTime,
+      required String endTime,
       required String subject,
       required String className}) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: Dimensions.PADDING_SIZE_DEFAULT, vertical: 5),
+      padding: EdgeInsets.zero,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: 90,
-            child: Text(
-              " $session ",
-              style: AlMaraia.copyWith(
-                  fontSize: 18, color: AppColors.DARKENGREYFONTCOLOR),
+            width: 120,
+            child: Column(
+              children: [
+                Text(
+                  " $session ",
+                  style: AlMaraia.copyWith(
+                      fontSize: 18, color: AppColors.DARKENGREYFONTCOLOR),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      startTime,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 1), // space between times
+                    const Text('-'),
+                    const SizedBox(width: 1),
+                    Text(
+                      endTime,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
           SizedBox(

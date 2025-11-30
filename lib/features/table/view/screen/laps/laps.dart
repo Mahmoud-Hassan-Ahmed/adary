@@ -236,22 +236,46 @@ class _LapsState extends State<Laps> {
 
   Widget _tableRow(
       {required String session,
+      required String start_time,
+      required String end_time,
       required String subject,
       required String instructorName}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+      padding: EdgeInsets.zero,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Center(
-              child: Text(
-                " $session ",
-                style: AlMaraia.copyWith(
-                    fontSize: 15, color: AppColors.DARKENGREYFONTCOLOR),
-              ),
+            child: Column(
+              children: [
+                Center(
+                  child: Text(
+                    " $session ",
+                    style: AlMaraia.copyWith(
+                        fontSize: 15, color: AppColors.DARKENGREYFONTCOLOR),
+                  ),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      start_time,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 1), // space between times
+                    const Text('-'),
+                    const SizedBox(width: 1),
+                    Text(
+                      end_time,
+                      style: const TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
           Expanded(
@@ -374,21 +398,20 @@ class _LapsState extends State<Laps> {
                                         session: teacherPageController
                                             .classesNamesAndNumbers[index]
                                             .toString(),
+                                        start_time: singleClass["table"]
+                                                ["${calednerController.selectedDayIndex}"]
+                                            ["${index + 1}"]["start_time"],
+                                        end_time: singleClass["table"]
+                                                ["${calednerController.selectedDayIndex}"]
+                                            ["${index + 1}"]["end_time"],
                                         subject: StringHanler.cutString(
                                             txt: singleClass["table"]
                                                         ["${calednerController.selectedDayIndex}"]
-                                                    [
-                                                    "${index + 1}"]["cell_text"]
+                                                    ["${index + 1}"]["cell_text"]
                                                 .toString(),
                                             isName: false,
                                             pattern: "\n"),
-                                        instructorName: StringHanler.cutString(
-                                            txt: singleClass["table"]
-                                                        ["${Get.find<CalednerController>().selectedDayIndex}"]
-                                                    ["${index + 1}"]["cell_text"]
-                                                .toString(),
-                                            isName: true,
-                                            pattern: "\n"));
+                                        instructorName: StringHanler.cutString(txt: singleClass["table"]["${Get.find<CalednerController>().selectedDayIndex}"]["${index + 1}"]["cell_text"].toString(), isName: true, pattern: "\n"));
                                   });
                             });
                           }),
