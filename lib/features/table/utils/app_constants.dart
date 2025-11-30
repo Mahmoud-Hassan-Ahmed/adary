@@ -4,7 +4,7 @@ class AppConstants {
   static const String appName = 'Smart Table';
   static const double appVersion = 1.0;
 
-  static const String baseUrl = 'http://192.168.1.3:8000/';
+  static const String baseUrl = 'https://www.smartble.net/';
   static const String LOGIN_URI = '/dashboard-mobile/login/';
   static const String WORK_DAYS = '/dashboard-mobile/load-workdays-data/';
   static const String CONTACT_US = '/dashboard-mobile/contact-us/';
@@ -36,7 +36,7 @@ class AppConstants {
 
   static const String APP_KEY = 'appKey';
   static const String USER_NAME = 'username';
-  static const String about_url = "http://192.168.1.3:8000/about/";
+  static const String about_url = "https://www.smartble.net/about/";
 
   static const String NO_INTERNET_MESSAGE = 'NO_INTERNET_MESSAGE';
   static const String loginUri = '/api/v1/auth/login';
