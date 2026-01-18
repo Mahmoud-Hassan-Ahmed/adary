@@ -43,7 +43,7 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
       calendarFormat: CalendarFormat.month,
       onFormatChanged: (format) {},
       firstDay: DateTime.utc(2024, 1, 1),
-      lastDay: DateTime.utc(2025, 12, 31),
+      lastDay: DateTime.utc(2026, 12, 31),
       selectedDayPredicate: (day) => isSameDay(day, selectedDay),
       onRangeSelected: (start, end, focusedDay) {
         setState(() {

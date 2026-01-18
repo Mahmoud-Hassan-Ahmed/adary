@@ -509,7 +509,7 @@ class DbImp implements Db {
 
   @override
   Future<void> loadCalendart() async {
-    final year = [2025, 2024, 2026];
+    final year = [2025, 2026, 2027];
     const url = "https://api.aladhan.com/v1/gToHCalendar/";
     for (var i = 0; i < 2; i++) {
       for (var month = 1; month <= 12; month++) {

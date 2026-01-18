@@ -44,6 +44,7 @@ class ApiClient extends GetxService {
       'Accept-Language': "ar"
     };
     AppUtils.log(_mainHeaders.toString());
+    AppUtils.log(appBaseUrl);
   }
 
   Future<Response> getData(String uri,
@@ -196,7 +197,7 @@ class ApiClient extends GetxService {
           statusText: _response.body['Message']);
     }
     debugPrint(
-        '====> API Response: [${_response.statusCode}] $uri\n${_response.body}');
+        '====> API Response: [${_response.statusCode}]  $uri\n${_response.body}');
     return _response;
   } // end of handle response
 }
