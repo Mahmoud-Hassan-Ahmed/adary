@@ -35,6 +35,7 @@ class _AddNotePageState extends State<AddNotePage> {
   late TextEditingController arranging;
   int sessionactive = 4;
   int whatsapp = 5;
+  int sms = 9;
   int notification = 7;
   late TextEditingController template;
   final formState = GlobalKey<FormState>();
@@ -52,6 +53,7 @@ class _AddNotePageState extends State<AddNotePage> {
     if (widget.noteModel != null) {
       sessionactive = widget.noteModel!.howSession ? 3 : 4;
       whatsapp = widget.noteModel!.activeWhatsapp ? 5 : 6;
+      sms = widget.noteModel!.activeSms ? 8 : 9;
       notification = widget.noteModel!.activeNotification ? 7 : 8;
       typeNote = typNoties.firstWhereOrNull(
           (e) => (e as Relations).value == widget.noteModel!.typeNote);
@@ -81,6 +83,15 @@ class _AddNotePageState extends State<AddNotePage> {
                   e.tr('whatsapp_not_active'), SnackType.FAILURE);
             } else {
               whatsapp = state.switchValue;
+            }
+          } else if (state is ActiveSmsState) {
+            if (AppUtils.appUser!.smsService == null ||
+                !AppUtils.appUser!.smsService!.isActive) {
+              sms = 9;
+              AppUtils.showCustomSnackbar(
+                  e.tr('sms_not_active'), SnackType.FAILURE);
+            } else {
+              sms = state.switchValue;
             }
           } else if (state is DoneAddNoteState) {
             AppUtils.showCustomSnackbar(e.tr('added_note'), SnackType.SUCESS);
@@ -184,6 +195,30 @@ class _AddNotePageState extends State<AddNotePage> {
                               })
                         ],
                       ),
+                      Titile(label: e.tr('sms_active')),
+                      Row(
+                        children: [
+                          RadioBtn(
+                              group: sms,
+                              label: e.tr('yes'),
+                              value: 8,
+                              valueChanged: (v) {
+                                BaseBloc.get<NoteBloc>(context)
+                                    .emitState(ActiveSmsState(switchValue: v!));
+                              }),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          RadioBtn(
+                              group: sms,
+                              label: e.tr('no'),
+                              value: 9,
+                              valueChanged: (v) {
+                                BaseBloc.get<NoteBloc>(context)
+                                    .emitState(ActiveSmsState(switchValue: v!));
+                              })
+                        ],
+                      ),
                       Titile(label: e.tr('notification_active')),
                       Row(
                         children: [
@@ -208,7 +243,7 @@ class _AddNotePageState extends State<AddNotePage> {
                               })
                         ],
                       ),
-                      if (whatsapp == 5 || notification == 7)
+                      if (whatsapp == 5 || notification == 7 || sms == 8)
                         Column(
                           children: [
                             InputApp(
@@ -240,6 +275,7 @@ class _AddNotePageState extends State<AddNotePage> {
                                             activeNotification:
                                                 notification == 7,
                                             activeWhatsapp: whatsapp == 5,
+                                            activeSms: sms == 8,
                                             arranging:
                                                 int.tryParse(arranging.text),
                                             howSession: sessionactive == 3,
@@ -256,6 +292,7 @@ class _AddNotePageState extends State<AddNotePage> {
                                             activeNotification:
                                                 notification == 7,
                                             activeWhatsapp: whatsapp == 5,
+                                            activeSms: sms == 8,
                                             arranging:
                                                 int.tryParse(arranging.text),
                                             howSession: sessionactive == 3,

@@ -31,6 +31,8 @@ final class DoneAddHealthState extends HealthState {}
 
 final class ChnageNotifyState extends HealthState {}
 
+final class ChnageNotifyState3 extends HealthState {}
+
 final class DoneUpdateHealthState extends HealthState {}
 
 final class DoneDeleteHealthState extends HealthState {}

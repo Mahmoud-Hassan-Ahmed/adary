@@ -24,6 +24,12 @@ final class ActiveWhasappState extends NoteState {
   const ActiveWhasappState({required this.switchValue});
 }
 
+final class ActiveSmsState extends NoteState {
+  final int switchValue;
+
+  const ActiveSmsState({required this.switchValue});
+}
+
 final class ActiveSessionState extends NoteState {
   final int switchValue;
 

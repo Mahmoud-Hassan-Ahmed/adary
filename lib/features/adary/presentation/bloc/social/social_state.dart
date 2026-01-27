@@ -44,3 +44,5 @@ final class ChangeGroupState2 extends SocialState {
 }
 
 final class ChnageNotifyState extends SocialState {}
+
+final class ChnageNotifyState3 extends SocialState {}

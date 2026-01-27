@@ -10,6 +10,7 @@ class StudentModel {
   final String kinshipWithStudent;
   final String withLive;
   final bool? notifyTeacher;
+  final bool? sendSms;
   // Constructor
   StudentModel({
     required this.id,
@@ -21,6 +22,7 @@ class StudentModel {
     required this.kinshipWithStudent,
     required this.withLive,
     required this.notifyTeacher,
+    required this.sendSms,
   });
 
   factory StudentModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class StudentModel {
       kinshipWithStudent: json['kinship_with_student'] as String,
       withLive: json['with_live'] as String,
       notifyTeacher: json['notify_teacher'],
+      sendSms: json['send_sms'],
     );
   }
 }

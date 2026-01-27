@@ -32,6 +32,8 @@ final class SelectDateState extends CircularState {
 
 final class ChnageNotifyState extends CircularState {}
 
+final class ChnageNotifyState3 extends CircularState {}
+
 final class ChnageNotifyState2 extends CircularState {}
 
 final class DoneUpdateCircularState extends CircularState {}

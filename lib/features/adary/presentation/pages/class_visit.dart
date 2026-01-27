@@ -41,6 +41,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
   late TextEditingController nameVisitor;
   final formState = GlobalKey<FormState>();
   bool valueSelect = false;
+  bool sendSms = false;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
       dateHijri = widget.visitModel!.dateHijri;
       gregorianDate = widget.visitModel!.date;
       valueSelect = widget.visitModel?.notifyTeacher ?? false;
+      sendSms = widget.visitModel?.sendSms ?? false;
     }
     super.initState();
   }
@@ -97,6 +99,8 @@ class _AddClassVisitState extends State<AddClassVisit> {
             Navigator.pop(context);
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
+          } else if (state is ChnageNotifyState3) {
+            sendSms = !sendSms;
           }
           return SafeArea(
             child: Padding(
@@ -113,6 +117,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                                 UpdateVisitevent(
                                     enity: VisitEntity(
                                         notifyTeacher: valueSelect,
+                                        sendSms: sendSms,
                                         id: widget.visitModel!.id,
                                         teacher: selected!.id,
                                         visitorName: nameVisitor.text,
@@ -129,6 +134,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                                 AddClassVisitsEvent(
                                     enity: VisitEntity(
                                         notifyTeacher: valueSelect,
+                                        sendSms: sendSms,
                                         teacher: selected!.id,
                                         visitorName: nameVisitor.text,
                                         date: gregorianDate!,
@@ -237,6 +243,40 @@ class _AddClassVisitState extends State<AddClassVisit> {
                       const SizedBox(
                         height: 10,
                       ),
+                      if (AppUtils.appUser?.smsService != null ||
+                          AppUtils.appUser!.smsService!.isActive)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Titile(
+                              label: e.tr('send_sms'),
+                            ),
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    BaseBloc.get<ClassVisitBloc>(context)
+                                        .emitState(ChnageNotifyState3());
+                                  },
+                                  child: RadioBtn(
+                                      group: sendSms ? 1 : 0,
+                                      label: e.tr('yes'),
+                                      value: 1,
+                                      valueChanged: (v) {
+                                        BaseBloc.get<ClassVisitBloc>(context)
+                                            .emitState(ChnageNotifyState3());
+                                      }),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),

@@ -57,6 +57,8 @@ final class DoneDeleteStudentState extends ClassVisitState {}
 
 final class ChnageNotifyState extends ClassVisitState {}
 
+final class ChnageNotifyState3 extends ClassVisitState {}
+
 final class DoneUpdateVisitState extends ClassVisitState {}
 
 final class DoneDeleteVisitState extends ClassVisitState {}

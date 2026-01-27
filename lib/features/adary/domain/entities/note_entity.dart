@@ -7,6 +7,7 @@ class NoteEntity extends BaseEnity {
   final String typeNote; // Use 'p' for Positive, 'n' for Needs improvement
   final bool howSession;
   final bool activeWhatsapp;
+  final bool activeSms;
   final bool activeNotification;
   final int numToSend;
   final int? arranging;
@@ -19,6 +20,7 @@ class NoteEntity extends BaseEnity {
     required this.typeNote,
     this.howSession = false,
     this.activeWhatsapp = false,
+    this.activeSms = false,
     this.activeNotification = false,
     this.numToSend = 1,
     this.arranging,
@@ -49,6 +51,7 @@ class NoteEntity extends BaseEnity {
       'type_note': typeNote,
       'how_session': howSession,
       'active_whatsapp': activeWhatsapp,
+      'active_sms': activeSms,
       'active_notification': activeNotification,
       'num_to_send': numToSend,
       'arranging': arranging,

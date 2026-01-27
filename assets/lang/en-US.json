@@ -931,6 +931,8 @@
     "title_circular": "Write the circular title",
     "name_issues": "Issuing entity name",
     "not_teachers": "Notify teachers",
+    "sms_active":"send sms",
+    "send_sms": "send sms",
     "added_health": "Health status added successfully",
     "updated_health": "Health status updated successfully",
     "name_student": "Student name",
@@ -994,6 +996,7 @@
     "write_note_commint":"write comment",
     "all_teachers":"all teachers",
     "whatsapp_not_active":"Whatsapp not active",
+    "sms_not_active":"sms not active",
     "whatsapp_not_remaining":"quantity of whatsapp messages is less"
     ,
     "from_day":"From Day",

@@ -8,6 +8,7 @@ class HealthEntity extends BaseEnity {
   final String? recommendations;
   final String dealingWithSituation;
   final bool notifyTeacher;
+  final bool sendSms;
 
   HealthEntity({
     this.id,
@@ -15,6 +16,7 @@ class HealthEntity extends BaseEnity {
     required this.classNameId,
     required this.name,
     required this.notifyTeacher,
+    required this.sendSms,
     this.recommendations,
     required this.dealingWithSituation,
   });
@@ -27,6 +29,7 @@ class HealthEntity extends BaseEnity {
       'class_name_id': classNameId,
       'name': name,
       'notify_teacher': notifyTeacher,
+      'send_sms': sendSms,
       'recommendations': recommendations,
       'dealing_with_situation': dealingWithSituation,
     };

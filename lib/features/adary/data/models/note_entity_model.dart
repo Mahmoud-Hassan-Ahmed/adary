@@ -6,6 +6,7 @@ class NoteModel implements SelectModel {
   final String typeNote;
   final bool howSession;
   final bool activeWhatsapp;
+  final bool activeSms;
   final bool activeNotification;
   final int numToSend;
   final int? arranging;
@@ -18,6 +19,7 @@ class NoteModel implements SelectModel {
       required this.typeNote,
       required this.howSession,
       required this.activeWhatsapp,
+      required this.activeSms,
       required this.activeNotification,
       required this.numToSend,
       required this.arranging,
@@ -32,6 +34,7 @@ class NoteModel implements SelectModel {
       typeNote: json['type_note'],
       howSession: json['how_session'] ?? false,
       activeWhatsapp: json['active_whatsapp'] ?? false,
+      activeSms: json['active_sms'] ?? false,
       activeNotification: json['active_notification'] ?? false,
       numToSend: json['num_to_send'] ?? 1,
       arranging: json['arranging'],

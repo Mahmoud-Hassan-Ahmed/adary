@@ -32,6 +32,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
   late TextEditingController des;
   late TextEditingController health;
   bool valueSelect = false;
+  bool sendSms = false;
   List<SelectModel> classes = [];
   SelectModel? selectedClass;
   final formState = GlobalKey<FormState>();
@@ -43,6 +44,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
     health = TextEditingController(text: widget.healthCondition?.name);
     des = TextEditingController(text: widget.healthCondition?.recommendations);
     valueSelect = widget.healthCondition?.notifyTeacher ?? false;
+    sendSms = widget.healthCondition?.sendSms ?? false;
     super.initState();
   }
 
@@ -74,6 +76,8 @@ class _AddHeathPageState extends State<AddHeathPage> {
             Navigator.pop(context);
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
+          } else if (state is ChnageNotifyState3) {
+            sendSms = !sendSms;
           }
           return SafeArea(
             child: Padding(
@@ -142,6 +146,40 @@ class _AddHeathPageState extends State<AddHeathPage> {
                             ),
                           ],
                         ),
+                        if (AppUtils.appUser?.smsService != null &&
+                            AppUtils.appUser!.smsService!.isActive)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Titile(
+                                label: e.tr('send_sms'),
+                              ),
+                              // const SizedBox(
+                              //   height: 10,
+                              // ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      BaseBloc.get<HealthBloc>(context)
+                                          .emitState(ChnageNotifyState3());
+                                    },
+                                    child: RadioBtn(
+                                        group: sendSms ? 1 : 0,
+                                        label: e.tr('yes'),
+                                        value: 1,
+                                        valueChanged: (v) {
+                                          BaseBloc.get<HealthBloc>(context)
+                                              .emitState(ChnageNotifyState3());
+                                        }),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -154,6 +192,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
                                       AddHealthEvent(
                                           baseEnity: HealthEntity(
                                               notifyTeacher: valueSelect,
+                                              sendSms: sendSms,
                                               nameStudent: name.text,
                                               classNameId: selectedClass!.id,
                                               name: health.text,
@@ -166,6 +205,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
                                               id: widget.healthCondition!.id,
                                               nameStudent: name.text,
                                               classNameId: selectedClass!.id,
+                                              sendSms: sendSms,
                                               name: health.text,
                                               notifyTeacher: valueSelect,
                                               dealingWithSituation: lead.text,

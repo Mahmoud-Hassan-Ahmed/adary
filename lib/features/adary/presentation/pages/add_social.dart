@@ -11,8 +11,6 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/student_model.dart';
 import 'package:adary/features/adary/domain/entities/student_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/social/social_bloc.dart';
-import 'package:adary/features/adary/presentation/bloc/students/students_bloc.dart';
-import 'package:adary/features/adary/presentation/pages/class_room_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +35,7 @@ class _AddSocialState extends State<AddSocial> {
   int valueGroup = 1;
   int valueGroup2 = 3;
   bool valueSelect = false;
+  bool sendSms = false;
   SelectModel? valueClass, valueRealtion;
   List<SelectModel> list = [];
   final formState = GlobalKey<FormState>();
@@ -49,6 +48,7 @@ class _AddSocialState extends State<AddSocial> {
       valueGroup = widget.student!.fatherIsAlive ? 1 : 2;
       valueGroup2 = widget.student!.motherIsAlive ? 3 : 4;
       valueSelect = widget.student?.notifyTeacher ?? false;
+      sendSms = widget.student?.sendSms ?? false;
       valueRealtion = relationList.firstWhereOrNull(
           (e) => (e as Relations).value == widget.student!.withLive);
     }
@@ -101,6 +101,9 @@ class _AddSocialState extends State<AddSocial> {
           if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
           }
+          if (state is ChnageNotifyState3) {
+            sendSms = !sendSms;
+          }
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
@@ -115,6 +118,7 @@ class _AddSocialState extends State<AddSocial> {
                                 .add(CreatestudentEvent(
                               entity: StudentEntity(
                                   notifyTeacher: valueSelect,
+                                  sendSms: sendSms,
                                   className: valueClass!.id,
                                   name: name.text,
                                   fatherIsAlive: valueGroup2 == 3,
@@ -128,6 +132,7 @@ class _AddSocialState extends State<AddSocial> {
                                 UpdatestudentEvent(
                                     entity: StudentEntity(
                                         notifyTeacher: valueSelect,
+                                        sendSms: sendSms,
                                         id: widget.student?.id,
                                         className: valueClass!.id,
                                         name: name.text,
@@ -262,6 +267,40 @@ class _AddSocialState extends State<AddSocial> {
                           ),
                         ],
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      if (AppUtils.appUser?.smsService != null ||
+                          AppUtils.appUser!.smsService!.isActive)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Titile(
+                              label: e.tr('send_sms'),
+                            ),
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    BaseBloc.get<SocialBloc>(context)
+                                        .emitState(ChnageNotifyState3());
+                                  },
+                                  child: RadioBtn(
+                                      group: sendSms ? 1 : 0,
+                                      label: e.tr('yes'),
+                                      value: 1,
+                                      valueChanged: (v) {
+                                        BaseBloc.get<SocialBloc>(context)
+                                            .emitState(ChnageNotifyState3());
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),

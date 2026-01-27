@@ -10,6 +10,7 @@ class StudentEntity extends BaseEnity {
   final String studentGuardian;
   final String withLive;
   final bool? notifyTeacher;
+  final bool? sendSms;
 
   StudentEntity(
       {required this.className,
@@ -20,6 +21,7 @@ class StudentEntity extends BaseEnity {
       required this.kinshipWithStudent,
       required this.studentGuardian,
       required this.notifyTeacher,
+      required this.sendSms,
       required this.withLive});
   @override
   Map<String, dynamic> toJson() => {
@@ -31,5 +33,6 @@ class StudentEntity extends BaseEnity {
         'with_live': withLive,
         'name': name,
         'notify_teacher': notifyTeacher,
+        'send_sms': sendSms,
       };
 }

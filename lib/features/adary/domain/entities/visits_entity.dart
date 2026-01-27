@@ -12,6 +12,7 @@ class VisitEntity extends BaseEnity {
   final bool sendNotif;
   final bool isVisible;
   final bool notifyTeacher;
+  final bool sendSms;
 
   VisitEntity({
     this.id,
@@ -24,6 +25,7 @@ class VisitEntity extends BaseEnity {
     required this.sendNotif,
     required this.isVisible,
     required this.notifyTeacher,
+    required this.sendSms,
   });
 
   Map<String, dynamic> toJson() {
@@ -39,6 +41,7 @@ class VisitEntity extends BaseEnity {
       'send_notif': sendNotif,
       'is_visible': isVisible,
       'notify_teacher': notifyTeacher,
+      'send_sms': sendSms,
     };
   }
 }

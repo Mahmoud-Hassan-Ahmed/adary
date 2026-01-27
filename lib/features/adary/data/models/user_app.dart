@@ -9,6 +9,7 @@ class AppUser {
   final SmartblePlanInfo smartblePlanInfo;
   final FollowerPlanInfo followerPlanInfo;
   final WhatsappService whatsappService;
+  final WhatsappService? smsService;
 
   AppUser({
     required this.school,
@@ -20,6 +21,7 @@ class AppUser {
     required this.smartblePlanInfo,
     required this.followerPlanInfo,
     required this.whatsappService,
+    required this.smsService,
     required this.ky,
   });
 
@@ -36,6 +38,9 @@ class AppUser {
       smartblePlanInfo: SmartblePlanInfo.fromJson(json['smartble_plan_info']),
       followerPlanInfo: FollowerPlanInfo.fromJson(json['follower_plan_info']),
       whatsappService: WhatsappService.fromJson(json['whatsapp_service']),
+      smsService: json['smsService'] != null
+          ? WhatsappService.fromJson(json['smsService'])
+          : null,
     );
   }
 
@@ -51,6 +56,9 @@ class AppUser {
         smartblePlanInfo: SmartblePlanInfo.fromJson(json['smartble_plan_info']),
         followerPlanInfo: FollowerPlanInfo.fromJson(json['follower_plan_info']),
         whatsappService: WhatsappService.fromJson(json['whatsapp_service']),
+        smsService: json['smsService'] != null
+            ? WhatsappService.fromJson(json['smsService'])
+            : null,
       );
   // Convert the instance to JSON
   Map<String, dynamic> toJson() {
@@ -65,6 +73,7 @@ class AppUser {
       'smartble_plan_info': smartblePlanInfo.toJson(),
       'follower_plan_info': followerPlanInfo.toJson(),
       'whatsapp_service': whatsappService.toJson(),
+      'smsService:': smsService?.toJson(),
     };
   }
 }
@@ -158,7 +167,7 @@ class WhatsappService {
   factory WhatsappService.fromJson(Map<String, dynamic> json) {
     return WhatsappService(
       isActive: json['is_active'],
-      remaining: json['remaining'],
+      remaining: int.tryParse(json['remaining'].toString()) ?? 0,
     );
   }
 

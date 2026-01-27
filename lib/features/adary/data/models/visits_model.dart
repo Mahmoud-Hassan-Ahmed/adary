@@ -12,6 +12,7 @@ class VisitModel {
   final bool sendNotif;
   final bool isVisible;
   final bool? notifyTeacher;
+  final bool? sendSms;
 
   VisitModel({
     this.id,
@@ -24,19 +25,22 @@ class VisitModel {
     required this.sendNotif,
     required this.isVisible,
     required this.notifyTeacher,
+    required this.sendSms,
   });
 
   factory VisitModel.fromJson(Map<String, dynamic> json) {
     return VisitModel(
-        id: json['id'] as int?,
-        teacher: Teacher.fromJson(json['teacher']),
-        visitorName: json['visitor_name'] as String,
-        date: DateTime.parse(json['date'] as String),
-        dateHijri: json['date_hijri'] as String,
-        className: Classes.fromJson(json['class_name']),
-        session: json['session'] as String?,
-        sendNotif: json['send_notif'] as bool,
-        isVisible: json['is_visible'] as bool,
-        notifyTeacher: json['notify_teacher']);
+      id: json['id'] as int?,
+      teacher: Teacher.fromJson(json['teacher']),
+      visitorName: json['visitor_name'] as String,
+      date: DateTime.parse(json['date'] as String),
+      dateHijri: json['date_hijri'] as String,
+      className: Classes.fromJson(json['class_name']),
+      session: json['session'] as String?,
+      sendNotif: json['send_notif'] as bool,
+      isVisible: json['is_visible'] as bool,
+      notifyTeacher: json['notify_teacher'],
+      sendSms: json['send_sms'],
+    );
   }
 }

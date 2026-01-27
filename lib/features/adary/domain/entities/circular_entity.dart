@@ -12,6 +12,7 @@ class CircularEntity extends BaseEnity {
   String dateHijri;
   String issuer;
   bool sendNotif;
+  bool sendSms;
   bool selectAll;
   final File? file;
   final List<SelectModel> teachers;
@@ -23,6 +24,7 @@ class CircularEntity extends BaseEnity {
       required this.dateHijri,
       this.id,
       required this.issuer,
+      required this.sendSms,
       required this.sendNotif,
       required this.selectAll,
       required this.teachers,
@@ -38,6 +40,7 @@ class CircularEntity extends BaseEnity {
       if (file != null) 'file': await MultipartFile.fromFile(file!.path),
       'send_notif': sendNotif,
       'select_all': selectAll,
+      'send_sms': sendSms,
     });
   }
 
@@ -50,6 +53,7 @@ class CircularEntity extends BaseEnity {
       'issuer': issuer,
       'send_notif': sendNotif,
       'select_all': selectAll,
+      'send_sms': sendSms,
     };
   }
 }

@@ -42,6 +42,7 @@ class _AddCircaleState extends State<AddCircale> {
   DateTime? gregorianDate;
   String? dateHijri;
   bool valueSelect = false;
+  bool sendSms = false;
   bool valueSelect2 = true;
   File? file;
   final formState = GlobalKey<FormState>();
@@ -55,6 +56,7 @@ class _AddCircaleState extends State<AddCircale> {
       dateHijri = widget.administrativeCircular!.dateHijri;
       valueSelect = widget.administrativeCircular!.sendNotification;
       valueSelect2 = widget.administrativeCircular!.selectAll;
+      sendSms = widget.administrativeCircular!.sendSms;
     }
     super.initState();
   }
@@ -87,6 +89,8 @@ class _AddCircaleState extends State<AddCircale> {
             dateHijri = state.enity;
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
+          } else if (state is ChnageNotifyState3) {
+            sendSms = !sendSms;
           } else if (state is ChnageNotifyState2) {
             valueSelect2 = !valueSelect2;
             if (valueSelect2) {
@@ -136,6 +140,7 @@ class _AddCircaleState extends State<AddCircale> {
                                       dateHijri: dateHijri!,
                                       issuer: name.text,
                                       file: file,
+                                      sendSms: sendSms,
                                       sendNotif: valueSelect,
                                       selectAll: valueSelect2,
                                       teachers: selected)));
@@ -153,6 +158,7 @@ class _AddCircaleState extends State<AddCircale> {
                                       dateHijri: dateHijri!,
                                       issuer: name.text,
                                       file: file!,
+                                      sendSms: sendSms,
                                       sendNotif: valueSelect,
                                       selectAll: valueSelect2,
                                       teachers: selected)));
@@ -256,6 +262,39 @@ class _AddCircaleState extends State<AddCircale> {
                         ),
                       ],
                     ),
+                    if (AppUtils.appUser?.smsService != null &&
+                        AppUtils.appUser!.smsService!.isActive)
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Titile(
+                              label: e.tr('send_sms'),
+                            ),
+                            // const SizedBox(
+                            //   height: 10,
+                            // ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    BaseBloc.get<CircularBloc>(context)
+                                        .emit(ChnageNotifyState3());
+                                  },
+                                  child: RadioBtn(
+                                      group: sendSms ? 1 : 0,
+                                      label: e.tr('yes'),
+                                      value: 1,
+                                      valueChanged: (v) {
+                                        BaseBloc.get<CircularBloc>(context)
+                                            .emit(ChnageNotifyState3());
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ]),
                     const SizedBox(
                       height: 10,
                     ),
