@@ -9,8 +9,8 @@ workflows:
         - teacher_credentials
       vars:
         BUNDLE_ID: "com.smartapleP.in"
-        BUILD_VERSION: "2.0.15"
-        BUILD_NUMBER: "1"
+        BUILD_VERSION: "2.0.26"
+        BUILD_NUMBER: "2"
 
       ios_signing:
         distribution_type: app_store # or: ad_hoc | development | enterprise
