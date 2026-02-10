@@ -17,6 +17,24 @@ class Model19Model {
     required this.numDays,
   });
 
+  Model19Model copyWith({
+    int? id,
+    Teacher? teacher,
+    int? schoolId,
+    String? name,
+    double? exitTime,
+    int? numDays,
+  }) {
+    return Model19Model(
+      id: id ?? this.id,
+      teacher: teacher ?? this.teacher,
+      schoolId: schoolId ?? this.schoolId,
+      name: name ?? this.name,
+      exitTime: exitTime ?? this.exitTime,
+      numDays: numDays ?? this.numDays,
+    );
+  }
+
   factory Model19Model.fromJson(Map<String, dynamic> json) {
     return Model19Model(
       id: json['id'],

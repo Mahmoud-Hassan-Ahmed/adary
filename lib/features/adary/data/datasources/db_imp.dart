@@ -509,8 +509,8 @@ class DbImp implements Db {
 
   @override
   Future<void> loadCalendart() async {
-    final year = [2025, 2026, 2027];
-    const url = "https://api.aladhan.com/v1/gToHCalendar/";
+    final year = [2025, 2026];
+    const url = "https://aladhan.api.islamic.network/v1/gToHCalendar/";
     for (var i = 0; i < 2; i++) {
       for (var month = 1; month <= 12; month++) {
         final response = await http.get(Uri.parse('$url$month/${year[i]}'));

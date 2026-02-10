@@ -65,13 +65,17 @@ class _AddModel19State extends State<AddModel19> {
             AppUtils.showCustomSnackbar(e.tr('added_model'), SnackType.SUCESS);
 
             widget.pagingController.refresh();
-            Navigator.pop(context);
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           } else if (state is DoneUpdateModel19State) {
             AppUtils.showCustomSnackbar(
                 e.tr('updated_model'), SnackType.SUCESS);
 
-            Navigator.pop(context);
             widget.pagingController.refresh();
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           }
           return SafeArea(
             child: Padding(

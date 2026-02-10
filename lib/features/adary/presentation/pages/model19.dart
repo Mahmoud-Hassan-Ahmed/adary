@@ -50,7 +50,6 @@ class _Model19PageState extends State<Model19Page> {
       });
     } catch (error) {
       _pagingController.error = error;
-      AppUtils.log(error.toString());
     }
   }
 

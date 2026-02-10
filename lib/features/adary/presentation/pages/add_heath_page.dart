@@ -65,15 +65,20 @@ class _AddHeathPageState extends State<AddHeathPage> {
           } else if (state is ChangeClassState) {
             selectedClass = state.selectModel;
           } else if (state is DoneAddHealthState) {
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
             AppUtils.showCustomSnackbar(e.tr('added_health'), SnackType.SUCESS);
-
             widget.refreshKey?.currentState?.show();
-            Navigator.pop(context);
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           } else if (state is DoneUpdateHealthState) {
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
             AppUtils.showCustomSnackbar(
                 e.tr('updated_health'), SnackType.SUCESS);
             widget.refreshKey?.currentState?.show();
-            Navigator.pop(context);
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
           } else if (state is ChnageNotifyState3) {

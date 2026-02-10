@@ -243,7 +243,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                       const SizedBox(
                         height: 10,
                       ),
-                      if (AppUtils.appUser?.smsService != null ||
+                      if (AppUtils.appUser?.smsService != null &&
                           AppUtils.appUser!.smsService!.isActive)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

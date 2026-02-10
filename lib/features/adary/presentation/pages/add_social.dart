@@ -87,16 +87,22 @@ class _AddSocialState extends State<AddSocial> {
             //     // Navigator.pop(context);
             //   },
             // );
-            Navigator.pop(context);
+            // Navigator.pop(context);
             widget.pagingController!.refresh();
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           } else if (state is DoneUpdateStudentState) {
             AppUtils.showCustomSnackbar(
                 e.tr('updated_student'), SnackType.SUCESS);
             // BaseBloc.get<StudentsBloc>(ClassRoomPage.context!)
             //     .add(GetClassesRoomEvent());
 
-            Navigator.pop(context);
+            // Navigator.pop(context);
             widget.pagingController!.refresh();
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
           }
           if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
@@ -270,7 +276,7 @@ class _AddSocialState extends State<AddSocial> {
                       const SizedBox(
                         height: 10,
                       ),
-                      if (AppUtils.appUser?.smsService != null ||
+                      if (AppUtils.appUser?.smsService != null &&
                           AppUtils.appUser!.smsService!.isActive)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

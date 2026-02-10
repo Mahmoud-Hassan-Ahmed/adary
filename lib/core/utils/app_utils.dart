@@ -63,9 +63,18 @@ abstract class AppUtils {
     return formattedTime;
   }
 
+  static String latestMessage = "";
+
   static void showCustomSnackbar(String message, SnackType type,
       {String title = ''}) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (latestMessage == message) {
+        Future.delayed(const Duration(seconds: 10), () {
+          latestMessage = '';
+        });
+        return;
+      }
+      latestMessage = message;
       Get.snackbar(
         title,
         message,
