@@ -4,6 +4,7 @@ import 'package:adary/core/conts/icons.dart';
 import 'package:adary/core/share/widgets/btn_icon.dart';
 import 'package:adary/core/share/widgets/container_btns.dart';
 import 'package:adary/core/share/widgets/expansion_widget.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/note_entity_model.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 
@@ -67,44 +68,50 @@ class ItemNotes extends StatelessWidget {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  BtnIcon(
-                      label: 'delete'.tr(),
-                      icon: AppIcon.rash,
-                      onTap: () {
-                        AwesomeDialog(
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.contains('api/notes/delete/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'delete'.tr(),
+                        icon: AppIcon.rash,
+                        onTap: () {
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                              title: 'delete_note'.tr(),
+                              desc: 'delete_note_des'.tr(),
+                              btnCancelText: 'no'.tr(),
+                              btnOkText: 'delete'.tr(),
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                BaseBloc.get<NoteBloc>(context).add(
+                                    DeleteNoteEvent(
+                                        entity: DeleteEntity(
+                                            id: visitModel.id ?? 0)));
+                              }).show();
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.contains('api/notes/update/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'edit'.tr(),
+                        icon: AppIcon.edit,
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
                             context: context,
-                            dialogType: DialogType.warning,
-                            titleTextStyle: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            title: 'delete_note'.tr(),
-                            desc: 'delete_note_des'.tr(),
-                            btnCancelText: 'no'.tr(),
-                            btnOkText: 'delete'.tr(),
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                              BaseBloc.get<NoteBloc>(context).add(
-                                  DeleteNoteEvent(
-                                      entity: DeleteEntity(
-                                          id: visitModel.id ?? 0)));
-                            }).show();
-                      }),
-                  BtnIcon(
-                      label: 'edit'.tr(),
-                      icon: AppIcon.edit,
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddNotePage(
-                              noteModel: visitModel,
-                              pagingController: pagingController,
-                            );
-                          },
-                        );
-                      })
+                            builder: (context) {
+                              return AddNotePage(
+                                noteModel: visitModel,
+                                pagingController: pagingController,
+                              );
+                            },
+                          );
+                        })
                 ],
               ),
             )

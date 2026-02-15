@@ -5,6 +5,9 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/core/utils/check_internet.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/domain/entities/login_entity.dart';
+import 'package:adary/features/adary/domain/usecases/login_use_case.dart';
+import 'package:adary/features/adary/presentation/pages/main_screen.dart';
+import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -18,20 +21,46 @@ class AppUtilsImp extends AppUtils {
   AppUtilsImp(
       {required this.dio, required this.checkinternet, required this.prefs}) {
     loadDatesMapFromStorage();
+    LoginEntity? loginEntity = getcredinal();
+    AppUtils.log("loginEntity: ${loginEntity?.username}");
+    AppUtils.log("loginEntity: ${loginEntity?.password}");
+    final permissions = getLogin()?.permissions.length ?? 0;
+    AppUtils.log("permissions: ${permissions}");
+    if (loginEntity != null) {
+      sl<LoginUseCase>()
+          .call(LoginEntity(
+            username: loginEntity.username,
+            password: loginEntity.password,
+          ))
+          .then((value) => {
+                AppUtils.log("log ${AppUtils.permissions.length}"),
+                if (permissions != AppUtils.permissions.length)
+                  {AppUtils.goAndReplace(MainScreen())}
+              });
+    }
   }
 
   @override
   Future<void> login(LoginEntity entity) async {
     await prefs.setString('username', entity.username);
     await prefs.setString('app-key', entity.password);
+    await prefs.setStringList(
+      'permissions',
+      entity.permissions,
+    );
+    AppUtils.permissions = entity.permissions;
   }
 
   @override
-  Future<LoginEntity?> getLogin() async {
+  LoginEntity? getLogin() {
     if (prefs.containsKey('username')) {
       final userName = prefs.getString('username');
       final password = prefs.getString('app-key');
-      return LoginEntity(username: userName ?? "", password: password ?? '');
+      final permissions = prefs.getStringList('permissions') ?? [];
+      return LoginEntity(
+          username: userName ?? "",
+          password: password ?? '',
+          permissions: permissions);
     } else {
       return null;
     }
@@ -138,5 +167,22 @@ class AppUtilsImp extends AppUtils {
         };
       }
     } catch (e) {}
+  }
+
+  @override
+  LoginEntity? getcredinal() {
+    if (prefs.containsKey('username_user')) {
+      final userName = prefs.getString('username_user');
+      final password = prefs.getString('password_user');
+      return LoginEntity(username: userName ?? "", password: password ?? '');
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> setcredinal(LoginEntity entity) async {
+    await prefs.setString('username_user', entity.username);
+    await prefs.setString('password_user', entity.password);
   }
 }

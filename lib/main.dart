@@ -51,6 +51,8 @@ class MyApp extends StatelessWidget {
     configLoading();
     AppUtils.contextApp = context;
     AppUtils.appUser = AppUtils.instance.getUser();
+    AppUtils.permissions = AppUtils.instance.getLogin()?.permissions ?? [];
+    AppUtils.log("permissions: ${AppUtils.permissions}");
     return ScreenUtilInit(
       designSize: const Size(430, 932),
       child: GetMaterialApp(

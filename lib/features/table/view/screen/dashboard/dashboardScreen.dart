@@ -1,4 +1,5 @@
 import 'package:adary/core/share/widgets/my_app_bar.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/table/controller/dashBoard_controller.dart';
 import 'package:adary/features/table/utils/app_colors.dart';
 import 'package:adary/features/table/utils/images.dart';
@@ -29,22 +30,30 @@ class DashBoardScreen extends GetView<DashBoardController> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    BottomNavItem(
-                      iconPath: dashBoardController.pageIndex == 0
-                          ? Images.INSTRUCTOR_ICON
-                          : Images.INSTRUCTOR_ICON,
-                      isSelected: dashBoardController.pageIndex == 0,
-                      onTap: () => dashBoardController.onTapPager(0),
-                      pageName: easy.tr("instructors"),
-                    ),
-                    BottomNavItem(
-                      iconPath: dashBoardController.pageIndex == 1
-                          ? Images.FILLED_LAP_ICON
-                          : Images.LAP_ICON,
-                      isSelected: dashBoardController.pageIndex == 1,
-                      onTap: () => dashBoardController.onTapPager(1),
-                      pageName: easy.tr("laps"),
-                    ),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.contains(
+                                '/dashboard-mobile/classes/instructors/') ||
+                        AppUtils.permissions.isEmpty)
+                      BottomNavItem(
+                        iconPath: dashBoardController.pageIndex == 0
+                            ? Images.INSTRUCTOR_ICON
+                            : Images.INSTRUCTOR_ICON,
+                        isSelected: dashBoardController.pageIndex == 0,
+                        onTap: () => dashBoardController.onTapPager(0),
+                        pageName: easy.tr("instructors"),
+                      ),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions
+                                .contains('/dashboard-mobile/classes/laps/') ||
+                        AppUtils.permissions.isEmpty)
+                      BottomNavItem(
+                        iconPath: dashBoardController.pageIndex == 1
+                            ? Images.FILLED_LAP_ICON
+                            : Images.LAP_ICON,
+                        isSelected: dashBoardController.pageIndex == 1,
+                        onTap: () => dashBoardController.onTapPager(1),
+                        pageName: easy.tr("laps"),
+                      ),
                     // BottomNavItem(
                     //   iconPath: dashBoardController.pageIndex == 2
                     //       ? Images.FILLED_WAITING_ICON

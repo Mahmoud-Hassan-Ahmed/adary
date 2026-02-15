@@ -37,40 +37,48 @@ class ItemWeekPaln extends StatelessWidget {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  BtnIcon(
-                      label: 'delete'.tr(),
-                      icon: AppIcon.rash,
-                      onTap: () {
-                        AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.warning,
-                            titleTextStyle: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            title: 'delete_paln'.tr(),
-                            desc: 'delete_paln_des'.tr(),
-                            btnCancelText: 'no'.tr(),
-                            btnOkText: 'delete'.tr(),
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                              BaseBloc.get<WeekPlanBloc>(context).add(
-                                  DeleteWeekPlanEvent(
-                                      entity: DeleteEntity(
-                                          id: visitModel.id ?? 0)));
-                            }).show();
-                      }),
-                  BtnIcon(
-                      label: 'download'.tr(),
-                      icon: AppIcon.download,
-                      onTap: () async {
-                        final pdf = await AppUtils.downloadFile(
-                            '${visitModel.file}',
-                            '${visitModel.teacher.name}.pdf');
-                        if (pdf != null) {
-                          OpenFilex.open(pdf);
-                        }
-                      }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any((p) =>
+                              p.contains("api/notes/week_plane/delete/")) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'delete'.tr(),
+                        icon: AppIcon.rash,
+                        onTap: () {
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                              title: 'delete_paln'.tr(),
+                              desc: 'delete_paln_des'.tr(),
+                              btnCancelText: 'no'.tr(),
+                              btnOkText: 'delete'.tr(),
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                BaseBloc.get<WeekPlanBloc>(context).add(
+                                    DeleteWeekPlanEvent(
+                                        entity: DeleteEntity(
+                                            id: visitModel.id ?? 0)));
+                              }).show();
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any((p) =>
+                              p.contains("api/notes/week_plane/download/")) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'download'.tr(),
+                        icon: AppIcon.download,
+                        onTap: () async {
+                          final pdf = await AppUtils.downloadFile(
+                              '${visitModel.file}',
+                              '${visitModel.teacher.name}.pdf');
+                          if (pdf != null) {
+                            OpenFilex.open(pdf);
+                          }
+                        }),
                 ],
               ),
             )

@@ -435,15 +435,17 @@ class DbImp implements Db {
     // await AppUtils.instance.login(entity);
     final respone = await dio.post(Api.login, data: entity.toJson());
     if (respone.data['success']) {
+      AppUtils.instance.setcredinal(entity);
       await AppUtils.instance.login(LoginEntity(
           username: respone.data['data']['username'],
-          password: respone.data['data']['app-key']));
+          password: respone.data['data']['app-key'],
+          permissions: List<String>.from(respone.data['data']['permissions'])));
 
       final response = await dio.get(Api.me);
       await AppUtils.instance.setUser(AppUser.fromJson({
         ...response.data['data'],
         'app-key': respone.data['data']['app-key'],
-      }));
+      }, password: entity.password));
     }
 
     // await AppUtils.instance.setUser(AppUser.fromJson(respone.data['data']));

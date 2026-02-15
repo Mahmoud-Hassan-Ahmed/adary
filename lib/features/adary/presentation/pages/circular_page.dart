@@ -75,42 +75,50 @@ class _CircularPageState extends State<CircularPage> {
             child: Scaffold(
               bottomNavigationBar: BottomNavigatorBar(
                 items: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AppUtils.go(AddCircale(
-                          pagingController: _pagingController,
-                        ));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        'new_circular'.tr(),
-                        style: const TextStyle(color: Colors.white),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('/api/notes/add_circular/') ||
+                      AppUtils.permissions.isEmpty)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AppUtils.go(AddCircale(
+                            pagingController: _pagingController,
+                          ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          elevation: 4,
+                        ),
+                        child: Text(
+                          'new_circular'.tr(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        final tempDir = await getTemporaryDirectory();
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('/api/notes/circulars_exports_pdf/') ||
+                      AppUtils.permissions.isEmpty)
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () async {
+                          final tempDir = await getTemporaryDirectory();
 
-                        final filePath = '${tempDir.path}/visits.pdf';
-                        BaseBloc.get<CircularBloc>(context).add(
-                            ExportCirculasPdfEvent(
-                                eneity: FileDownloadEneity(
-                                    id: 0, pathDownload: filePath)));
-                      },
-                      child: Text(
-                        '${'export'.tr()} PDF'.tr(),
-                        style: AbhayaLibreSemiBold.copyWith(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline),
+                          final filePath = '${tempDir.path}/visits.pdf';
+                          BaseBloc.get<CircularBloc>(context).add(
+                              ExportCirculasPdfEvent(
+                                  eneity: FileDownloadEneity(
+                                      id: 0, pathDownload: filePath)));
+                        },
+                        child: Text(
+                          '${'export'.tr()} PDF'.tr(),
+                          style: AbhayaLibreSemiBold.copyWith(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               appBar: MyAppBar(title: 'circulars'.tr()),

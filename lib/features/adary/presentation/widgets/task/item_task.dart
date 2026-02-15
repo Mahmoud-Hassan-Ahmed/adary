@@ -101,29 +101,33 @@ class ItemTask extends StatelessWidget {
                 content: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    BtnIcon(
-                        label: 'delete'.tr(),
-                        icon: AppIcon.rash,
-                        onTap: () {
-                          AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.warning,
-                              titleTextStyle: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                              title: 'delete_mission'.tr(),
-                              desc: 'delete_mission_des'.tr(),
-                              btnCancelText: 'no'.tr(),
-                              btnOkText: 'delete'.tr(),
-                              btnCancelOnPress: () {},
-                              btnOkOnPress: () {
-                                BaseBloc.get<DelayTaskBloc>(context).add(
-                                    RemoveTakTeaccherEvent(
-                                        enity:
-                                            DeleteEntity(id: visitModel.id)));
-                              }).show();
-                        }),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.any((p) => p.contains(
+                                "/daily-supervision/delete-daily-task-bulk/")) ||
+                        AppUtils.permissions.isEmpty)
+                      BtnIcon(
+                          label: 'delete'.tr(),
+                          icon: AppIcon.rash,
+                          onTap: () {
+                            AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.warning,
+                                titleTextStyle: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                                title: 'delete_mission'.tr(),
+                                desc: 'delete_mission_des'.tr(),
+                                btnCancelText: 'no'.tr(),
+                                btnOkText: 'delete'.tr(),
+                                btnCancelOnPress: () {},
+                                btnOkOnPress: () {
+                                  BaseBloc.get<DelayTaskBloc>(context).add(
+                                      RemoveTakTeaccherEvent(
+                                          enity:
+                                              DeleteEntity(id: visitModel.id)));
+                                }).show();
+                          }),
                     // BtnIcon(
                     //     label: 'edit'.tr(),
                     //     icon: AppIcon.edit,

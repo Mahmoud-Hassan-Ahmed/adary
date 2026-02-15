@@ -59,44 +59,50 @@ class _WaitingState extends State<Waiting> {
                   // SizedBox(
                   //   height: 56,
                   // ),
-                  GetBuilder<WaitingController>(builder: (waitingController) {
-                    return waitingController.isLoading
-                        ? _addInstructorLoader()
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                            child: Center(
-                              child: GestureDetector(
-                                // onTap: () => Get.toNamed(
-                                //     RouteHelper.getAwaitingRoute(
-                                //         dayNum: Get.find<CalednerController>()
-                                //             .selectedDayIndex
-                                //             .toString())),
-                                onTap: () {
-                                  AppUtils.go(AddWaititng(
-                                    day: Get.find<CalednerController>()
-                                        .selectedDayIndex
-                                        .toString(),
-                                  ));
-                                },
-                                child: Container(
-                                  width: 327,
-                                  height: 56,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.SECONDERYCOLOR,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: Center(
-                                    child: Text(
-                                      easy.tr("add_to_upsent_teacher"),
-                                      style: AlMaraiaBold.copyWith(
-                                          fontSize: 21,
-                                          color: AppColors.MAINCOLOR),
+
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.contains(
+                              '/waiting-classes/add-waiting-classes/') ||
+                      AppUtils.permissions.isEmpty)
+                    GetBuilder<WaitingController>(builder: (waitingController) {
+                      return waitingController.isLoading
+                          ? _addInstructorLoader()
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+                              child: Center(
+                                child: GestureDetector(
+                                  // onTap: () => Get.toNamed(
+                                  //     RouteHelper.getAwaitingRoute(
+                                  //         dayNum: Get.find<CalednerController>()
+                                  //             .selectedDayIndex
+                                  //             .toString())),
+                                  onTap: () {
+                                    AppUtils.go(AddWaititng(
+                                      day: Get.find<CalednerController>()
+                                          .selectedDayIndex
+                                          .toString(),
+                                    ));
+                                  },
+                                  child: Container(
+                                    width: 327,
+                                    height: 56,
+                                    decoration: BoxDecoration(
+                                        color: AppColors.SECONDERYCOLOR,
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
+                                    child: Center(
+                                      child: Text(
+                                        easy.tr("add_to_upsent_teacher"),
+                                        style: AlMaraiaBold.copyWith(
+                                            fontSize: 21,
+                                            color: AppColors.MAINCOLOR),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ));
-                  }),
+                              ));
+                    }),
                   //end of add absent btn
                   const SizedBox(
                     height: 34,

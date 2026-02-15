@@ -174,10 +174,20 @@ class Profile extends StatelessWidget {
               // GestureDetector(
               //     onTap: () => AppUtils.go(Invoice()),
               //     child: _customBox(text: "invoices".tr())),
-              const Divider(),
-              GestureDetector(
-                  onTap: () => AppUtils.go(SubscriptionManager()),
-                  child: _customBox(text: "manage_subscribtion")),
+              if (AppUtils.permissions.isNotEmpty &&
+                      AppUtils.permissions.any((p) =>
+                          p.contains("/daily-supervision/delete--bulk/")) ||
+                  AppUtils.permissions.isEmpty)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Divider(),
+                    GestureDetector(
+                        onTap: () => AppUtils.go(SubscriptionManager()),
+                        child: _customBox(text: "manage_subscribtion")),
+                  ],
+                ),
+
               const Divider(),
               GestureDetector(
                   onTap: () {

@@ -75,62 +75,78 @@ class ItemCicular extends StatelessWidget {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  BtnIcon(
-                      label: 'delete'.tr(),
-                      icon: AppIcon.rash,
-                      onTap: () {
-                        AwesomeDialog(
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/circular/delete/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'delete'.tr(),
+                        icon: AppIcon.rash,
+                        onTap: () {
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                              title: 'delete_circular'.tr(),
+                              desc: 'delete_circular_des'.tr(),
+                              btnCancelText: 'no'.tr(),
+                              btnOkText: 'delete'.tr(),
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                BaseBloc.get<CircularBloc>(context).add(
+                                    DeleteCircularEvent(
+                                        entity: DeleteEntity(
+                                            id: visitModel.id ?? 0)));
+                              }).show();
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/circular/download/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'download'.tr(),
+                        icon: AppIcon.download,
+                        onTap: () async {
+                          final pdf = await AppUtils.downloadFile(
+                              visitModel.fileUrl, '${visitModel.title}.pdf');
+                          if (pdf != null) {
+                            OpenFilex.open(pdf);
+                          }
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/circular/update/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'edit'.tr(),
+                        icon: AppIcon.edit,
+                        onTap: () {
+                          AppUtils.go(AddCircale(
+                            administrativeCircular: visitModel,
+                            pagingController: pagingController,
+                          ));
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/circular/download/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'list_teachers'.tr(),
+                        icon: AppIcon.list,
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
                             context: context,
-                            dialogType: DialogType.warning,
-                            titleTextStyle: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            title: 'delete_circular'.tr(),
-                            desc: 'delete_circular_des'.tr(),
-                            btnCancelText: 'no'.tr(),
-                            btnOkText: 'delete'.tr(),
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                              BaseBloc.get<CircularBloc>(context).add(
-                                  DeleteCircularEvent(
-                                      entity: DeleteEntity(
-                                          id: visitModel.id ?? 0)));
-                            }).show();
-                      }),
-                  BtnIcon(
-                      label: 'download'.tr(),
-                      icon: AppIcon.download,
-                      onTap: () async {
-                        final pdf = await AppUtils.downloadFile(
-                            visitModel.fileUrl, '${visitModel.title}.pdf');
-                        if (pdf != null) {
-                          OpenFilex.open(pdf);
-                        }
-                      }),
-                  BtnIcon(
-                      label: 'edit'.tr(),
-                      icon: AppIcon.edit,
-                      onTap: () {
-                        AppUtils.go(AddCircale(
-                          administrativeCircular: visitModel,
-                          pagingController: pagingController,
-                        ));
-                      }),
-                  BtnIcon(
-                      label: 'list_teachers'.tr(),
-                      icon: AppIcon.list,
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return ListTeachersWidget(
-                              classId: visitModel,
-                            );
-                          },
-                        );
-                      })
+                            builder: (context) {
+                              return ListTeachersWidget(
+                                classId: visitModel,
+                              );
+                            },
+                          );
+                        })
                 ],
               ),
             ),

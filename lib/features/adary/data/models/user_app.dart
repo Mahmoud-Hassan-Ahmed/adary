@@ -10,6 +10,7 @@ class AppUser {
   final FollowerPlanInfo followerPlanInfo;
   final WhatsappService whatsappService;
   final WhatsappService? smsService;
+  final String? password;
 
   AppUser({
     required this.school,
@@ -23,14 +24,16 @@ class AppUser {
     required this.whatsappService,
     required this.smsService,
     required this.ky,
+    required this.password,
   });
 
   // Factory method to create an instance from JSON
-  factory AppUser.fromJson(Map<String, dynamic> json) {
+  factory AppUser.fromJson(Map<String, dynamic> json, {String? password}) {
     return AppUser(
       school: json['school'],
       ky: json['app-key'] ?? '',
       username: json['username'],
+      password: password,
       schoolSystem: json['school_system'],
       dateSystem: json['date_system'],
       isSmartbleActive: json['is_smartble_active'] ?? false,
@@ -53,6 +56,7 @@ class AppUser {
         dateSystem: json['date_system'],
         isSmartbleActive: json['is_smartble_active'],
         isFollowerActive: json['is_follower_active'],
+        password: user?.password ?? json['password'],
         smartblePlanInfo: SmartblePlanInfo.fromJson(json['smartble_plan_info']),
         followerPlanInfo: FollowerPlanInfo.fromJson(json['follower_plan_info']),
         whatsappService: WhatsappService.fromJson(json['whatsapp_service']),
@@ -74,6 +78,7 @@ class AppUser {
       'follower_plan_info': followerPlanInfo.toJson(),
       'whatsapp_service': whatsappService.toJson(),
       'smsService:': smsService?.toJson(),
+      "password": password,
     };
   }
 }

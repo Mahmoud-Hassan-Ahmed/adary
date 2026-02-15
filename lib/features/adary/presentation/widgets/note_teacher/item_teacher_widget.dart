@@ -3,6 +3,7 @@ import 'package:adary/core/conts/icons.dart';
 import 'package:adary/core/share/widgets/btn_icon.dart';
 import 'package:adary/core/share/widgets/container_btns.dart';
 import 'package:adary/core/share/widgets/expansion_widget.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/note_teacher.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/teacher_note/teacher_notes_bloc.dart';
@@ -35,65 +36,77 @@ class ItemTeacherWidget extends StatelessWidget {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  BtnIcon(
-                      label: 'delete'.tr(),
-                      icon: AppIcon.rash,
-                      onTap: () {
-                        AwesomeDialog(
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/teacher/delete/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'delete'.tr(),
+                        icon: AppIcon.rash,
+                        onTap: () {
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                              title: 'delete_note'.tr(),
+                              desc: 'sure_delete_note'.tr(),
+                              btnCancelText: 'no'.tr(),
+                              btnOkText: 'delete'.tr(),
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                BaseBloc.get<TeacherNotesBloc>(context).add(
+                                    DeleteTeacherNoteEvent(
+                                        entity: DeleteEntity(
+                                            id: visitModel.id ?? 0)));
+                              }).show();
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('api/notes/teachers-update/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'edit'.tr(),
+                        icon: AppIcon.edit,
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
                             context: context,
-                            dialogType: DialogType.warning,
-                            titleTextStyle: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            title: 'delete_note'.tr(),
-                            desc: 'sure_delete_note'.tr(),
-                            btnCancelText: 'no'.tr(),
-                            btnOkText: 'delete'.tr(),
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                              BaseBloc.get<TeacherNotesBloc>(context).add(
-                                  DeleteTeacherNoteEvent(
-                                      entity: DeleteEntity(
-                                          id: visitModel.id ?? 0)));
-                            }).show();
-                      }),
-                  BtnIcon(
-                      label: 'edit'.tr(),
-                      icon: AppIcon.edit,
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return SendNoteContent(
-                              isTeacher: true,
-                              teachern: visitModel,
-                              edit: true,
-                              add: false,
-                              pagingController: pagingController,
-                            );
-                          },
-                        );
-                      }),
-                  BtnIcon(
-                      label: 'assign_note'.tr(),
-                      icon: AppIcon.edit,
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return SendNoteContent(
-                              isTeacher: true,
-                              edit: false,
-                              teachern: visitModel,
-                              add: true,
-                              pagingController: pagingController,
-                            );
-                          },
-                        );
-                      })
+                            builder: (context) {
+                              return SendNoteContent(
+                                isTeacher: true,
+                                teachern: visitModel,
+                                edit: true,
+                                add: false,
+                                pagingController: pagingController,
+                              );
+                            },
+                          );
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions
+                              .contains('/api/notes/teachers-notes/') ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'assign_note'.tr(),
+                        icon: AppIcon.edit,
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return SendNoteContent(
+                                isTeacher: true,
+                                edit: false,
+                                teachern: visitModel,
+                                add: true,
+                                pagingController: pagingController,
+                              );
+                            },
+                          );
+                        })
                 ],
               ),
             )

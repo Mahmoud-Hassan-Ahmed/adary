@@ -40,19 +40,23 @@ class ClassRoomPage extends StatelessWidget {
             child: Scaffold(
               appBar: MyAppBar(title: 'classes'.tr()),
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: BtnApp(
-                      label: 'add_class'.tr(),
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return const AddClass();
-                          },
-                        );
-                      }),
-                )
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains("/api/notes/add_laps/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: BtnApp(
+                        label: 'add_class'.tr(),
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return const AddClass();
+                            },
+                          );
+                        }),
+                  )
               ]),
               body: RefreshIndicator(
                 onRefresh: () async {

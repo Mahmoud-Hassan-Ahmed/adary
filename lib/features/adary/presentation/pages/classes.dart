@@ -76,21 +76,25 @@ class _ClassesListState extends State<ClassesList> {
                 title: 'MaritalStatus'.tr(),
               ),
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: BtnApp(
-                      label: 'add student'.tr(),
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddSocial(
-                              pagingController: _pagingController,
-                            );
-                          },
-                        );
-                      }),
-                )
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains("/api/notes/add_social/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: BtnApp(
+                        label: 'add student'.tr(),
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return AddSocial(
+                                pagingController: _pagingController,
+                              );
+                            },
+                          );
+                        }),
+                  )
               ]),
               body: PagedListView<int, StudentModel>(
                   padding: EdgeInsets.zero,

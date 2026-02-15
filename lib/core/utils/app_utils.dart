@@ -17,6 +17,7 @@ abstract class AppUtils {
   static final GetIt sl = GetIt.instance;
   static late BuildContext contextApp;
   static AppUser? appUser;
+  static List<String> permissions = [];
   static Map<String, Map<String, String>> datesMap = {};
   static final logger = Logger();
   static void log(String log, {Level levelLog = Level.info}) {
@@ -110,7 +111,9 @@ abstract class AppUtils {
   void setLocale(String? locale, String locale_2);
 
   Future<void> login(LoginEntity entity);
-  Future<LoginEntity?> getLogin();
+  Future<void> setcredinal(LoginEntity entity);
+  LoginEntity? getcredinal();
+  LoginEntity? getLogin();
   Future<void> logout();
   static Future<String?> downloadFile(String fileUrl, String fileName) async {
     EasyLoading.show();

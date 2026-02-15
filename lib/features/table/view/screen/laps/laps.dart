@@ -1,3 +1,4 @@
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/table/controller/calender_controller.dart';
 import 'package:adary/features/table/controller/class_room_controller.dart';
 import 'package:adary/features/table/helper/route_helper.dart';
@@ -128,26 +129,30 @@ class _LapsState extends State<Laps> {
                         color: AppColors.GREYCOLOR,
                       ),
                     ),
-                    GetBuilder<ClassRoomController>(
-                        builder: (classRoomController) {
-                      return classRoomController.tablesList.length > 0
-                          ? GestureDetector(
-                              onTap: () {
-                                Get.toNamed(
-                                    RouteHelper.getAllClassesTAbleRoute());
-                              },
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Text(
-                                  easy.tr("view_full_table"),
-                                  style: AlMaraiaBold.copyWith(
-                                      fontSize: 16,
-                                      decoration: TextDecoration.underline),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.contains(
+                                '/dashboard-mobile/classes/in-classes/') ||
+                        AppUtils.permissions.isEmpty)
+                      GetBuilder<ClassRoomController>(
+                          builder: (classRoomController) {
+                        return classRoomController.tablesList.length > 0
+                            ? GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(
+                                      RouteHelper.getAllClassesTAbleRoute());
+                                },
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    easy.tr("view_full_table"),
+                                    style: AlMaraiaBold.copyWith(
+                                        fontSize: 16,
+                                        decoration: TextDecoration.underline),
+                                  ),
                                 ),
-                              ),
-                            )
-                          : const SizedBox.shrink();
-                    }),
+                              )
+                            : const SizedBox.shrink();
+                      }),
                     const SizedBox(
                       height: 60,
                     ),

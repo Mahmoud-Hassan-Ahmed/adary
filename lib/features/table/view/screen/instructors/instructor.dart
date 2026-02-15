@@ -135,26 +135,31 @@ class _InstructorState extends State<Instructor> {
                         color: AppColors.GREYCOLOR,
                       ),
                     ),
-                    // end of divider
-                    GetBuilder<TeacherPageController>(
-                        builder: (teacherPageController) {
-                      return teacherPageController.teachersTableList.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () => Get.to(
-                                  () => const InstructorsFullTable(),
-                                  transition: Transition.cupertino),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Text(
-                                  easy.tr("view_all_teacher_tables"),
-                                  style: AlMaraiaBold.copyWith(
-                                      fontSize: 18,
-                                      decoration: TextDecoration.underline),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.contains(
+                                '/dashboard-mobile/classes/teachers/') ||
+                        AppUtils.permissions.isEmpty)
+                      // end of divider
+                      GetBuilder<TeacherPageController>(
+                          builder: (teacherPageController) {
+                        return teacherPageController
+                                .teachersTableList.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () => Get.to(
+                                    () => const InstructorsFullTable(),
+                                    transition: Transition.cupertino),
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    easy.tr("view_all_teacher_tables"),
+                                    style: AlMaraiaBold.copyWith(
+                                        fontSize: 18,
+                                        decoration: TextDecoration.underline),
+                                  ),
                                 ),
-                              ),
-                            )
-                          : const SizedBox.shrink();
-                    }),
+                              )
+                            : const SizedBox.shrink();
+                      }),
                     // end of view all tables btn
                     const SizedBox(
                       height: 60,

@@ -1,5 +1,6 @@
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/style.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/presentation/bloc/teacher_note/teacher_notes_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/note_teachers_page.dart';
 import 'package:adary/features/adary/presentation/pages/notes_pgae.dart';
@@ -15,13 +16,18 @@ class TeacherNotePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int tabsCount = [
+      '/api/notes/teachers-notes/',
+      '/api/notes/note/',
+      '/api/notes/teachers/',
+    ].where((perm) => AppUtils.permissions.any((p) => p.contains(perm))).length;
     return BlocProvider(
       create: (context) => sl<TeacherNotesBloc>(),
       child: BlocBuilder<TeacherNotesBloc, TeacherNotesState>(
         builder: (context, state) {
           return SafeArea(
             child: DefaultTabController(
-              length: 3,
+              length: tabsCount > 0 ? tabsCount : 1,
               child: Scaffold(
                   appBar: AppBar(
                       bottom: TabBar(
@@ -38,30 +44,42 @@ class TeacherNotePage extends StatelessWidget {
                             .titleMedium!
                             .copyWith(fontSize: 14),
                         tabs: [
-                          Tab(
-                            child: Text(
-                              'send_not'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.permissions.isNotEmpty &&
+                                  AppUtils.permissions
+                                      .contains('/api/notes/teachers-notes/') ||
+                              AppUtils.permissions.isEmpty)
+                            Tab(
+                              child: Text(
+                                'send_not'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
-                          Tab(
-                            child: Text(
-                              'nots_list'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.permissions.isNotEmpty &&
+                                  AppUtils.permissions
+                                      .contains('/api/notes/note/') ||
+                              AppUtils.permissions.isEmpty)
+                            Tab(
+                              child: Text(
+                                'nots_list'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
-                          Tab(
-                            child: Text(
-                              'notes'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.permissions.isNotEmpty &&
+                                  AppUtils.permissions
+                                      .contains('/api/notes/teachers/') ||
+                              AppUtils.permissions.isEmpty)
+                            Tab(
+                              child: Text(
+                                'notes'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                       title: Text(
@@ -71,11 +89,23 @@ class TeacherNotePage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey),
                       )),
-                  body: const TabBarView(
+                  body: TabBarView(
                     children: [
-                      SendNoteContent(),
-                      NotesPage(),
-                      NoteTeachersPage()
+                      if (AppUtils.permissions.isNotEmpty &&
+                              AppUtils.permissions
+                                  .contains('/api/notes/teachers-notes/') ||
+                          AppUtils.permissions.isEmpty)
+                        const SendNoteContent(),
+                      if (AppUtils.permissions.isNotEmpty &&
+                              AppUtils.permissions
+                                  .contains('/api/notes/note/') ||
+                          AppUtils.permissions.isEmpty)
+                        const NotesPage(),
+                      if (AppUtils.permissions.isNotEmpty &&
+                              AppUtils.permissions
+                                  .contains('/api/notes/teachers/') ||
+                          AppUtils.permissions.isEmpty)
+                        const NoteTeachersPage()
                     ],
                   )),
             ),

@@ -43,29 +43,33 @@ class _TasksPageState extends State<TasksPage> {
             child: Scaffold(
               appBar: MyAppBar(title: 'missions'.tr()),
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return add.AddTask(fun: () {
-                            _refreshIndicatorKey.currentState?.show();
-                          });
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      'new_missiom'.tr(),
-                      style: const TextStyle(color: Colors.white),
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains("/api/daily-tasks/add/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return add.AddTask(fun: () {
+                              _refreshIndicatorKey.currentState?.show();
+                            });
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        elevation: 4,
+                      ),
+                      child: Text(
+                        'new_missiom'.tr(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
               ]),
               body: RefreshIndicator(
                 key: _refreshIndicatorKey,

@@ -1,4 +1,5 @@
 import 'package:adary/core/conts/app_colors.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/presentation/pages/dialy_tasks.dart';
 import 'package:adary/features/adary/presentation/pages/tasks_page.dart';
 import 'package:adary/features/adary/presentation/widgets/dashboard/bottom_nav_bar.dart';
@@ -27,26 +28,34 @@ class _DialyTaskState extends State<DialyTask> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    BottomNavItem(
-                      iconPath: null,
-                      isSelected: startPage == 0,
-                      onTap: () {
-                        setState(() {
-                          startPage = 0;
-                        });
-                      },
-                      pageName: "notes_techers".tr(),
-                    ),
-                    BottomNavItem(
-                      iconPath: null,
-                      isSelected: startPage == 1,
-                      onTap: () {
-                        setState(() {
-                          startPage = 1;
-                        });
-                      },
-                      pageName: "missions".tr(),
-                    ),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.any(
+                                (p) => p.contains('/api/daily-tasks/list/')) ||
+                        AppUtils.permissions.isEmpty)
+                      BottomNavItem(
+                        iconPath: null,
+                        isSelected: startPage == 0,
+                        onTap: () {
+                          setState(() {
+                            startPage = 0;
+                          });
+                        },
+                        pageName: "notes_techers".tr(),
+                      ),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions
+                                .any((p) => p.contains("/api/daily-tasks/")) ||
+                        AppUtils.permissions.isEmpty)
+                      BottomNavItem(
+                        iconPath: null,
+                        isSelected: startPage == 1,
+                        onTap: () {
+                          setState(() {
+                            startPage = 1;
+                          });
+                        },
+                        pageName: "missions".tr(),
+                      ),
                   ])),
           body: startPage == 0 ? const DialyTasks() : const TasksPage()),
     );

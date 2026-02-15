@@ -41,49 +41,57 @@ class ClassHealthPage extends StatelessWidget {
             child: Scaffold(
               appBar: MyAppBar(title: 'healths'.tr()),
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return AddHeathPage(
-                            refreshKey: _refreshIndicatorKey,
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      'new_health'.tr(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                Builder(builder: (context) {
-                  return Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        final tempDir = await getTemporaryDirectory();
-
-                        final filePath = '${tempDir.path}/healths.pdf';
-                        BaseBloc.get<HealthBloc>(context).add(ExportPfdEvent(
-                            baseEnity: FileDownloadEneity(
-                                id: 0, pathDownload: filePath)));
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains("/api/notes/add_health/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddHeathPage(
+                              refreshKey: _refreshIndicatorKey,
+                            );
+                          },
+                        );
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        elevation: 4,
+                      ),
                       child: Text(
-                        '${'export'.tr()} PDF',
-                        style: AbhayaLibreSemiBold.copyWith(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline),
+                        'new_health'.tr(),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
-                  );
-                }),
+                  ),
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions.any(
+                            (p) => p.contains("api/notes/healths/download/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Builder(builder: (context) {
+                    return Expanded(
+                      child: TextButton(
+                        onPressed: () async {
+                          final tempDir = await getTemporaryDirectory();
+
+                          final filePath = '${tempDir.path}/healths.pdf';
+                          BaseBloc.get<HealthBloc>(context).add(ExportPfdEvent(
+                              baseEnity: FileDownloadEneity(
+                                  id: 0, pathDownload: filePath)));
+                        },
+                        child: Text(
+                          '${'export'.tr()} PDF',
+                          style: AbhayaLibreSemiBold.copyWith(
+                              color: Colors.black,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    );
+                  }),
               ]),
               body: RefreshIndicator(
                 key: _refreshIndicatorKey,

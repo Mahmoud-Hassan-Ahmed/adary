@@ -4,6 +4,7 @@ import 'package:adary/core/share/widgets/btn_icon.dart';
 import 'package:adary/core/share/widgets/btn_with_icon.dart';
 import 'package:adary/core/share/widgets/container_btns.dart';
 import 'package:adary/core/share/widgets/expansion_widget.dart';
+import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
@@ -54,68 +55,86 @@ class ItemDelayAlert extends StatelessWidget {
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  BtnIcon(
-                      label: 'delete'.tr(),
-                      icon: AppIcon.rash,
-                      onTap: () {
-                        AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.warning,
-                            titleTextStyle: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                            title: 'delete_note'.tr(),
-                            desc: 'sure_delete_note'.tr(),
-                            btnCancelText: 'no'.tr(),
-                            btnOkText: 'delete'.tr(),
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () {
-                              BaseBloc.get<DelayBloc>(context).add(
-                                  DeleteModel18event(
-                                      entity: DeleteEntity(id: item.id)));
-                            }).show();
-                      }),
-                  BtnIcon(
-                      label: 'download'.tr(),
-                      icon: AppIcon.download,
-                      onTap: () async {
-                        final tempDir = await getTemporaryDirectory();
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any(
+                              (p) => p.contains('api/notes/model18/delete/')) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'delete'.tr(),
+                        icon: AppIcon.rash,
+                        onTap: () {
+                          AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                              title: 'delete_note'.tr(),
+                              desc: 'sure_delete_note'.tr(),
+                              btnCancelText: 'no'.tr(),
+                              btnOkText: 'delete'.tr(),
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                BaseBloc.get<DelayBloc>(context).add(
+                                    DeleteModel18event(
+                                        entity: DeleteEntity(id: item.id)));
+                              }).show();
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any((p) =>
+                              p.contains('api/notes/model18/download/')) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'download'.tr(),
+                        icon: AppIcon.download,
+                        onTap: () async {
+                          final tempDir = await getTemporaryDirectory();
 
-                        final filePath =
-                            '${tempDir.path}/${item.teacher.name}.pdf';
-                        BaseBloc.get<DelayBloc>(context).add(DownloadFileEvent(
-                            baseEnity: FileDownloadEneity(
-                                id: item.id, pathDownload: filePath)));
-                      }),
-                  BtnIcon(
-                      label: 'طباعة',
-                      icon: AppIcon.print,
-                      onTap: () async {
-                        final tempDir = await getTemporaryDirectory();
-                        final filePath =
-                            '${tempDir.path}/${item.teacher.name}.pdf';
-                        BaseBloc.get<DelayBloc>(context).add(DownloadFileEvent(
-                            baseEnity: FileDownloadEneity(
-                                id: item.id,
-                                pathDownload: filePath,
-                                print: true)));
-                      }),
-                  BtnIcon(
-                      label: 'edit'.tr(),
-                      icon: AppIcon.edit,
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddDelayedAlert(
-                              pagingController: pagingController,
-                              model18model: item,
-                            );
-                          },
-                        );
-                      })
+                          final filePath =
+                              '${tempDir.path}/${item.teacher.name}.pdf';
+                          BaseBloc.get<DelayBloc>(context).add(
+                              DownloadFileEvent(
+                                  baseEnity: FileDownloadEneity(
+                                      id: item.id, pathDownload: filePath)));
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any((p) =>
+                              p.contains('api/notes/model18/download/')) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'طباعة',
+                        icon: AppIcon.print,
+                        onTap: () async {
+                          final tempDir = await getTemporaryDirectory();
+                          final filePath =
+                              '${tempDir.path}/${item.teacher.name}.pdf';
+                          BaseBloc.get<DelayBloc>(context).add(
+                              DownloadFileEvent(
+                                  baseEnity: FileDownloadEneity(
+                                      id: item.id,
+                                      pathDownload: filePath,
+                                      print: true)));
+                        }),
+                  if (AppUtils.permissions.isNotEmpty &&
+                          AppUtils.permissions.any(
+                              (p) => p.contains('api/notes/model18/update/')) ||
+                      AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'edit'.tr(),
+                        icon: AppIcon.edit,
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return AddDelayedAlert(
+                                pagingController: pagingController,
+                                model18model: item,
+                              );
+                            },
+                          );
+                        })
                 ],
               ),
             )

@@ -1,5 +1,5 @@
 class Api {
-  static String domain = 'https://www.smartble.net/';
+  static String domain = 'https://test.smartble.net/';
   static String baseUrl = '$domain';
   static String notes = 'api/notes/note/';
   static String teachers = 'api/notes/teachers/';

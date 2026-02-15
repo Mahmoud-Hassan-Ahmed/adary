@@ -72,48 +72,56 @@ class _VisitsPageState extends State<VisitsPage> {
             child: Scaffold(
               appBar: MyAppBar(title: 'back'.tr()),
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return AddClassVisit(
-                            pagingController: _pagingController,
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      'new_visit'.tr(),
-                      style: const TextStyle(color: Colors.white),
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains("/api/notes/add_Visits/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddClassVisit(
+                              pagingController: _pagingController,
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        elevation: 4,
+                      ),
+                      child: Text(
+                        'new_visit'.tr(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () async {
-                      final tempDir = await getTemporaryDirectory();
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions.any(
+                            (p) => p.contains("api/notes/Visits/download/")) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () async {
+                        final tempDir = await getTemporaryDirectory();
 
-                      final filePath = '${tempDir.path}/visits.pdf';
-                      BaseBloc.get<ClassVisitBloc>(context).add(
-                          ExportVisitsEvent(
-                              fileDownloadEneity: FileDownloadEneity(
-                                  id: 0, pathDownload: filePath)));
-                    },
-                    child: Text(
-                      '${'export'.tr()} PDF',
-                      style: AbhayaLibreSemiBold.copyWith(
-                          color: Colors.black,
-                          decoration: TextDecoration.underline),
+                        final filePath = '${tempDir.path}/visits.pdf';
+                        BaseBloc.get<ClassVisitBloc>(context).add(
+                            ExportVisitsEvent(
+                                fileDownloadEneity: FileDownloadEneity(
+                                    id: 0, pathDownload: filePath)));
+                      },
+                      child: Text(
+                        '${'export'.tr()} PDF',
+                        style: AbhayaLibreSemiBold.copyWith(
+                            color: Colors.black,
+                            decoration: TextDecoration.underline),
+                      ),
                     ),
                   ),
-                ),
               ]),
               body: PagedListView<int, VisitModel>(
                   padding: EdgeInsets.zero,

@@ -115,47 +115,64 @@ class MainScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _Custom_Box(
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isSmartbleActive) {
-                                  AppUtils.go(const DashBoardScreen());
-                                } else {
-                                  _showNotSubsription(context,
-                                      des: 'table_sub');
-                                }
-                              },
-                              subTitle: "SchoolTable".tr(),
-                              imagePath: Images.SCHOOL_TABLE_ICON),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isSmartbleActive) {
-                                  AppUtils.go(const Waiting());
-                                } else {
-                                  _showNotSubsription(context,
-                                      des: 'table_sub');
-                                }
-                              },
-                              subTitle: "waitingSessions".tr(),
-                              imagePath: Images.ALARM),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isSmartbleActive) {
-                                  AppUtils.go(const DialyTask());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              },
-                              subTitle: "SchedualedTasks".tr(),
-                              imagePath: Images.SCHEDUALEDTASKS),
-                        ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions
+                                    .contains('/dashboard-mobile/classes/') ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isSmartbleActive) {
+                                    AppUtils.go(const DashBoardScreen());
+                                  } else {
+                                    _showNotSubsription(context,
+                                        des: 'table_sub');
+                                  }
+                                },
+                                subTitle: "SchoolTable".tr(),
+                                imagePath: Images.SCHOOL_TABLE_ICON),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.contains(
+                                    '/dashboard-mobile/load-waiting-classes-page/') ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isSmartbleActive) {
+                                    AppUtils.go(const Waiting());
+                                  } else {
+                                    _showNotSubsription(context,
+                                        des: 'table_sub');
+                                  }
+                                },
+                                subTitle: "waitingSessions".tr(),
+                                imagePath: Images.ALARM),
+                          ),
+                        // if (AppUtils.permissions.isNotEmpty &&
+                        //         AppUtils.permissions.contains(
+                        //             '/daily-supervision/api/daily-tasks/') ||
+                        //     AppUtils.permissions.isEmpty)
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/daily-tasks/list/') ||
+                                    p.contains("/api/daily-tasks/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isSmartbleActive) {
+                                    AppUtils.go(const DialyTask());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                },
+                                subTitle: "SchedualedTasks".tr(),
+                                imagePath: Images.SCHEDUALEDTASKS),
+                          ),
                       ],
                     )),
                 const SizedBox(
@@ -171,45 +188,68 @@ class MainScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "Teacher'sNotes".tr(),
-                              imagePath: Images.TEACHERNOTE,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const TeacherNotePage());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "circulars".tr(),
-                              imagePath: Images.EXAMINER,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const CircularPage());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "HealthStatus".tr(),
-                              imagePath: Images.STATUS,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const ClassHealthPage());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/teachers-notes/') ||
+                                    p.contains('/api/notes/note/') ||
+                                    p.contains("/api/notes/teachers/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "Teacher'sNotes".tr(),
+                                imagePath: Images.TEACHERNOTE,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const TeacherNotePage());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/circulars/') ||
+                                    p.contains("/api/notes/add_circular/") ||
+                                    p.contains(
+                                        "api/notes/circular/download/") ||
+                                    p.contains("api/notes/circular/update/") ||
+                                    p.contains("api/notes/circular/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "circulars".tr(),
+                                imagePath: Images.EXAMINER,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const CircularPage());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/healths/') ||
+                                    p.contains("/api/notes/add_health/") ||
+                                    p.contains("api/notes/healths/download/") ||
+                                    p.contains("api/notes/health/update/") ||
+                                    p.contains("api/notes/health/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "HealthStatus".tr(),
+                                imagePath: Images.STATUS,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const ClassHealthPage());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
                       ],
                     )),
                 const SizedBox(
@@ -221,45 +261,67 @@ class MainScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "Visits".tr(),
-                              imagePath: Images.VISITS,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const VisitsPage());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const AdminPrepation());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              },
-                              subTitle: "ChainOfCommand".tr(),
-                              imagePath: Images.EXAMINER),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "MaritalStatus".tr(),
-                              imagePath: Images.FAMILY,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const ClassesList());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/Visits/') ||
+                                    p.contains("/api/notes/add_Visits/") ||
+                                    p.contains("api/notes/Visits/download/") ||
+                                    p.contains("api/notes/Visits/update/") ||
+                                    p.contains("api/notes/Visits/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "Visits".tr(),
+                                imagePath: Images.VISITS,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const VisitsPage());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('api/notes/model18/') ||
+                                    p.contains('api/notes/model19/') ||
+                                    p.contains("api/notes/model20/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const AdminPrepation());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                },
+                                subTitle: "ChainOfCommand".tr(),
+                                imagePath: Images.EXAMINER),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/social/') ||
+                                    p.contains("/api/notes/add_social/") ||
+                                    p.contains("api/notes/socials/download/") ||
+                                    p.contains("api/notes/social/update/") ||
+                                    p.contains("api/notes/social/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "MaritalStatus".tr(),
+                                imagePath: Images.FAMILY,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const ClassesList());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
                       ],
                     )),
                 const SizedBox(
@@ -271,32 +333,51 @@ class MainScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "week_plan".tr(),
-                              imagePath: Images.VISITS,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const WeekPlaning());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
-                        Expanded(
-                          child: _Custom_Box(
-                              subTitle: "laps".tr(),
-                              imagePath: Images.VISITS,
-                              onTap: () {
-                                if (AppUtils.appUser != null &&
-                                    AppUtils.appUser!.isFollowerActive) {
-                                  AppUtils.go(const ClassRoomPage());
-                                } else {
-                                  _showNotSubsription(context);
-                                }
-                              }),
-                        ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/week_plane/') ||
+                                    p.contains("/api/notes/add_week_plane/") ||
+                                    p.contains(
+                                        "api/notes/week_plane/download/") ||
+                                    p.contains(
+                                        "api/notes/week_plane/update/") ||
+                                    p.contains(
+                                        "api/notes/week_plane/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "week_plan".tr(),
+                                imagePath: Images.VISITS,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const WeekPlaning());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
+                        if (AppUtils.permissions.isNotEmpty &&
+                                AppUtils.permissions.any((p) =>
+                                    p.contains('/api/notes/laps/') ||
+                                    p.contains("/api/notes/add_laps/") ||
+                                    p.contains("api/notes/laps/download/") ||
+                                    p.contains("api/notes/laps/update/") ||
+                                    p.contains("api/notes/laps/delete/")) ||
+                            AppUtils.permissions.isEmpty)
+                          Expanded(
+                            child: _Custom_Box(
+                                subTitle: "laps".tr(),
+                                imagePath: Images.VISITS,
+                                onTap: () {
+                                  if (AppUtils.appUser != null &&
+                                      AppUtils.appUser!.isFollowerActive) {
+                                    AppUtils.go(const ClassRoomPage());
+                                  } else {
+                                    _showNotSubsription(context);
+                                  }
+                                }),
+                          ),
                         const Expanded(
                           child: SizedBox(),
                         )

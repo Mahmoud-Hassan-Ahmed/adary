@@ -49,42 +49,50 @@ class ItemClass extends StatelessWidget {
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              BtnIcon(
-                  label: 'delete'.tr(),
-                  icon: AppIcon.rash,
-                  onTap: () {
-                    AwesomeDialog(
+              if (AppUtils.permissions.isNotEmpty &&
+                      AppUtils.permissions
+                          .any((p) => p.contains("api/notes/laps/delete/")) ||
+                  AppUtils.permissions.isEmpty)
+                BtnIcon(
+                    label: 'delete'.tr(),
+                    icon: AppIcon.rash,
+                    onTap: () {
+                      AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.warning,
+                          titleTextStyle: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                          title: 'delete_class'.tr(),
+                          desc: 'delete_class_des'.tr(),
+                          btnCancelText: 'no'.tr(),
+                          btnOkText: 'delete'.tr(),
+                          btnCancelOnPress: () {},
+                          btnOkOnPress: () {
+                            BaseBloc.get<StudentsBloc>(context).add(
+                                DeleteClassEvent(
+                                    entity: DeleteEntity(id: item.id)));
+                          }).show();
+                    }),
+              if (AppUtils.permissions.isNotEmpty &&
+                      AppUtils.permissions
+                          .any((p) => p.contains("api/notes/laps/update/")) ||
+                  AppUtils.permissions.isEmpty)
+                BtnIcon(
+                    label: 'edit'.tr(),
+                    icon: AppIcon.edit,
+                    onTap: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
                         context: context,
-                        dialogType: DialogType.warning,
-                        titleTextStyle: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                        title: 'delete_class'.tr(),
-                        desc: 'delete_class_des'.tr(),
-                        btnCancelText: 'no'.tr(),
-                        btnOkText: 'delete'.tr(),
-                        btnCancelOnPress: () {},
-                        btnOkOnPress: () {
-                          BaseBloc.get<StudentsBloc>(context).add(
-                              DeleteClassEvent(
-                                  entity: DeleteEntity(id: item.id)));
-                        }).show();
-                  }),
-              BtnIcon(
-                  label: 'edit'.tr(),
-                  icon: AppIcon.edit,
-                  onTap: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return AddClass(
-                          item: Classes(id: item.id, name: item.name),
-                        );
-                      },
-                    );
-                  }),
+                        builder: (context) {
+                          return AddClass(
+                            item: Classes(id: item.id, name: item.name),
+                          );
+                        },
+                      );
+                    }),
               // BtnIcon(
               //   label: 'go'.tr(),
               //   icon: AppIcon.go,

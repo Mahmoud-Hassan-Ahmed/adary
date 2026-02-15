@@ -84,29 +84,33 @@ class _Model20PageState extends State<Model20Page> {
           return SafeArea(
             child: Scaffold(
               bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return AddModel20(
-                            pagingController: _pagingController,
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      'note'.tr(),
-                      style: TextStyle(color: Colors.white),
+                if (AppUtils.permissions.isNotEmpty &&
+                        AppUtils.permissions
+                            .any((p) => p.contains('api/notes/model19/add/')) ||
+                    AppUtils.permissions.isEmpty)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddModel20(
+                              pagingController: _pagingController,
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        elevation: 4,
+                      ),
+                      child: Text(
+                        'note'.tr(),
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
                 // TextButton(
                 //   onPressed: () {},
                 //   child: Text(
