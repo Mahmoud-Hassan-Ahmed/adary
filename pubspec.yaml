@@ -135,4 +135,8 @@ flutter:
           weight: 700
         - asset: assets/fonts/Almarai-ExtraBold.ttf
           weight: 900
+    - family: BahijTheSansArabic
+      fonts:
+        - asset: assets/fonts/Bahij_TheSansArabic-Bold.ttf
+          weight: 700
   

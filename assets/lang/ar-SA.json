@@ -45,11 +45,11 @@
   
   "marketing_code":"كود التسويق",
   "subscription_manager":"إدارة الاشتراك",
-"hello_txt":"مرحبا بك",
+"hello_txt":"تسجيل الدخول للمدير",
   "sign_in_smart_table":"قم بتسجيل الدخول في تطبيق الجدول الذكي الخاص بالاداريين.",
   "user_name":"اسم المستخدم",
   "password_key":"الرقم السري ",
-  "log_in":"دخول ",
+  "log_in":"تسجيل الدخول ",
   "connection_to_api_server_failed": "فشل الاتصال بخادم API بسبب الاتصال بالإنترنت",
   "instructors":"المعلمون",
   "laps":"الفصول",
@@ -1052,7 +1052,8 @@
     "expire_at":"تنتهي في",
     "whatsapp_service":"خدمة الواتساب",
     "remaining":"المتبقي من الرسائل",
-    "delete_account":"حذف الحساب"
+    "delete_account":"حذف الحساب",
+    "manager app":"تطبيق المدير"
     
   }
   

@@ -1,38 +1,33 @@
 class Images {
- static const APP_LOGO = "assets/images/logo_smartble.png";
- static const APP_ICON = "assets/images/app_icon.jpg";
- static const MAIN_ICON = "assets/images/main_icon.png";
- static const SCHOOL_TABLE_ICON = "assets/images/school_table.png";
- static const ALARM = "assets/images/alram.png";
- static const NOTE = "assets/images/note.png";
+  static const APP_LOGO = "assets/images/logo_smartble.png";
+  static const APP_LOGO_LOGIN = "assets/images/logo_login.png";
+  static const APP_ICON = "assets/images/app_icon.jpg";
+  static const MAIN_ICON = "assets/images/main_icon.png";
+  static const SCHOOL_TABLE_ICON = "assets/images/school_table.png";
+  static const ALARM = "assets/images/alram.png";
+  static const NOTE = "assets/images/note.png";
 
- static const STATUS = "assets/images/maritialStatus.png";
- static const SCHEDUALEDTASKS = "assets/images/schedualedTasks.png";
- static const TEACHERNOTE = "assets/images/teacherNote.png";
- static const EXAMINER = "assets/images/examiner.png";
- static const VISITS = "assets/images/VISITS.png";
- static const FAMILY = "assets/images/family.png";
+  static const STATUS = "assets/images/maritialStatus.png";
+  static const SCHEDUALEDTASKS = "assets/images/schedualedTasks.png";
+  static const TEACHERNOTE = "assets/images/teacherNote.png";
+  static const EXAMINER = "assets/images/examiner.png";
+  static const VISITS = "assets/images/VISITS.png";
+  static const FAMILY = "assets/images/family.png";
 
-
-// nav bar icons 
-static const NOTI_ICON = "assets/images/System.svg";
-static const USER_SQUARE = "assets/images/user-square.svg"; 
-static const SEND_ICON="assets/images/send_icon.svg";
-static const HOME_SCREEN_ICON = "assets/images/home_screen_icon.svg";
+// nav bar icons
+  static const NOTI_ICON = "assets/images/System.svg";
+  static const USER_SQUARE = "assets/images/user-square.svg";
+  static const SEND_ICON = "assets/images/send_icon.svg";
+  static const HOME_SCREEN_ICON = "assets/images/home_screen_icon.svg";
 // end of nav bar icons
 
-
-
 // send module
-static const FORWARD_ARROW = "assets/images/forward_arrow.svg";
+  static const FORWARD_ARROW = "assets/images/forward_arrow.svg";
 
+// profile module
 
-
-// profile module 
-
-static const  ECLIPSE   = "assets/images/Eclipse.svg";
-static const SLOGAN = "assets/images/slogan.svg";
-
+  static const ECLIPSE = "assets/images/Eclipse.svg";
+  static const SLOGAN = "assets/images/slogan.svg";
 
   static const LAP_ICON = "assets/icons/lap.svg";
   static const INSTRUCTOR_ICON = "assets/icons/instructor.svg";
@@ -64,9 +59,4 @@ static const SLOGAN = "assets/images/slogan.svg";
   static const MoreDown = "assets/images/MOREDOWN.svg";
   static const TRASH = "assets/images/trash.svg";
   //trash.svg
-
-  
-
-
-  
 }

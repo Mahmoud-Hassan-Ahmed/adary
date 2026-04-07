@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ThemeApp {
   static final lightTheme = ThemeData(
-    fontFamily: 'PingARLT',
+    fontFamily: 'BahijTheSansArabic',
     primaryColor: const Color(0xFFEF7822),
     secondaryHeaderColor: const Color(0xFF000743),
     disabledColor: const Color(0xFFA0A4A8),

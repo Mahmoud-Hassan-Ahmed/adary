@@ -16,6 +16,7 @@ class DioConfig {
         }
 
         AppUtils.log(options.path);
+        AppUtils.log(options.baseUrl);
         if (options.data is FormData) {
           AppUtils.log((options.data as FormData).fields.toString());
           AppUtils.log((options.data as FormData).files.toString());

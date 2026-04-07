@@ -45,7 +45,7 @@
 
 
 
-,"hello_txt":"Welcome",
+,"hello_txt":"Sign In to Manager App",
   "sign_in_smart_table":"Sign In to smart table ",
   "user_name":"User Name ",
   "password_key":"Password",
@@ -1025,5 +1025,6 @@
     "is_trial":"In Trial Period",
     "expire_at":"Expires At",
     "whatsapp_service":"WhatsApp Service",
-    "remaining":"Remaining Messages"
+    "remaining":"Remaining Messages",
+    "manager app":"Manager App"
   }

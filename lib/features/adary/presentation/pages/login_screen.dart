@@ -7,6 +7,8 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/entities/login_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/login/login_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/start_page.dart';
+import 'package:adary/features/adary/presentation/widgets/btns/default_btn.dart';
+import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 import 'package:adary/features/table/view/screen/profile/widget/privacyScreen.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -37,93 +39,99 @@ class LoginScreen extends StatelessWidget {
                 body: Center(
               child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Form(
                     key: keyForm,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                          child: Image.asset(
-                            Images.APP_LOGO,
-                            width: MediaQuery.of(context).size.width / 1.4,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "hello_txt".tr(),
-                                style: AbhayaLibre.copyWith(fontSize: 18),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 7,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE),
-                          child: Wrap(
-                            children: [
-                              Text(
-                                "sign_in_smart_table".tr(),
-                                style: AbhayaLibre.copyWith(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w300,
-                                    color: AppColors.GREYFONTCOLOR),
+                            child: Column(
+                          children: [
+                            FractionallySizedBox(
+                              widthFactor: 0.3,
+                              child: Image.asset(
+                                Images.APP_LOGO_LOGIN,
+                                fit: BoxFit.contain,
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                            child: CustomTextField(
-                              prefixIcon: Icons.person_2_outlined,
-                              hintText: "user_name".tr(),
-                              // focusNode: usernameFocus,
-                              controller: username,
-                              showBorder: true,
-                              validate: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr();
-                                }
-                                return null;
-                              },
-                            )),
-                        // end of user name
-                        SizedBox(
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomButton(
+                              label: "manager app".tr(),
+                              widthPercentage: 0.4,
+                              onPressed: () {},
+                            )
+                          ],
+                        )),
+                        const SizedBox(
                           height: 10,
                         ),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                            child: CustomTextField(
-                              controller: pass,
-                              prefixIcon: Icons.lock_outline,
-                              hintText: "password_key".tr(),
-                              isPassword: true,
 
-                              // focusNode: passwordFocus,
-                              validate: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "required".tr();
-                                }
-                                return null;
-                              },
-                            )),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            LabelMainText(
+                              text: "hello_txt".tr(),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        LabelMainText(
+                            text: "user_name".tr(),
+                            fontSize: 15,
+                            color: AppColors.HINT_COLOR),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        CustomTextField(
+                          hintText: "user_name".tr(),
+                          // focusNode: usernameFocus,
+                          controller: username,
+                          showBorder: true,
+                          validate: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "required".tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        // end of user name
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        LabelMainText(
+                          text: "password".tr(),
+                          fontSize: 15,
+                          color: AppColors.HINT_COLOR,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        CustomTextField(
+                          controller: pass,
+
+                          hintText: "password_key".tr(),
+                          isPassword: true,
+
+                          // focusNode: passwordFocus,
+                          validate: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "required".tr();
+                            }
+                            return null;
+                          },
+                        ),
                         //end of password
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         Padding(
@@ -178,42 +186,20 @@ class LoginScreen extends StatelessWidget {
                               )),
                         ),
                         // end of privacy policy
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal:
-                                    Dimensions.PADDING_SIZE_EXTRA_LARGE),
-                            child: GestureDetector(
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                BaseBloc.get<LoginBloc>(context).add(
-                                    LoginUserEvent(
-                                        entity: LoginEntity(
-                                            username: username.text,
-                                            password: pass.text)));
-                              },
-                              child: Container(
-                                width: 350,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    color: AppColors.SECONDERYCOLOR,
-                                    borderRadius: BorderRadius.circular(
-                                        Dimensions.RADIUS_DEFAULT)),
-                                child: Center(
-                                  child: Text(
-                                    "log_in".tr(),
-                                    style: AbhayaLibre.copyWith(
-                                        fontSize: 18,
-                                        color: AppColors.MAINCOLOR),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        CustomButton(
+                          widthPercentage: 100,
+                          label: "log_in".tr(),
+                          fontSize: 18,
+                          onPressed: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            BaseBloc.get<LoginBloc>(context).add(LoginUserEvent(
+                                entity: LoginEntity(
+                                    username: username.text,
+                                    password: pass.text)));
+                          },
                         ),
                         //end of log in btn
                       ],

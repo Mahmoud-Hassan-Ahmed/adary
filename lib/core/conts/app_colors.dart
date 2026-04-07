@@ -23,4 +23,7 @@ class AppColors {
   static const checkbox = Color(0xFF1A6A7D);
   static const inputBgColor = Color.fromARGB(255, 202, 201, 201);
   static const fileBg = Color(0xFFECE8CD);
+
+  static const Color APP_COLOR = Color.fromRGBO(60, 154, 166, 1);
+  static const Color HINT_COLOR = Color.fromRGBO(60, 154, 166, 0.5);
 }
