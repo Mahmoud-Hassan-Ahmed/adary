@@ -1,6 +1,7 @@
 import 'package:adary/core/bloc/base_bloc.dart';
 import 'package:adary/core/model/select_model.dart';
 import 'package:adary/features/adary/data/models/classes.dart';
+import 'package:adary/features/adary/data/models/evaluation_model.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
@@ -10,6 +11,7 @@ import 'package:adary/features/adary/domain/usecases/delete_student_use_case.dar
 import 'package:adary/features/adary/domain/usecases/delete_visit_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/export_visitis_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_classes_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_evaluation_by_visit.dart';
 import 'package:adary/features/adary/domain/usecases/get_teachers_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/update_visit_use_case.dart';
 import 'package:equatable/equatable.dart';
@@ -25,6 +27,7 @@ class ClassVisitBloc extends BaseBloc<ClassVisitEvent, ClassVisitState> {
   final DeleteVisitUseCase deleteVisitUseCase;
   final ExportVisitisUseCase exportVisitisUseCase;
   final DeleteStudentUseCase deleteStudentUseCase;
+  final GetEvaluationByVisit getEvaluationByVisit;
 
   ClassVisitBloc(
       {required this.getClassesUseCase,
@@ -33,6 +36,7 @@ class ClassVisitBloc extends BaseBloc<ClassVisitEvent, ClassVisitState> {
       required this.deleteVisitUseCase,
       required this.exportVisitisUseCase,
       required this.deleteStudentUseCase,
+      required this.getEvaluationByVisit,
       required this.addVisitUseCase})
       : super(ClassVisitInitial()) {
     on<ClassVisitEvent>((event, emit) async {
@@ -58,6 +62,9 @@ class ClassVisitBloc extends BaseBloc<ClassVisitEvent, ClassVisitState> {
       } else if (event is DeleteStudentEvent) {
         result = await deleteStudentUseCase(event.entity);
         emitDone((v) => emit(DoneDeleteStudentState()));
+      } else if (event is GetEvaluationByVisitEvent) {
+        result = await getEvaluationByVisit(event.v);
+        emitDone((v) => emit(DoneGetIdEvaluationState(visit: v)));
       }
     });
   }

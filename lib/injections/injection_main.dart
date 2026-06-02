@@ -8,15 +8,23 @@ import 'package:adary/features/adary/data/datasources/db.dart';
 import 'package:adary/features/adary/data/datasources/db_imp.dart';
 import 'package:adary/features/adary/data/repositories/repo_imp.dart';
 import 'package:adary/features/adary/domain/repositories/repo.dart';
+import 'package:adary/features/adary/domain/usecases/add_behavoir_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_circular_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_class_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/add_exam_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_healths_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_note_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_visit_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/add_week_group_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_category_evi_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_implementation_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_intraction_user_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_management_user_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_model18_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_model19_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_model20_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_note_teachers_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_palnning_evaluation_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_student_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_task_teacher.dart';
 import 'package:adary/features/adary/domain/usecases/create_task_use_case.dart';
@@ -31,24 +39,37 @@ import 'package:adary/features/adary/domain/usecases/delete_note_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/delete_plan_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/delete_student_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/delete_visit_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/delete_week_group_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/download_file_20_use_case%20.dart';
 import 'package:adary/features/adary/domain/usecases/download_file_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/download_teacher_note_pdf_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/download_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/export_circulars_pdf_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/export_healths_to_pdf_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/export_visitis_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/file_download_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_all_teachers_circular_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_attendence_statistics_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_behavoir_static_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_circulars_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_class_healths_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_class_room_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_classes_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_evaluation_by_visit.dart';
+import 'package:adary/features/adary/domain/usecases/get_evidences_caregories.dart';
+import 'package:adary/features/adary/domain/usecases/get_evidences_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_exam_by_day_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_exams_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_healths_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_hijri_date.dart';
+import 'package:adary/features/adary/domain/usecases/get_list_behavoir_notes.dart';
 import 'package:adary/features/adary/domain/usecases/get_model19_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_model20_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_models18_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_notes_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_student_attendnce.dart';
+import 'package:adary/features/adary/domain/usecases/get_student_calss_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_students_behavoir.dart';
 import 'package:adary/features/adary/domain/usecases/get_students_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_task_teacher_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_tasks_use_case.dart';
@@ -58,9 +79,12 @@ import 'package:adary/features/adary/domain/usecases/get_teachers_use_case.dart'
 import 'package:adary/features/adary/domain/usecases/get_visits_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_week_palnes_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_weekly_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_weeks_group.dart';
 import 'package:adary/features/adary/domain/usecases/login_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/note_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/rate_file_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/register_students_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/remove_task_teacher_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/remove_task_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/updat_model18_use_case.dart';
@@ -75,15 +99,21 @@ import 'package:adary/features/adary/domain/usecases/update_student_use_case.dar
 import 'package:adary/features/adary/domain/usecases/update_task_teacher.dart';
 import 'package:adary/features/adary/domain/usecases/update_task_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/update_visit_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/update_week_groups_user_case.dart';
+import 'package:adary/features/adary/presentation/bloc/behavoir_notes/behavoir_notes_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/circular/circular_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/delay/delay_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/delay_task/delay_task_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/evaluations/evaluations_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/evidence/evidence_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/exam/exam_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/health/health_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/login/login_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/model19/model19_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/model20/model20_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/note/note_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/perseverance/perseverance_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/social/social_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/students/students_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/task/task_bloc.dart';
@@ -177,8 +207,13 @@ Future<void> init() async {
         deleteStudentUseCase: sl(),
         deleteVisitUseCase: sl(),
         exportVisitisUseCase: sl(),
+        getEvaluationByVisit: sl(),
         updateVisitUseCase: sl()),
   );
+  sl.registerFactory(() => PerseveranceBloc(
+      getClassesUseCase: sl(),
+      getStudentsUseCase: sl(),
+      downloadUseCase: sl()));
   sl.registerFactory(
     () => StudentsBloc(
         getClassRoomUseCase: sl(),
@@ -188,6 +223,19 @@ Future<void> init() async {
         deleteStudentUseCase: sl(),
         updateClassUseCase: sl()),
   );
+
+  sl.registerFactory(() => EvidenceBloc(
+        getEvidencesCaregories: sl(),
+        createCategoryEvidenceUseCase: sl(),
+        getEvidencesUseCase: sl(),
+        getTechersUseCase: sl(),
+        rateFileUseCase: sl(),
+      ));
+  sl.registerFactory(() => EvaluationsBloc(
+      createImplementationUseCase: sl(),
+      createInteractionEvaluationUseCase: sl(),
+      createManagementEvaluationUseCase: sl(),
+      createPlanningEvaluationUseCase: sl()));
   sl.registerFactory(
     () => TaskBloc(
         createTaskUseCase: sl(),
@@ -220,6 +268,7 @@ Future<void> init() async {
         createStudentUseCase: sl(),
         updateStudentUseCase: sl(),
       ));
+  sl.registerFactory(() => ExamBloc(addExamUseCase: sl()));
   sl.registerFactory(
     () => CircularBloc(
         getTeachersUseCase: sl(),
@@ -230,7 +279,19 @@ Future<void> init() async {
         getAllTeachersCircularUseCase: sl()),
   );
   sl.registerFactory(
-    () => WeekPlanBloc(deletePlanUseCase: sl(), getTeachersUseCase: sl()),
+    () => BehavoirNotesBloc(
+        getListBehavoirNotes: sl(),
+        getAttendenceStatisticsUseCase: sl(),
+        getBehavoirStaticUseCase: sl()),
+  );
+  sl.registerFactory(
+    () => WeekPlanBloc(
+        deletePlanUseCase: sl(),
+        getTeachersUseCase: sl(),
+        addWeekGroupUseCase: sl(),
+        getWeeksGroup: sl(),
+        updateWeekGroupUseCase: sl(),
+        deleteWeekGroupUseCase: sl()),
   );
   sl.registerFactory(
     () => LoginBloc(loginUseCase: sl()),
@@ -239,6 +300,104 @@ Future<void> init() async {
   //### usecase
   sl.registerLazySingleton(
     () => GetNotesUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => DownloadUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetExamByDayUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetAttendenceStatisticsUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(
+    () => AddBehavoirUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetBehavoirStaticUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => AddExamUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetEvidencesUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => RateFileUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetWeeksGroup(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => AddWeekGroupUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => UpdateWeekGroupUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => DeleteWeekGroupUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetEvidencesCaregories(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => CreateCategoryEvidenceUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(
+    () => GetExamsUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetListBehavoirNotes(
       repo: sl(),
       db: sl(),
     ),
@@ -256,6 +415,30 @@ Future<void> init() async {
     ),
   );
   sl.registerLazySingleton(
+    () => CreatePlanningEvaluationUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => CreateInteractionEvaluationUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => CreateManagementEvaluationUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => CreateImplementationUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
     () => AddCircularUseCase(
       repo: sl(),
       db: sl(),
@@ -268,7 +451,37 @@ Future<void> init() async {
     ),
   );
   sl.registerLazySingleton(
+    () => GetEvaluationByVisit(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
     () => CreateStudentUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => RegisterStudentsUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetStudentAttendnce(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetStudentCalssUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetStudentsBehavoir(
       repo: sl(),
       db: sl(),
     ),

@@ -10,6 +10,7 @@ import 'package:adary/features/table/view/base/table.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../base/days_drawer.dart';
 import 'package:easy_localization/easy_localization.dart' as easy;
@@ -37,7 +38,7 @@ class _InstructorsFullTableState extends State<InstructorsFullTable> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: MyAppBar(title: easy.tr('back')),
+        appBar: MyAppBar(title: easy.tr('الجدول المدرسي ')),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -46,14 +47,14 @@ class _InstructorsFullTableState extends State<InstructorsFullTable> {
               //   height: 40,
               // ),
               // // const MainAppBar(),
-              const SizedBox(
-                height: 10,
-              ),
 
-              const InstructorDropDown(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: InstructorDropDown(),
+              ),
               // end of drop down
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
 
               SizedBox(
@@ -82,7 +83,7 @@ class _InstructorsFullTableState extends State<InstructorsFullTable> {
                                               .teachersTableList[
                                           instructorIndex]['teacher_name']),
                                   const SizedBox(
-                                    height: 5,
+                                    height: 10,
                                   ),
                                   AppTable(
                                       table: teacherPageController
@@ -123,15 +124,18 @@ class _InstructorsFullTableState extends State<InstructorsFullTable> {
             horizontal: Dimensions.PADDING_SIZE_DEFAULT),
         child: Row(
           children: [
-            Text(
-              "$classTabel: ",
-              style:
-                  AlMaraiaBold.copyWith(fontSize: 20, color: Color(0xFF9ED3D7)),
+            SvgPicture.asset("assets/icons/person.svg"),
+            const SizedBox(
+              width: 10,
             ),
+            //  Text(
+            //   "$classTabel : ",
+            //   style: AlMaraiaBold.copyWith(
+            //       fontSize: 19, color: AppColors.FONTCOLOR),
+            // ),
             Text(
               "$grade",
-              style: AlMaraiaBold.copyWith(
-                  fontSize: 19, color: AppColors.SECONDERYCOLOR),
+              style: AlMaraiaBold.copyWith(fontSize: 19),
             ),
           ],
         ));

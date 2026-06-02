@@ -1,8 +1,46 @@
+class DataFollower {
+  final String last_time_notes,
+      last_time_circular,
+      num_health_today,
+      visits,
+      num_week_day_active,
+      socila_status,
+      performance,
+      classes,
+      managements,
+      behavior;
+
+  DataFollower(
+      {required this.last_time_notes,
+      required this.last_time_circular,
+      required this.num_health_today,
+      required this.visits,
+      required this.num_week_day_active,
+      required this.socila_status,
+      required this.performance,
+      required this.classes,
+      required this.managements,
+      required this.behavior});
+
+  factory DataFollower.fromJson(Map<String, dynamic> json) => DataFollower(
+      last_time_notes: json['last_time_notes'],
+      last_time_circular: json['last_time_circular'],
+      num_health_today: json['num_health_today'],
+      visits: json['visits'],
+      num_week_day_active: json['num_week_day_active'],
+      socila_status: json['socila_status'],
+      performance: json['performance'],
+      classes: json['classes'],
+      managements: json['managements'],
+      behavior: json['managements']);
+}
+
 class AppUser {
   final String school;
   final String username;
   final String schoolSystem;
   final int dateSystem;
+  final DataFollower? data_follower;
   final bool isSmartbleActive;
   final String ky;
   final bool isFollowerActive;
@@ -11,6 +49,8 @@ class AppUser {
   final WhatsappService whatsappService;
   final WhatsappService? smsService;
   final String? password;
+  final int id;
+  final String? logo;
 
   AppUser({
     required this.school,
@@ -22,17 +62,25 @@ class AppUser {
     required this.smartblePlanInfo,
     required this.followerPlanInfo,
     required this.whatsappService,
+    this.data_follower,
     required this.smsService,
     required this.ky,
+    required this.id,
     required this.password,
+    this.logo,
   });
 
   // Factory method to create an instance from JSON
   factory AppUser.fromJson(Map<String, dynamic> json, {String? password}) {
     return AppUser(
+      id: json['id'],
       school: json['school'],
+      data_follower: json['data_follower'] != null
+          ? DataFollower.fromJson(json['data_follower'])
+          : null,
       ky: json['app-key'] ?? '',
       username: json['username'],
+      logo: json['logo'],
       password: password,
       schoolSystem: json['school_system'],
       dateSystem: json['date_system'],
@@ -49,10 +97,12 @@ class AppUser {
 
   factory AppUser.fromJsom2(AppUser? user, Map<String, dynamic> json) =>
       AppUser(
+        id: json['id'],
         school: json['school'],
         username: json['username'],
         ky: user?.ky ?? json['app-key'] ?? '',
         schoolSystem: json['school_system'],
+        logo: json['logo'],
         dateSystem: json['date_system'],
         isSmartbleActive: json['is_smartble_active'],
         isFollowerActive: json['is_follower_active'],
@@ -67,10 +117,12 @@ class AppUser {
   // Convert the instance to JSON
   Map<String, dynamic> toJson() {
     return {
+      "id": id,
       'school': school,
       'username': username,
       'school_system': schoolSystem,
       'date_system': dateSystem,
+      'logo': logo,
       'app-key': ky,
       'is_smartble_active': isSmartbleActive,
       'is_follower_active': isFollowerActive,

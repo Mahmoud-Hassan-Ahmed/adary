@@ -5,6 +5,7 @@ import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/input_app.dart';
 import 'package:adary/core/share/inputs/select_input.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/share/widgets/radio_btn.dart';
 import 'package:adary/core/utils/app_utils.dart';
@@ -12,6 +13,7 @@ import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/data/models/visits_model.dart';
 import 'package:adary/features/adary/domain/entities/visits_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +25,8 @@ import '../../../../core/share/widgets/date_widget.dart';
 import 'package:easy_localization/easy_localization.dart' as e;
 
 class AddClassVisit extends StatefulWidget {
-  const AddClassVisit(
-      {super.key, required this.pagingController, this.visitModel});
-  final PagingController pagingController;
+  const AddClassVisit({super.key, this.pagingController, this.visitModel});
+  final PagingController? pagingController;
   final VisitModel? visitModel;
 
   @override
@@ -89,13 +90,19 @@ class _AddClassVisitState extends State<AddClassVisit> {
           } else if (state is SelectedTeachersState) {
             selected = state.teacher;
           } else if (state is DoneAddVisitState) {
-            AppUtils.showCustomSnackbar(e.tr('added_visit'), SnackType.SUCESS);
-            widget.pagingController.refresh();
+            widget.pagingController?.refresh();
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة الزيارة  الصفية بنجاح',
+                  title: 'إضافة زيارة صفية جديدة'));
+            });
+            // AppUtils.showCustomSnackbar(e.tr('added_visit'), SnackType.SUCESS);
+
             Navigator.pop(context);
           } else if (state is DoneUpdateVisitState) {
             AppUtils.showCustomSnackbar(
                 e.tr('updated_visit'), SnackType.SUCESS);
-            widget.pagingController.refresh();
+            widget.pagingController?.refresh();
             Navigator.pop(context);
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
@@ -106,55 +113,53 @@ class _AddClassVisitState extends State<AddClassVisit> {
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
-                appBar: MyAppBar(title: e.tr('back')),
+                appBar: MyAppBar(title: e.tr('إضافة زيارة صفية جديدة')),
                 bottomNavigationBar: BottomNavigatorBar(items: [
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (formState.currentState!.validate()) {
-                          if (widget.visitModel != null) {
-                            BaseBloc.get<ClassVisitBloc>(context).add(
-                                UpdateVisitevent(
-                                    enity: VisitEntity(
-                                        notifyTeacher: valueSelect,
-                                        sendSms: sendSms,
-                                        id: widget.visitModel!.id,
-                                        teacher: selected!.id,
-                                        visitorName: nameVisitor.text,
-                                        date: gregorianDate!,
-                                        className: selectedClass?.id,
-                                        session: valueSession != null
-                                            ? (valueSession as Relations).value
-                                            : null,
-                                        dateHijri: dateHijri!,
-                                        sendNotif: true,
-                                        isVisible: true)));
-                          } else {
-                            BaseBloc.get<ClassVisitBloc>(context).add(
-                                AddClassVisitsEvent(
-                                    enity: VisitEntity(
-                                        notifyTeacher: valueSelect,
-                                        sendSms: sendSms,
-                                        teacher: selected!.id,
-                                        visitorName: nameVisitor.text,
-                                        date: gregorianDate!,
-                                        className: selectedClass?.id,
-                                        session: valueSession != null
-                                            ? (valueSession as Relations).value
-                                            : null,
-                                        dateHijri: dateHijri!,
-                                        sendNotif: true,
-                                        isVisible: true)));
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: BtnApp(
+                        onTap: () {
+                          if (formState.currentState!.validate()) {
+                            if (widget.visitModel != null) {
+                              BaseBloc.get<ClassVisitBloc>(context).add(
+                                  UpdateVisitevent(
+                                      enity: VisitEntity(
+                                          notifyTeacher: valueSelect,
+                                          sendSms: sendSms,
+                                          id: widget.visitModel!.id,
+                                          teacher: selected!.id,
+                                          visitorName: nameVisitor.text,
+                                          date: gregorianDate!,
+                                          className: selectedClass?.id,
+                                          session: valueSession != null
+                                              ? (valueSession as Relations)
+                                                  .value
+                                              : null,
+                                          dateHijri: dateHijri!,
+                                          sendNotif: true,
+                                          isVisible: true)));
+                            } else {
+                              BaseBloc.get<ClassVisitBloc>(context).add(
+                                  AddClassVisitsEvent(
+                                      enity: VisitEntity(
+                                          notifyTeacher: valueSelect,
+                                          sendSms: sendSms,
+                                          teacher: selected!.id,
+                                          visitorName: nameVisitor.text,
+                                          date: gregorianDate!,
+                                          className: selectedClass?.id,
+                                          session: valueSession != null
+                                              ? (valueSession as Relations)
+                                                  .value
+                                              : null,
+                                          dateHijri: dateHijri!,
+                                          sendNotif: true,
+                                          isVisible: true)));
+                            }
                           }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        e.tr('save'),
-                        style: const TextStyle(color: Colors.white),
+                        },
+                        label: 'حفظ ',
                       ),
                     ),
                   ),
@@ -163,9 +168,22 @@ class _AddClassVisitState extends State<AddClassVisit> {
                   key: formState,
                   child: ListView(
                     padding: const EdgeInsets.only(
-                        top: 0, right: 10, left: 10, bottom: 10),
+                        top: 0, right: 20, left: 20, bottom: 10),
                     physics: const BouncingScrollPhysics(),
                     children: [
+                      Titile(
+                        label: e.tr('choose_teachers'),
+                      ),
+
+                      SelectInput(
+                        selectedValue: selected,
+                        items: teachers,
+                        onChanged: (value) {
+                          BaseBloc.get<ClassVisitBloc>(context).emitState(
+                              SelectedTeachersState(teacher: value!));
+                        },
+                        label: e.tr('choose_teachers'),
+                      ),
                       InputApp(
                           textEditingController: nameVisitor,
                           label: e.tr('name_visitor'),
@@ -203,25 +221,13 @@ class _AddClassVisitState extends State<AddClassVisit> {
                               SelectDateState(entity: value.hijriDate));
                         },
                       ),
-                      Titile(
-                        label: e.tr('choose_teachers'),
-                      ),
 
-                      SelectInput(
-                        selectedValue: selected,
-                        items: teachers,
-                        onChanged: (value) {
-                          BaseBloc.get<ClassVisitBloc>(context).emitState(
-                              SelectedTeachersState(teacher: value!));
-                        },
-                        label: e.tr('choose_teachers'),
-                      ),
-                      Titile(
-                        label: e.tr('not_teacher'),
-                      ),
-                      // const SizedBox(
-                      //   height: 10,
+                      // Titile(
+                      //   label: e.tr('not_teacher'),
                       // ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         children: [
                           InkWell(
@@ -231,7 +237,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                             },
                             child: RadioBtn(
                                 group: valueSelect ? 1 : 0,
-                                label: e.tr('yes'),
+                                label: e.tr('اشعار المعلم عن طريق التطبيق'),
                                 value: 1,
                                 valueChanged: (v) {
                                   BaseBloc.get<ClassVisitBloc>(context)
@@ -243,40 +249,51 @@ class _AddClassVisitState extends State<AddClassVisit> {
                       const SizedBox(
                         height: 10,
                       ),
-                      if (AppUtils.appUser?.smsService != null &&
-                          AppUtils.appUser!.smsService!.isActive)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Titile(
-                              label: e.tr('send_sms'),
-                            ),
-                            // const SizedBox(
-                            //   height: 10,
-                            // ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    BaseBloc.get<ClassVisitBloc>(context)
-                                        .emitState(ChnageNotifyState3());
-                                  },
-                                  child: RadioBtn(
-                                      group: sendSms ? 1 : 0,
-                                      label: e.tr('yes'),
-                                      value: 1,
-                                      valueChanged: (v) {
-                                        BaseBloc.get<ClassVisitBloc>(context)
-                                            .emitState(ChnageNotifyState3());
-                                      }),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        )
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              BaseBloc.get<ClassVisitBloc>(context)
+                                  .emitState(ChnageNotifyState());
+                            },
+                            child: RadioBtn(
+                                group: valueSelect ? 1 : 0,
+                                label: e.tr('إرسال إشعار عن طريق الواتساب '),
+                                value: 1,
+                                valueChanged: (v) {
+                                  BaseBloc.get<ClassVisitBloc>(context)
+                                      .emitState(ChnageNotifyState());
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      // if (AppUtils.appUser?.smsService != null &&
+                      //     AppUtils.appUser!.smsService!.isActive)
+
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              BaseBloc.get<ClassVisitBloc>(context)
+                                  .emitState(ChnageNotifyState3());
+                            },
+                            child: RadioBtn(
+                                group: sendSms ? 1 : 0,
+                                label: e.tr('يستطيع المعلم رؤيته '),
+                                value: 1,
+                                valueChanged: (v) {
+                                  BaseBloc.get<ClassVisitBloc>(context)
+                                      .emitState(ChnageNotifyState3());
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      )
                     ],
                   ),
                 ),

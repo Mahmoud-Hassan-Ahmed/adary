@@ -12,6 +12,7 @@ import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ClassRoomPage extends StatelessWidget {
   const ClassRoomPage({super.key});
@@ -38,26 +39,38 @@ class ClassRoomPage extends StatelessWidget {
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: 'classes'.tr()),
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains("/api/notes/add_laps/")) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: BtnApp(
-                        label: 'add_class'.tr(),
-                        onTap: () {
-                          showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return const AddClass();
-                            },
-                          );
-                        }),
-                  )
+              appBar: MyAppBar(title: 'classes'.tr(), actions: [
+                IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return const AddClass();
+                        },
+                      );
+                    },
+                    icon: SvgPicture.asset("assets/icons/icon-add.svg"))
               ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   if (AppUtils.permissions.isNotEmpty &&
+              //           AppUtils.permissions
+              //               .any((p) => p.contains("/api/notes/add_laps/")) ||
+              //       AppUtils.permissions.isEmpty)
+              //     Expanded(
+              //       child: BtnApp(
+              //           label: 'add_class'.tr(),
+              //           onTap: () {
+              //             showModalBottomSheet(
+              //               isScrollControlled: true,
+              //               context: context,
+              //               builder: (context) {
+              //                 return const AddClass();
+              //               },
+              //             );
+              //           }),
+              //     )
+              // ]),
               body: RefreshIndicator(
                 onRefresh: () async {
                   BaseBloc.get<StudentsBloc>(context)

@@ -9,23 +9,20 @@ class BackBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 80,
-        ),
         Row(
           children: [
             GestureDetector(
               onTap: () => Get.back(),
-              child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 42),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      SvgPicture.asset(
-                        Images.CLOSE_ICON,
-                      ),
-                    ],
-                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SvgPicture.asset(
+                    Images.CLOSE_ICON,
+                    height: 25,
+                    width: 25,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

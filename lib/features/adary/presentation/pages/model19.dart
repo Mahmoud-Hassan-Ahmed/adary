@@ -7,6 +7,7 @@ import 'package:adary/features/adary/data/models/model_19.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/domain/usecases/get_model19_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/model19/model19_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/admin_prepation.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_model19.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/item_model19.dart';
 import 'package:adary/injections/injection_main.dart';
@@ -61,6 +62,8 @@ class _Model19PageState extends State<Model19Page> {
 
   @override
   Widget build(BuildContext context) {
+    AdminPrepation.pagingController = _pagingController;
+
     return BlocProvider(
       create: (context) => sl<Model19Bloc>(),
       child: BlocBuilder<Model19Bloc, Model19State>(
@@ -80,44 +83,45 @@ class _Model19PageState extends State<Model19Page> {
           }
           return SafeArea(
             child: Scaffold(
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains('api/notes/model20/add/')) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddModel19(
-                              pagingController: _pagingController,
-                            );
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        'desi'.tr(),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                // TextButton(
-                //   onPressed: () {},
-                //   child: Text(
-                //     'تصدير PDF',
-                //     style: AbhayaLibreSemiBold.copyWith(
-                //         color: Colors.black,
-                //         decoration: TextDecoration.underline),
-                //   ),
-                // ),
-              ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   if (AppUtils.permissions.isNotEmpty &&
+              //           AppUtils.permissions
+              //               .any((p) => p.contains('api/notes/model20/add/')) ||
+              //       AppUtils.permissions.isEmpty)
+              //     Expanded(
+              //       child: ElevatedButton(
+              //         onPressed: () {
+              //           showModalBottomSheet(
+              //             isScrollControlled: true,
+              //             context: context,
+              //             builder: (context) {
+              //               return AddModel19(
+              //                 pagingController: _pagingController,
+              //               );
+              //             },
+              //           );
+              //         },
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor: Colors.black,
+              //           elevation: 4,
+              //         ),
+              //         child: Text(
+              //           'desi'.tr(),
+              //           style: TextStyle(color: Colors.white),
+              //         ),
+              //       ),
+              //     ),
+              //   // TextButton(
+              //   //   onPressed: () {},
+              //   //   child: Text(
+              //   //     'تصدير PDF',
+              //   //     style: AbhayaLibreSemiBold.copyWith(
+              //   //         color: Colors.black,
+              //   //         decoration: TextDecoration.underline),
+              //   //   ),
+              //   // ),
+              // ]),
+
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

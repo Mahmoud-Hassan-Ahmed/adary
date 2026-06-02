@@ -7,6 +7,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/classes.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/students/students_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +38,15 @@ class _AddClassState extends State<AddClass> {
       child: BlocBuilder<StudentsBloc, StudentsState>(
         builder: (context, state) {
           if (state is DoneAddClassState) {
-            AppUtils.showCustomSnackbar('added_class'.tr(), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar('added_class'.tr(), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة الفصل بنجاح', title: 'إضافة فصل جديد'));
+            });
             Navigator.pop(context);
             // BaseBloc.get<StudentsBloc>(context).add(GetClassesRoomEvent());
           } else if (state is DoneUpdateClassState) {
-            AppUtils.showCustomSnackbar('updated_class'.tr(), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar('updated_class'.tr(), SnackType.SUCESS);
             Navigator.pop(context);
             // BaseBloc.get<StudentsBloc>(context).add(GetClassesRoomEvent());
           }
@@ -49,7 +54,26 @@ class _AddClassState extends State<AddClass> {
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
-                appBar: MyAppBar(title: 'back'.tr()),
+                appBar: MyAppBar(title: 'إضافة فصل جديد'.tr()),
+                bottomNavigationBar: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: BtnApp(
+                      label: 'save'.tr(),
+                      onTap: () {
+                        if (formState.currentState!.validate()) {
+                          if (widget.item == null) {
+                            BaseBloc.get<StudentsBloc>(context).add(
+                                AddClassEvent(
+                                    entity: ClassEntity(name: name.text)));
+                          } else {
+                            BaseBloc.get<StudentsBloc>(context).add(
+                                UpdateClassEvent(
+                                    entity: ClassEntity(
+                                        id: widget.item!.id, name: name.text)));
+                          }
+                        }
+                      }),
+                ),
                 body: Form(
                   key: formState,
                   child: ListView(
@@ -63,23 +87,6 @@ class _AddClassState extends State<AddClass> {
                       const SizedBox(
                         height: 10,
                       ),
-                      BtnApp(
-                          label: 'save'.tr(),
-                          onTap: () {
-                            if (formState.currentState!.validate()) {
-                              if (widget.item == null) {
-                                BaseBloc.get<StudentsBloc>(context).add(
-                                    AddClassEvent(
-                                        entity: ClassEntity(name: name.text)));
-                              } else {
-                                BaseBloc.get<StudentsBloc>(context).add(
-                                    UpdateClassEvent(
-                                        entity: ClassEntity(
-                                            id: widget.item!.id,
-                                            name: name.text)));
-                              }
-                            }
-                          })
                     ],
                   ),
                 ),

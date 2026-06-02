@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class FileInput extends StatefulWidget {
   const FileInput({
@@ -36,17 +37,29 @@ class _FileInputState extends State<FileInput> {
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-                color: AppColors.fileBg,
+                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(20)),
             child: Center(
-              child: Text(
-                name,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/upload.svg',
+                    width: 30,
+                    height: 30,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    name,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 20,
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
           ),

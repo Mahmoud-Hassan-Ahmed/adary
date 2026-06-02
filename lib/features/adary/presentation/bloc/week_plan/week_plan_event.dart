@@ -14,3 +14,23 @@ final class DeleteWeekPlanEvent extends WeekPlanEvent {
 }
 
 final class GetTechersEvent extends WeekPlanEvent {}
+
+final class GetWeeksGroupEvent extends WeekPlanEvent {}
+
+final class AddWeekGroupEvent extends WeekPlanEvent {
+  final BaseEnity entity;
+
+  const AddWeekGroupEvent({required this.entity});
+}
+
+final class UpdateWeekGroupEvent extends WeekPlanEvent {
+  final BaseEnity entity;
+
+  const UpdateWeekGroupEvent({required this.entity});
+}
+
+final class DeleteWeekGroupEvent extends WeekPlanEvent {
+  final int id;
+
+  const DeleteWeekGroupEvent({required this.id});
+}

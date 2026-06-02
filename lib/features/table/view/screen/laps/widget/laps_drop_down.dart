@@ -19,56 +19,69 @@ class LapsDropDown extends StatelessWidget {
     return GetBuilder<ClassRoomController>(builder: (classRoomController) {
       return classRoomController.isLoading
           ? _dropDownLoader()
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: GetBuilder<ClassRoomController>(
-                  builder: (classRoomController) {
-                return Container(
-                  width: context.width,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.GREYCOLOR.withOpacity(0.6)),
-                  child: DropdownMenu<ClassesMeta>(
-                    inputDecorationTheme: const InputDecorationTheme(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                        outlineBorder: BorderSide.none,
-                        border:
-                            UnderlineInputBorder(borderSide: BorderSide.none)),
-                    trailingIcon: SvgPicture.asset(Images.DROP_DOWN_ICON),
-                    width: context.width / 1.1,
-                    menuHeight: 200,
-                    textStyle: AlMaraiaBold.copyWith(fontSize: 16),
-                    menuStyle: const MenuStyle(
-                      side: MaterialStatePropertyAll(
-                          BorderSide(style: BorderStyle.none)),
-                      backgroundColor:
-                          MaterialStatePropertyAll(AppColors.GREYCOLOR),
+          : GetBuilder<ClassRoomController>(builder: (classRoomController) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: context.width,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.SECONDERYCOLOR),
+                      ),
+                      child: DropdownMenu<ClassesMeta>(
+                        inputDecorationTheme: const InputDecorationTheme(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12),
+                            outlineBorder: BorderSide.none,
+                            border: UnderlineInputBorder(
+                                borderSide: BorderSide.none)),
+                        trailingIcon: SvgPicture.asset(Images.DROP_DOWN_ICON,
+                            color: AppColors.SECONDERYCOLOR),
+                        width: context.width / 1.1,
+                        menuHeight: 200,
+                        textStyle: AlMaraiaBold.copyWith(
+                            fontSize: 16, color: AppColors.GREYCOLOR),
+                        menuStyle: const MenuStyle(
+                          side: MaterialStatePropertyAll(
+                              BorderSide(style: BorderStyle.none)),
+                          backgroundColor:
+                              MaterialStatePropertyAll(AppColors.GREYCOLOR),
+                        ),
+                        initialSelection:
+                            classRoomController.selectedClassModel,
+                        requestFocusOnTap: false,
+                        onSelected: (value) {
+                          classRoomController.changeDropDownSelector(
+                              selectedClassModel: value!);
+                          classRoomController.FilterTeacherTableList();
+                        },
+                        dropdownMenuEntries: classRoomController.classesNames
+                            .map<DropdownMenuEntry<ClassesMeta>>(
+                                (ClassesMeta meta) {
+                          return DropdownMenuEntry<ClassesMeta>(
+                              value: meta,
+                              label: easy.tr("${meta.ClassName}"),
+                              enabled: true,
+                              style: ButtonStyle(
+                                  textStyle: MaterialStatePropertyAll(
+                                      AlMaraiaBold.copyWith(
+                                fontSize: 16,
+                              ))));
+                        }).toList(),
+                      ),
                     ),
-                    initialSelection: classRoomController.selectedClassModel,
-                    requestFocusOnTap: false,
-                    onSelected: (value) {
-                      classRoomController.changeDropDownSelector(
-                          selectedClassModel: value!);
-                      classRoomController.FilterTeacherTableList();
-                    },
-                    dropdownMenuEntries: classRoomController.classesNames
-                        .map<DropdownMenuEntry<ClassesMeta>>(
-                            (ClassesMeta meta) {
-                      return DropdownMenuEntry<ClassesMeta>(
-                          value: meta,
-                          label: easy.tr("${meta.ClassName}"),
-                          enabled: true,
-                          style: ButtonStyle(
-                              textStyle: MaterialStatePropertyAll(
-                                  AlMaraiaBold.copyWith(
-                            fontSize: 16,
-                          ))));
-                    }).toList(),
                   ),
-                );
-              }),
-            );
+                  IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset(
+                        "assets/icons/filter_icon.svg",
+                        height: 50,
+                      )),
+                ],
+              );
+            });
     });
   }
 

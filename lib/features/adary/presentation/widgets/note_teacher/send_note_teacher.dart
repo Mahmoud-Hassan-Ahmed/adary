@@ -4,6 +4,7 @@ import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/select_input.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/date_widget.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
@@ -129,68 +130,69 @@ class _SendNoteContentState extends State<SendNoteContent> {
                 bottomNavigationBar: BottomNavigatorBar(
                   items: [
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          List<TeacherNote> list = [];
-                          for (var element in teacherNote) {
-                            if (element.isActive) {
-                              list.add(element);
-                            }
-                          }
-                          if (formKey.currentState!.validate()) {
-                            final noteSelect = notes.firstWhereOrNull(
-                                (test) => test.id == groupValue);
-                            if (noteSelect!.activeWhatsapp) {
-                              if (!AppUtils.appUser!.whatsappService.isActive) {
-                                AppUtils.showCustomSnackbar(
-                                    easy.tr('whatsapp_not_active'),
-                                    SnackType.FAILURE);
-                                return;
-                              } else if (AppUtils
-                                      .appUser!.whatsappService.remaining <
-                                  list.length) {
-                                AppUtils.showCustomSnackbar(
-                                    easy.tr('whatsapp_not_remaining'),
-                                    SnackType.FAILURE);
-                                return;
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: BtnApp(
+                          onTap: () {
+                            List<TeacherNote> list = [];
+                            for (var element in teacherNote) {
+                              if (element.isActive) {
+                                list.add(element);
                               }
                             }
+                            if (formKey.currentState!.validate()) {
+                              final noteSelect = notes.firstWhereOrNull(
+                                  (test) => test.id == groupValue);
+                              if (noteSelect!.activeWhatsapp) {
+                                if (!AppUtils
+                                    .appUser!.whatsappService.isActive) {
+                                  AppUtils.showCustomSnackbar(
+                                      easy.tr('whatsapp_not_active'),
+                                      SnackType.FAILURE);
+                                  return;
+                                } else if (AppUtils
+                                        .appUser!.whatsappService.remaining <
+                                    list.length) {
+                                  AppUtils.showCustomSnackbar(
+                                      easy.tr('whatsapp_not_remaining'),
+                                      SnackType.FAILURE);
+                                  return;
+                                }
+                              }
 
-                            if (widget.teachern != null &&
-                                widget.add == false) {
-                              BaseBloc.get<TeacherNotesBloc>(context).add(
-                                  UpdateNoteTeacherEvent(
-                                      baseEnity: TeachersEntity(
-                                          list: list,
-                                          monitorNoteEntity: MonitorNoteEntity(
-                                              note: groupValue,
-                                              date: gregorianDate!,
-                                              dateHijri: selectDate ?? '',
-                                              session: noteModel!.howSession
-                                                  ? selectModel!.id
-                                                  : null))));
-                            } else {
-                              BaseBloc.get<TeacherNotesBloc>(context).add(
-                                  CreateTeacherNoteEvent(
-                                      enity: TeachersEntity(
-                                          list: list,
-                                          monitorNoteEntity: MonitorNoteEntity(
-                                              note: groupValue,
-                                              date: gregorianDate!,
-                                              dateHijri: selectDate ?? '',
-                                              session: noteModel!.howSession
-                                                  ? selectModel!.id
-                                                  : null))));
+                              if (widget.teachern != null &&
+                                  widget.add == false) {
+                                BaseBloc.get<TeacherNotesBloc>(context).add(
+                                    UpdateNoteTeacherEvent(
+                                        baseEnity: TeachersEntity(
+                                            list: list,
+                                            monitorNoteEntity:
+                                                MonitorNoteEntity(
+                                                    note: groupValue,
+                                                    date: gregorianDate!,
+                                                    dateHijri: selectDate ?? '',
+                                                    session:
+                                                        noteModel!.howSession
+                                                            ? selectModel!.id
+                                                            : null))));
+                              } else {
+                                BaseBloc.get<TeacherNotesBloc>(context).add(
+                                    CreateTeacherNoteEvent(
+                                        enity: TeachersEntity(
+                                            list: list,
+                                            monitorNoteEntity:
+                                                MonitorNoteEntity(
+                                                    note: groupValue,
+                                                    date: gregorianDate!,
+                                                    dateHijri: selectDate ?? '',
+                                                    session:
+                                                        noteModel!.howSession
+                                                            ? selectModel!.id
+                                                            : null))));
+                              }
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          elevation: 4,
-                        ),
-                        child: Text(
-                          easy.tr('save'),
-                          style: const TextStyle(color: Colors.white),
+                          },
+                          label: easy.tr('save'),
                         ),
                       ),
                     ),

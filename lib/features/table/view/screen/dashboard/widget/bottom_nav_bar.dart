@@ -18,37 +18,27 @@ class BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 90,
-      width: context.width / 4.2,
-      child: IconButton(
-        icon: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              padding: EdgeInsets.all(0),
-              icon: SvgPicture.asset(
-                iconPath,
+    return IconButton(
+      icon: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            color: isSelected ? AppColors.SECONDERYCOLOR : AppColors.FONTCOLOR,
+            width: 25,
+            height: 25,
+          ),
+          Text(
+            pageName,
+            style: AlMaraiaRegular.copyWith(
                 color:
                     isSelected ? AppColors.SECONDERYCOLOR : AppColors.FONTCOLOR,
-                width: 25,
-                height: 25,
-              ),
-              onPressed: () => onTap(),
-            ),
-            Text(
-              pageName,
-              style: AlMaraiaRegular.copyWith(
-                  color: isSelected
-                      ? AppColors.SECONDERYCOLOR
-                      : AppColors.FONTCOLOR,
-                  fontSize: 14),
-            ),
-          ],
-        ),
-        onPressed: () => onTap(),
+                fontSize: 14),
+          ),
+        ],
       ),
+      onPressed: () => onTap(),
     );
   }
 }

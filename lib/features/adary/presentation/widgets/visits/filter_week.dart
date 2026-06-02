@@ -47,7 +47,23 @@ class FilterWeek extends StatelessWidget {
             padding: const EdgeInsets.only(top: 30),
             child: SafeArea(
               child: Scaffold(
-                appBar: MyAppBar(title: 'back'.tr()),
+                appBar: MyAppBar(title: 'فلتر'.tr()),
+                bottomNavigationBar: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: BtnApp(
+                      label: 'search'.tr(),
+                      onTap: () {
+                        paginationEntity.startDate = gregorianDate1 != null
+                            ? DateFormat('yyyy-MM-dd').format(gregorianDate1!)
+                            : null;
+                        paginationEntity.endDate = gregorianDate2 != null
+                            ? DateFormat('yyyy-MM-dd').format(gregorianDate2!)
+                            : null;
+                        paginationEntity.classId = selected?.id;
+                        Navigator.pop(context);
+                        pagingController.refresh();
+                      }),
+                ),
                 body: ListView(
                   padding: const EdgeInsets.only(
                       top: 0, right: 10, left: 10, bottom: 10),
@@ -90,19 +106,6 @@ class FilterWeek extends StatelessWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    BtnApp(
-                        label: 'search'.tr(),
-                        onTap: () {
-                          paginationEntity.startDate = gregorianDate1 != null
-                              ? DateFormat('yyyy-MM-dd').format(gregorianDate1!)
-                              : null;
-                          paginationEntity.endDate = gregorianDate2 != null
-                              ? DateFormat('yyyy-MM-dd').format(gregorianDate2!)
-                              : null;
-                          paginationEntity.classId = selected?.id;
-                          Navigator.pop(context);
-                          pagingController.refresh();
-                        })
                   ],
                 ),
               ),

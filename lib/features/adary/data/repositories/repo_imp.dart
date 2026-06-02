@@ -11,6 +11,6 @@ class RepoImp implements Repo {
   RepoImp({required this.call});
   @override
   Future<Either<Failure, T>> calling<T>(
-          {BaseEnity? entity, required dynamic db}) =>
+          {dynamic? entity, required dynamic db}) =>
       call(db, entity);
 }

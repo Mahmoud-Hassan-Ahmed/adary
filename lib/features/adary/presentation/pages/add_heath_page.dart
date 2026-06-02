@@ -10,6 +10,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/health_model.dart';
 import 'package:adary/features/adary/domain/entities/health_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/health/health_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -66,13 +67,23 @@ class _AddHeathPageState extends State<AddHeathPage> {
             selectedClass = state.selectModel;
           } else if (state is DoneAddHealthState) {
             // WidgetsBinding.instance.addPostFrameCallback((_) {
-            AppUtils.showCustomSnackbar(e.tr('added_health'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(e.tr('added_health'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة الحالة الصحية بنجاح',
+                  title: 'إضافة حالة صحية جديدة'));
+            });
             widget.refreshKey?.currentState?.show();
             Future.delayed(Duration(milliseconds: 500), () {
               Navigator.pop(context);
             });
           } else if (state is DoneUpdateHealthState) {
             // WidgetsBinding.instance.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('updated_health'),
+                  title: 'إضافة حالة صحية جديدة'));
+            });
             AppUtils.showCustomSnackbar(
                 e.tr('updated_health'), SnackType.SUCESS);
             widget.refreshKey?.currentState?.show();
@@ -88,7 +99,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
-                appBar: MyAppBar(title: e.tr('back')),
+                appBar: MyAppBar(title: e.tr('إضافة حالة صحية جديدة   ')),
                 body: Form(
                     key: formState,
                     child: ListView(
@@ -127,9 +138,9 @@ class _AddHeathPageState extends State<AddHeathPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Titile(
-                          label: e.tr('not_teachers'),
-                        ),
+                        // Titile(
+                        //   label: e.tr('not_teachers'),
+                        // ),
                         // const SizedBox(
                         //   height: 10,
                         // ),
@@ -142,7 +153,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
                               },
                               child: RadioBtn(
                                   group: valueSelect ? 1 : 0,
-                                  label: e.tr('yes'),
+                                  label: e.tr('not_teachers'),
                                   value: 1,
                                   valueChanged: (v) {
                                     BaseBloc.get<HealthBloc>(context)
@@ -159,9 +170,9 @@ class _AddHeathPageState extends State<AddHeathPage> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Titile(
-                                label: e.tr('send_sms'),
-                              ),
+                              // Titile(
+                              //   label: e.tr('send_sms'),
+                              // ),
                               // const SizedBox(
                               //   height: 10,
                               // ),
@@ -174,7 +185,7 @@ class _AddHeathPageState extends State<AddHeathPage> {
                                     },
                                     child: RadioBtn(
                                         group: sendSms ? 1 : 0,
-                                        label: e.tr('yes'),
+                                        label: e.tr('send_sms'),
                                         value: 1,
                                         valueChanged: (v) {
                                           BaseBloc.get<HealthBloc>(context)

@@ -1,3 +1,4 @@
+import 'package:adary/features/table/view/screen/dashboard/widget/diagonal_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,28 +23,41 @@ class Days extends StatelessWidget {
         child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
-          itemCount: calednerController.workDaysList.length,
+          itemCount: calednerController.workDaysList.length + 1,
           controller: controller,
           itemBuilder: (_, index) {
-            return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-                child: Container(
-                  width: 120,
-                  height: 95,
-                  decoration: BoxDecoration(
-                      color: AppColors.SECONDERYCOLOR,
-                      borderRadius: BorderRadius.circular(13)),
-                  child: Center(
-                      child: Text(
-                    calednerController.workDaysList[index].day.toString(),
-                    style: AlMaraiaBold.copyWith(
-                        fontSize: 18,
-                        color:
-                            Get.find<CalednerController>().todayIndex == index
+            return index == 0
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2.3),
+                    child: DiagonalBox(
+                      topText: "الحصة",
+                      bottomText: "اليوم",
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3, vertical: 2.3),
+                    child: Container(
+                      width: 120,
+                      height: 95,
+                      decoration: BoxDecoration(
+                          color: Get.find<CalednerController>().todayIndex ==
+                                  index - 1
+                              ? AppColors.SECONDERYCOLOR
+                              : null,
+                          borderRadius: BorderRadius.circular(13),
+                          border: Border.all(color: AppColors.SECONDERYCOLOR)),
+                      child: Center(
+                          child: Text(
+                        calednerController.workDaysList[index - 1].day
+                            .toString(),
+                        style: AlMaraiaBold.copyWith(
+                            fontSize: 18,
+                            color: Get.find<CalednerController>().todayIndex ==
+                                    index - 1
                                 ? AppColors.MAINCOLOR
-                                : AppColors.FONTCOLOR),
-                  )),
-                ));
+                                : AppColors.SECONDERYCOLOR),
+                      )),
+                    ));
           },
         ),
       );

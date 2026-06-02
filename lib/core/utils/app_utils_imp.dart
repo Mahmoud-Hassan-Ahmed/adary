@@ -75,6 +75,7 @@ class AppUtilsImp extends AppUtils {
 
   @override
   Future<void> setUser(AppUser user) async {
+    AppUtils.log(user.toJson().toString());
     await prefs.setString('user', jsonEncode(user.toJson()));
     AppUtils.appUser = user;
     if (!prefs.containsKey(user.username) && user.followerPlanInfo.isTrial) {

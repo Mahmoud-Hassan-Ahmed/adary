@@ -3,8 +3,8 @@ class Images {
   static const APP_LOGO_LOGIN = "assets/images/logo_login.png";
   static const APP_ICON = "assets/images/app_icon.jpg";
   static const MAIN_ICON = "assets/images/main_icon.png";
-  static const SCHOOL_TABLE_ICON = "assets/images/school_table.png";
-  static const ALARM = "assets/images/alram.png";
+  static const SCHOOL_TABLE_ICON = "assets/icons/smart_table.svg";
+  static const ALARM = "assets/icons/whating.svg";
   static const NOTE = "assets/images/note.png";
 
   static const STATUS = "assets/images/maritialStatus.png";
@@ -16,9 +16,9 @@ class Images {
 
 // nav bar icons
   static const NOTI_ICON = "assets/images/System.svg";
-  static const USER_SQUARE = "assets/images/user-square.svg";
+  static const USER_SQUARE = "assets/icons/icon_profile.svg";
   static const SEND_ICON = "assets/images/send_icon.svg";
-  static const HOME_SCREEN_ICON = "assets/images/home_screen_icon.svg";
+  static const HOME_SCREEN_ICON = "assets/icons/icon_home.svg";
 // end of nav bar icons
 
 // send module
@@ -42,7 +42,7 @@ class Images {
   static const WHO_WE_ICON = "assets/icons/who_we.svg";
 
   static const DELETE_ICON = "assets/icons/delete.svg";
-  static const CLOSE_ICON = "assets/icons/close.svg";
+  static const CLOSE_ICON = "assets/icons/x-03.svg";
   static const CHECK_ICON = "assets/images/check.png";
   static const DROP_DOWN_ICON = "assets/icons/drop_down_icon.svg";
   static const BORDER_LINES = "assets/icons/broder.svg";

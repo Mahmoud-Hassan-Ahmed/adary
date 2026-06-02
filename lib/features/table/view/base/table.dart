@@ -18,7 +18,6 @@ class AppTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(table);
     var orientation = MediaQuery.of(context).orientation;
     return SizedBox(
         height: orientation == Orientation.portrait
@@ -31,14 +30,11 @@ class AppTable extends StatelessWidget {
           children: [
             SizedBox(
                 height: orientation == Orientation.portrait
-                    ? context.height / 1.39
-                    : context.height * 2,
+                    ? context.height / 1.1
+                    : context.height * 2 + 50,
                 width: 140,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: orientation == Orientation.portrait ? 0 : 40,
-                    ),
                     Expanded(child: Days(controller: controller)),
                   ],
                 )),
@@ -61,9 +57,17 @@ class AppTable extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              SizedBox(
-                                height: 50,
-                                width: 100,
+                              Container(
+                                width: 180,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: AppColors.SECONDERYCOLOR,
+                                        width: 1),
+                                    borderRadius: day == 0
+                                        ? const BorderRadius.only(
+                                            topRight: Radius.circular(10))
+                                        : null),
                                 child: Center(
                                   child: Text(
                                     Get.find<TeacherPageController>()
@@ -102,8 +106,8 @@ class AppTable extends StatelessWidget {
                                               : null,
                                           child: DottedBorder(
                                               borderType: BorderType.RRect,
-                                              dashPattern: const [7, 6],
-                                              color: Colors.black,
+                                              dashPattern: const [1, 0],
+                                              color: AppColors.SECONDERYCOLOR,
                                               strokeWidth: 1,
                                               padding: const EdgeInsets.all(6),
                                               child: Center(

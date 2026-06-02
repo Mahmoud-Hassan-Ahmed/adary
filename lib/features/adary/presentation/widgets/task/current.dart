@@ -65,27 +65,6 @@ class _CurrentTaskState extends State<CurrentTask> {
           }
           return SafeArea(
             child: Scaffold(
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains("/daily-supervision/")) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: BtnApp(
-                        label: 'new_mission'.tr(),
-                        onTap: () {
-                          showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return AddTeacherTask(
-                                pagingController: _pagingController,
-                              );
-                            },
-                          );
-                        }),
-                  )
-              ]),
               body: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: PagedListView<int, DailyTaskModel>(

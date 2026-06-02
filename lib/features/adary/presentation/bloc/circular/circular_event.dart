@@ -29,6 +29,8 @@ final class SelectDateEvent extends CircularEvent {
 
 final class ChnageNotifyEvent extends CircularEvent {}
 
+final class ChnageNotifyEvent2 extends CircularEvent {}
+
 final class UpdateCircularEvent extends CircularEvent {
   final BaseEnity entity;
 

@@ -5,6 +5,7 @@ import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/select_input.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/date_widget.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/note_entity_model.dart';
@@ -20,6 +21,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:open_filex/open_filex.dart';
@@ -97,126 +99,120 @@ class _NoteTeachersPageState extends State<NoteTeachersPage> {
             padding: const EdgeInsets.only(top: 0),
             child: SafeArea(
               child: Scaffold(
-                bottomNavigationBar: BottomNavigatorBar(items: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () async {
-                        final tempDir = await getTemporaryDirectory();
+                bottomNavigationBar: BottomNavigatorBar(
+                  items: [
+                    Expanded(
+                      child: BtnApp(
+                        onTap: () async {
+                          final tempDir = await getTemporaryDirectory();
 
-                        // Define a file path for the downloaded file
-                        final filePath = '${tempDir.path}/teachers.pdf';
-                        BaseBloc.get<TeacherNotesBloc>(context).add(
-                            DownloadTeacherPdfEvent(
-                                paginationEntity: entity..savePath = filePath));
-                      },
-                      child: Text(
-                        '${'export'.tr()} PDF',
-                        style: AbhayaLibreSemiBold.copyWith(
-                            color: Colors.black,
-                            decoration: TextDecoration.underline),
+                          // Define a file path for the downloaded file
+                          final filePath = '${tempDir.path}/teachers.pdf';
+                          BaseBloc.get<TeacherNotesBloc>(context).add(
+                              DownloadTeacherPdfEvent(
+                                  paginationEntity: entity
+                                    ..savePath = filePath));
+                        },
+                        label: '${'export'.tr()} PDF'.tr(),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AwesomeDialog(
-                                dialogType: DialogType.noHeader,
-                                context: context,
-                                body: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    DateWidget(
-                                      selectDate: selectDate,
-                                      onChange: (value) {
-                                        setState(() {
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
+                    IconButton(
+                        onPressed: () {
+                          AwesomeDialog(
+                                  dialogType: DialogType.noHeader,
+                                  context: context,
+                                  body: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        DateWidget(
+                                          selectDate: selectDate,
+                                          onChange: (value) {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
 
-                                          selectDate =
-                                              '${value.hijriDate} ${value.hijriDate2}';
+                                              selectDate =
+                                                  '${value.hijriDate} ${value.hijriDate2}';
 
-                                          entity.startDate =
-                                              AppUtils.convertToWesternNumerals(
-                                                  DateFormat('yyyy-MM-dd')
-                                                      .format(
-                                                          value.gregorianDate));
-                                          entity.endDate =
-                                              AppUtils.convertToWesternNumerals(
-                                                  DateFormat('yyyy-MM-dd')
-                                                      .format(value
-                                                          .gregorianDate2!));
-                                          _pagingController.refresh();
-                                        });
-                                      },
-                                      isRange: true,
+                                              entity.startDate = AppUtils
+                                                  .convertToWesternNumerals(
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(value
+                                                              .gregorianDate));
+                                              entity.endDate = AppUtils
+                                                  .convertToWesternNumerals(
+                                                      DateFormat('yyyy-MM-dd')
+                                                          .format(value
+                                                              .gregorianDate2!));
+                                              _pagingController.refresh();
+                                            });
+                                          },
+                                          isRange: true,
+                                        ),
+                                        Titile(
+                                          label: 'choose_teachers'.tr(),
+                                        ),
+                                        SelectInput(
+                                          selectedValue: selected,
+                                          items: teachers,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                              selected = value;
+                                              entity.teacher =
+                                                  value!.id.toString();
+                                              entity.page = 1;
+                                              _pagingController.refresh();
+                                            });
+                                          },
+                                          label: 'choose_teachers'.tr(),
+                                        ),
+                                        Titile(
+                                          label: 'choose_note'.tr(),
+                                        ),
+                                        SelectInput(
+                                          selectedValue: selected2,
+                                          items: notes,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              Navigator.pop(context);
+                                              selected2 = value;
+                                              entity.note =
+                                                  value!.id.toString();
+                                              entity.page = 1;
+                                              _pagingController.refresh();
+                                            });
+                                          },
+                                          label: 'choose_note'.tr(),
+                                        ),
+                                      ],
                                     ),
-                                    Titile(
-                                      label: 'choose_teachers'.tr(),
-                                    ),
-                                    SelectInput(
-                                      selectedValue: selected,
-                                      items: teachers,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          Navigator.pop(context);
-                                          selected = value;
-                                          entity.teacher = value!.id.toString();
-                                          entity.page = 1;
-                                          _pagingController.refresh();
-                                        });
-                                      },
-                                      label: 'choose_teachers'.tr(),
-                                    ),
-                                    Titile(
-                                      label: 'choose_note'.tr(),
-                                    ),
-                                    SelectInput(
-                                      selectedValue: selected2,
-                                      items: notes,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          Navigator.pop(context);
-                                          selected2 = value;
-                                          entity.note = value!.id.toString();
-                                          entity.page = 1;
-                                          _pagingController.refresh();
-                                        });
-                                      },
-                                      label: 'choose_note'.tr(),
-                                    ),
-                                  ],
-                                ),
-                                btnOkOnPress: () {
-                                  setState(() {
-                                    selected2 = null;
-                                    selected = null;
-                                    selectDate = 'start_end'.tr();
-                                    entity.endDate = '';
-                                    entity.note = '';
-                                    entity.startDate = '';
-                                    entity.teacher = '';
-                                    entity.page = 1;
-                                    _pagingController.refresh();
-                                  });
-                                },
-                                btnOkText: 'delete'.tr())
-                            .show();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        ('filter').tr(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ]),
+                                  ),
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      selected2 = null;
+                                      selected = null;
+                                      selectDate = 'start_end'.tr();
+                                      entity.endDate = '';
+                                      entity.note = '';
+                                      entity.startDate = '';
+                                      entity.teacher = '';
+                                      entity.page = 1;
+                                      _pagingController.refresh();
+                                    });
+                                  },
+                                  btnOkText: 'delete'.tr())
+                              .show();
+                        },
+                        icon: SvgPicture.asset("assets/icons/icon-search.svg"))
+                  ],
+                ),
                 body: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(

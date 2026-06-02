@@ -56,11 +56,15 @@ dependencies:
   jhijri_picker: ^1.0.1
   # islamic_hijri_calendar: ^0.0.3
   table_calendar: ^3.1.3
+  pdfrx: ^2.2.24
+  flutter_pdfview: ^1.4.4
+  flutter_rating_bar: ^4.0.1
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.4.3
+  # flutter_native_splash: ^2.4.7
   change_app_package_name: ^1.4.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -73,6 +77,32 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+# flutter_native_splash:
+#   # اللون الأبيض (خلفية احتياطية لو الصورة ماجتش)
+#   color: "#FFFFFF"
+  
+#   # استخدم background_image عشان تتمدد لكامل الشاشة
+#   background_image: "assets/splash.png"
+  
+#   # أخفي شريط الحالة
+#   fullscreen: true
+
+#   # -------------------------------------------------
+#   # للأجهزة القديمة (أندرويد 11 فأقل و iOS)
+#   # background_image بتتمدد تلقائيًا، بس ممكن تتحكم في الـ gravity
+#   # -------------------------------------------------
+#   android_gravity: fill       # تملأ كامل الشاشة (أندرويد)
+#   ios_content_mode: scaleToFill  # تملأ كامل الشاشة (iOS)
+#   web_image_mode: cover       # تغطية كامل الشاشة (Web)
+
+#   # -------------------------------------------------
+#   # لأندرويد 12+ (للأسف ما يدعمش background_image)
+#   # -------------------------------------------------
+#   android_12:
+#     color: "#FFFFFF"          # خلفية بيضا فقط – مفيش حل لصورة خلفية كاملة هنا
+#     # ما تحطش image جوه android_12 عشان متفاجئش بدائرة في النص
+
 flutter_launcher_icons:
   android: true
   ios: true
@@ -89,6 +119,7 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    - assets/splash.png
     - assets/icons/
     - assets/lang/
     - assets/appData/privacy_policy.json

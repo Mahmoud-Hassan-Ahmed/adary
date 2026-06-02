@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 
 class TimeButton extends StatefulWidget {
-  const TimeButton({super.key, this.selectDate, required this.onChange});
+  const TimeButton(
+      {super.key, this.selectDate, required this.onChange, this.label});
   final String? selectDate;
   final ValueChanged<DateTime> onChange;
+  final String? label;
 
   @override
   State<TimeButton> createState() => _DateWidgetState();
@@ -24,7 +26,7 @@ class _DateWidgetState extends State<TimeButton> {
 
   @override
   Widget build(BuildContext context) {
-    label = widget.selectDate ?? 'choose_time'.tr();
+    label = widget.selectDate ?? widget.label ?? 'choose_time'.tr();
     final TextEditingController validatorController =
         TextEditingController(text: widget.selectDate);
     return Stack(
@@ -65,7 +67,7 @@ class _DateWidgetState extends State<TimeButton> {
                 .show();
           },
           label: label,
-          pathIcon: AppIcon.date,
+          // pathIcon: AppIcon.date,
         ),
       ],
     );

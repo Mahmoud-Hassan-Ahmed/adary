@@ -1,6 +1,8 @@
 import 'package:adary/core/bloc/base_bloc.dart';
+import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/style.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/circular_model.dart';
@@ -15,6 +17,7 @@ import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -75,53 +78,42 @@ class _CircularPageState extends State<CircularPage> {
             child: Scaffold(
               bottomNavigationBar: BottomNavigatorBar(
                 items: [
-                  if (AppUtils.permissions.isNotEmpty &&
-                          AppUtils.permissions
-                              .contains('/api/notes/add_circular/') ||
-                      AppUtils.permissions.isEmpty)
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          AppUtils.go(AddCircale(
-                            pagingController: _pagingController,
-                          ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          elevation: 4,
-                        ),
-                        child: Text(
-                          'new_circular'.tr(),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  if (AppUtils.permissions.isNotEmpty &&
-                          AppUtils.permissions
-                              .contains('/api/notes/circulars_exports_pdf/') ||
-                      AppUtils.permissions.isEmpty)
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () async {
-                          final tempDir = await getTemporaryDirectory();
+                  Expanded(
+                    child: BtnApp(
+                      onTap: () async {
+                        final tempDir = await getTemporaryDirectory();
 
-                          final filePath = '${tempDir.path}/visits.pdf';
-                          BaseBloc.get<CircularBloc>(context).add(
-                              ExportCirculasPdfEvent(
-                                  eneity: FileDownloadEneity(
-                                      id: 0, pathDownload: filePath)));
-                        },
-                        child: Text(
-                          '${'export'.tr()} PDF'.tr(),
-                          style: AbhayaLibreSemiBold.copyWith(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline),
-                        ),
-                      ),
+                        final filePath = '${tempDir.path}/visits.pdf';
+                        BaseBloc.get<CircularBloc>(context).add(
+                            ExportCirculasPdfEvent(
+                                eneity: FileDownloadEneity(
+                                    id: 0, pathDownload: filePath)));
+                      },
+                      label: '${'export'.tr()} PDF'.tr(),
                     ),
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: SvgPicture.asset("assets/icons/icon-search.svg"))
                 ],
               ),
-              appBar: MyAppBar(title: 'circulars'.tr()),
+              appBar: MyAppBar(title: 'circulars'.tr(), actions: [
+                IconButton(
+                  onPressed: () {
+                    AppUtils.go(AddCircale(
+                      pagingController: _pagingController,
+                    ));
+                  },
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.APP_COLOR,
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              ]),
               body: PagedListView<int, AdministrativeCircular>(
                   padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),

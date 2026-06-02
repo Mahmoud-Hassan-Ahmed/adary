@@ -5,12 +5,14 @@ import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/input_app.dart';
 import 'package:adary/core/share/inputs/select_input.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/share/widgets/radio_btn.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/student_model.dart';
 import 'package:adary/features/adary/domain/entities/student_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/social/social_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -78,8 +80,13 @@ class _AddSocialState extends State<AddSocial> {
           } else if (state is ChangeGroupState2) {
             valueGroup2 = state.value;
           } else if (state is DoneCreateStudentState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('added_student'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('added_student'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة الحالة الاجتماعية بنجاح',
+                  title: 'إضافة حالة اجتماعية جديدة '));
+            });
             // BaseBloc.get<StudentsBloc>(ClassRoomPage.context!)
             //     .add(GetClassesRoomEvent());
             // WidgetsBinding.instance.addPersistentFrameCallback(
@@ -93,8 +100,13 @@ class _AddSocialState extends State<AddSocial> {
               Navigator.pop(context);
             });
           } else if (state is DoneUpdateStudentState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('updated_student'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('updated_student'),
+                  title: 'إضافة حالة اجتماعية جديدة'));
+            });
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('updated_student'), SnackType.SUCESS);
             // BaseBloc.get<StudentsBloc>(ClassRoomPage.context!)
             //     .add(GetClassesRoomEvent());
 
@@ -116,53 +128,50 @@ class _AddSocialState extends State<AddSocial> {
               child: Scaffold(
                 bottomNavigationBar: BottomNavigatorBar(items: [
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (formState.currentState!.validate()) {
-                          if (widget.student == null) {
-                            BaseBloc.get<SocialBloc>(context)
-                                .add(CreatestudentEvent(
-                              entity: StudentEntity(
-                                  notifyTeacher: valueSelect,
-                                  sendSms: sendSms,
-                                  className: valueClass!.id,
-                                  name: name.text,
-                                  fatherIsAlive: valueGroup2 == 3,
-                                  motherIsAlive: valueGroup2 == 1,
-                                  kinshipWithStudent: relation.text,
-                                  studentGuardian: parentName.text,
-                                  withLive: (valueRealtion as Relations).value),
-                            ));
-                          } else {
-                            BaseBloc.get<SocialBloc>(context).add(
-                                UpdatestudentEvent(
-                                    entity: StudentEntity(
-                                        notifyTeacher: valueSelect,
-                                        sendSms: sendSms,
-                                        id: widget.student?.id,
-                                        className: valueClass!.id,
-                                        name: name.text,
-                                        fatherIsAlive: valueGroup2 == 3,
-                                        motherIsAlive: valueGroup2 == 1,
-                                        kinshipWithStudent: relation.text,
-                                        studentGuardian: parentName.text,
-                                        withLive: (valueRealtion as Relations)
-                                            .value)));
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: BtnApp(
+                        onTap: () {
+                          if (formState.currentState!.validate()) {
+                            if (widget.student == null) {
+                              BaseBloc.get<SocialBloc>(context)
+                                  .add(CreatestudentEvent(
+                                entity: StudentEntity(
+                                    notifyTeacher: valueSelect,
+                                    sendSms: sendSms,
+                                    className: valueClass!.id,
+                                    name: name.text,
+                                    fatherIsAlive: valueGroup2 == 3,
+                                    motherIsAlive: valueGroup2 == 1,
+                                    kinshipWithStudent: relation.text,
+                                    studentGuardian: parentName.text,
+                                    withLive:
+                                        (valueRealtion as Relations).value),
+                              ));
+                            } else {
+                              BaseBloc.get<SocialBloc>(context).add(
+                                  UpdatestudentEvent(
+                                      entity: StudentEntity(
+                                          notifyTeacher: valueSelect,
+                                          sendSms: sendSms,
+                                          id: widget.student?.id,
+                                          className: valueClass!.id,
+                                          name: name.text,
+                                          fatherIsAlive: valueGroup2 == 3,
+                                          motherIsAlive: valueGroup2 == 1,
+                                          kinshipWithStudent: relation.text,
+                                          studentGuardian: parentName.text,
+                                          withLive: (valueRealtion as Relations)
+                                              .value)));
+                            }
                           }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        e.tr('save'),
-                        style: TextStyle(color: Colors.white),
+                        },
+                        label: e.tr('save'),
                       ),
                     ),
                   ),
                 ]),
-                appBar: MyAppBar(title: e.tr('back')),
+                appBar: MyAppBar(title: e.tr('إضافة حالة اجتماعية جديدة')),
                 body: Form(
                   key: formState,
                   child: ListView(
@@ -200,61 +209,43 @@ class _AddSocialState extends State<AddSocial> {
                                 .add(ChangeRealtion(selectModel: v!));
                           },
                           label: e.tr('with_live')),
-                      Titile(label: e.tr('father_on_live')),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RadioBtn(
-                              group: valueGroup2,
-                              label: e.tr('yes'),
-                              value: 3,
+                              group: 3,
+                              label: e.tr('father_on_live'),
+                              value: valueGroup2,
                               valueChanged: (v) {
-                                BaseBloc.get<SocialBloc>(context)
-                                    .emitState(ChangeGroupState2(value: v!));
+                                if (valueGroup2 == 3) {
+                                  valueGroup2 = 4;
+                                } else {
+                                  valueGroup2 = 3;
+                                }
+                                BaseBloc.get<SocialBloc>(context).emitState(
+                                    ChangeGroupState2(value: valueGroup2));
                               }),
-                          const SizedBox(
-                            width: 10,
-                          ),
                           RadioBtn(
-                              group: valueGroup2,
-                              label: e.tr('no'),
-                              value: 4,
+                              group: 1,
+                              label: e.tr('mother_on_live'),
+                              value: valueGroup,
                               valueChanged: (v) {
-                                BaseBloc.get<SocialBloc>(context)
-                                    .emitState(ChangeGroupState2(value: v!));
-                              })
+                                if (valueGroup == 2) {
+                                  valueGroup == 1;
+                                } else {
+                                  valueGroup = 2;
+                                }
+                                BaseBloc.get<SocialBloc>(context).emitState(
+                                    ChangeGroupState(value: valueGroup));
+                              }),
                         ],
                       ),
-                      Titile(label: e.tr('mother_on_live')),
-                      Row(
-                        children: [
-                          RadioBtn(
-                              group: valueGroup,
-                              label: e.tr('yes'),
-                              value: 1,
-                              valueChanged: (v) {
-                                BaseBloc.get<SocialBloc>(context)
-                                    .emitState(ChangeGroupState(value: v!));
-                              }),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          RadioBtn(
-                              group: valueGroup,
-                              label: e.tr('no'),
-                              value: 2,
-                              valueChanged: (v) {
-                                BaseBloc.get<SocialBloc>(context)
-                                    .emitState(ChangeGroupState(value: v!));
-                              })
-                        ],
+                      const SizedBox(
+                        height: 10,
                       ),
-
-                      Titile(
-                        label: e.tr('not_teachers'),
-                      ),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
                       Row(
                         children: [
                           InkWell(
@@ -264,7 +255,7 @@ class _AddSocialState extends State<AddSocial> {
                             },
                             child: RadioBtn(
                                 group: valueSelect ? 1 : 0,
-                                label: e.tr('yes'),
+                                label: e.tr('not_teachers'),
                                 value: 1,
                                 valueChanged: (v) {
                                   BaseBloc.get<SocialBloc>(context)
@@ -281,9 +272,6 @@ class _AddSocialState extends State<AddSocial> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Titile(
-                              label: e.tr('send_sms'),
-                            ),
                             // const SizedBox(
                             //   height: 10,
                             // ),
@@ -296,7 +284,7 @@ class _AddSocialState extends State<AddSocial> {
                                   },
                                   child: RadioBtn(
                                       group: sendSms ? 1 : 0,
-                                      label: e.tr('yes'),
+                                      label: e.tr('send_sms'),
                                       value: 1,
                                       valueChanged: (v) {
                                         BaseBloc.get<SocialBloc>(context)

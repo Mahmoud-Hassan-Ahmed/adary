@@ -3,6 +3,7 @@ import 'package:adary/core/enums/relations.dart';
 import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/input_app.dart';
+import 'package:adary/core/share/inputs/select_input.dart';
 import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/share/widgets/radio_btn.dart';
@@ -10,6 +11,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/note_entity_model.dart';
 import 'package:adary/features/adary/domain/entities/note_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/note/note_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +21,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:easy_localization/easy_localization.dart' as e;
 
 class AddNotePage extends StatefulWidget {
-  const AddNotePage(
-      {super.key, required this.pagingController, this.noteModel});
-  final PagingController pagingController;
+  const AddNotePage({super.key, this.pagingController, this.noteModel});
+  final PagingController? pagingController;
   final NoteModel? noteModel;
 
   @override
@@ -94,23 +95,32 @@ class _AddNotePageState extends State<AddNotePage> {
               sms = state.switchValue;
             }
           } else if (state is DoneAddNoteState) {
-            AppUtils.showCustomSnackbar(e.tr('added_note'), SnackType.SUCESS);
-            widget.pagingController.refresh();
+            // AppUtils.showCustomSnackbar(e.tr('added_note'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة الملاحظة بنجاح',
+                  title: 'إنشاء ملاحظة جديدة  '));
+            });
+            widget.pagingController?.refresh();
             Navigator.pop(context);
 
             // WidgetsBinding.instance.addPostFrameCallback((callback) {
 
             // });
           } else if (state is DoneUpdateNoteState) {
-            AppUtils.showCustomSnackbar(e.tr('updated_note'), SnackType.SUCESS);
-            widget.pagingController.refresh();
+            // AppUtils.showCustomSnackbar(e.tr('updated_note'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('updated_note'), title: 'إنشاء ملاحظة جديدة  '));
+            });
+            widget.pagingController?.refresh();
             Navigator.pop(context);
           }
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
-                appBar: MyAppBar(title: e.tr('back')),
+                appBar: MyAppBar(title: e.tr('إنشاء ملاحظة جديدة  ')),
                 body: Form(
                   key: formState,
                   child: ListView(
@@ -118,25 +128,36 @@ class _AddNotePageState extends State<AddNotePage> {
                         top: 0, right: 10, left: 10, bottom: 10),
                     physics: const BouncingScrollPhysics(),
                     children: [
-                      Titile(label: e.tr('type_note')),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ...typNoties.map((e) => RadioBtn(
-                              group: typeNote?.id ?? 1,
-                              label: e.name,
-                              value: e.id,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context)
-                                    .emitState(SelectTypeNote(selectModel: e));
-                              }))
-                        ],
-                      ),
                       InputApp(
-                          numLine: 2,
+                          // numLine: 2,
                           textEditingController: name,
-                          label: e.tr('des_note'),
-                          hint: e.tr('write_here')),
+                          label: e.tr('أسم الملاحظة '),
+                          hint: e.tr('ادخل أسم الملاحظة')),
+                      Titile(label: e.tr('type_note')),
+                      SelectInput(
+                          selectedValue: typeNote,
+                          items:
+                              // SessionModel(id: 0,name: '')
+                              typNoties,
+                          onChanged: (value) {
+                            BaseBloc.get<NoteBloc>(context)
+                                .emitState(SelectTypeNote(selectModel: value!));
+                          },
+                          // selectedValue: typeNote,
+                          label: e.tr('type_note')),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //   children: [
+                      //     ...typNoties.map((e) => RadioBtn(
+                      //         group: typeNote?.id ?? 1,
+                      //         label: e.name,
+                      //         value: e.id,
+                      //         valueChanged: (v) {
+                      //           BaseBloc.get<NoteBloc>(context)
+                      //               .emitState(SelectTypeNote(selectModel: e));
+                      //         }))
+                      //   ],
+                      // ),
                       InputApp(
                           textInputType: TextInputType.number,
                           textEditingController: numRepeat,
@@ -147,102 +168,91 @@ class _AddNotePageState extends State<AddNotePage> {
                           textEditingController: arranging,
                           label: e.tr('arranging'),
                           hint: e.tr('write_here')),
-                      Titile(label: e.tr('session_active')),
-                      Row(
-                        children: [
-                          RadioBtn(
-                              group: sessionactive,
-                              label: e.tr('yes'),
-                              value: 3,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveSessionState(switchValue: v!));
-                              }),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          RadioBtn(
-                              group: sessionactive,
-                              label: e.tr('no'),
-                              value: 4,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveSessionState(switchValue: v!));
-                              })
-                        ],
+                      // Titile(label: e.tr('session_active')),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Titile(label: e.tr('whatsapp_active')),
-                      Row(
-                        children: [
-                          RadioBtn(
-                              group: whatsapp,
-                              label: e.tr('yes'),
-                              value: 5,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveWhasappState(switchValue: v!));
-                              }),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          RadioBtn(
-                              group: whatsapp,
-                              label: e.tr('no'),
-                              value: 6,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveWhasappState(switchValue: v!));
-                              })
-                        ],
+                      RadioBtn(
+                          group: 3,
+                          label: e.tr('session_active'),
+                          value: sessionactive,
+                          valueChanged: (v) {
+                            AppUtils.log(v.toString());
+                            AppUtils.log(sessionactive.toString());
+                            if (sessionactive == 3) {
+                              sessionactive = 4;
+                            } else {
+                              sessionactive = 3;
+                            }
+                            BaseBloc.get<NoteBloc>(context).emitState(
+                                ActiveSessionState(switchValue: sessionactive));
+                          }),
+                      // Row(
+                      //   children: [
+                      //     const SizedBox(
+                      //       width: 10,
+                      //     ),
+                      //     RadioBtn(
+                      //         group: sessionactive,
+                      //         label: e.tr('no'),
+                      //         value: 4,
+                      //         valueChanged: (v) {
+                      //           BaseBloc.get<NoteBloc>(context).emitState(
+                      //               ActiveSessionState(switchValue: v!));
+                      //         })
+                      //   ],
+                      // ),
+
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Titile(label: e.tr('sms_active')),
-                      Row(
-                        children: [
-                          RadioBtn(
-                              group: sms,
-                              label: e.tr('yes'),
-                              value: 8,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context)
-                                    .emitState(ActiveSmsState(switchValue: v!));
-                              }),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          RadioBtn(
-                              group: sms,
-                              label: e.tr('no'),
-                              value: 9,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context)
-                                    .emitState(ActiveSmsState(switchValue: v!));
-                              })
-                        ],
+                      RadioBtn(
+                          group: 5,
+                          label: e.tr('whatsapp_active'),
+                          value: whatsapp,
+                          valueChanged: (v) {
+                            if (whatsapp == 5) {
+                              whatsapp = 6;
+                            } else {
+                              whatsapp = 5;
+                            }
+                            BaseBloc.get<NoteBloc>(context).emitState(
+                                ActiveWhasappState(switchValue: whatsapp));
+                          }),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Titile(label: e.tr('notification_active')),
-                      Row(
-                        children: [
-                          RadioBtn(
-                              group: notification,
-                              label: e.tr('yes'),
-                              value: 7,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveNotificationsState(switchValue: v!));
-                              }),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          RadioBtn(
-                              group: notification,
-                              label: e.tr('no'),
-                              value: 8,
-                              valueChanged: (v) {
-                                BaseBloc.get<NoteBloc>(context).emitState(
-                                    ActiveNotificationsState(switchValue: v!));
-                              })
-                        ],
+                      RadioBtn(
+                          group: 8,
+                          label: e.tr('sms_active'),
+                          value: sms,
+                          valueChanged: (v) {
+                            if (sms == 8) {
+                              sms = 9;
+                            } else {
+                              sms = 8;
+                            }
+                            BaseBloc.get<NoteBloc>(context)
+                                .emitState(ActiveSmsState(switchValue: sms));
+                          }),
+                      const SizedBox(
+                        height: 10,
                       ),
+                      RadioBtn(
+                          group: 7,
+                          label: e.tr('notification_active'),
+                          value: notification,
+                          valueChanged: (v) {
+                            if (notification == 7) {
+                              notification = 8;
+                            } else {
+                              notification = 7;
+                            }
+                            BaseBloc.get<NoteBloc>(context).emitState(
+                                ActiveNotificationsState(
+                                    switchValue: notification));
+                          }),
+
                       if (whatsapp == 5 || notification == 7 || sms == 8)
                         Column(
                           children: [
@@ -251,9 +261,15 @@ class _AddNotePageState extends State<AddNotePage> {
                                 textEditingController: template,
                                 label: e.tr('template_message'),
                                 hint: e.tr('write_here')),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Text(
                               'name تكون اسم المعلم ,type_not تكون نوع الملاحظة, num يكون عدد تكرار الملاحظة,note تكون الوصف',
-                              style: Theme.of(context).textTheme.displayMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(fontSize: 12),
                             ),
                           ],
                         ),

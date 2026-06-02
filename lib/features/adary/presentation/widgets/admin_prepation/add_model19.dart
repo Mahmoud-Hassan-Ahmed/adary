@@ -82,6 +82,28 @@ class _AddModel19State extends State<AddModel19> {
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
                 appBar: MyAppBar(title: e.tr('back')),
+                bottomNavigationBar: BtnApp(
+                    label: e.tr('save'),
+                    onTap: () {
+                      if (keyForm.currentState!.validate()) {
+                        if (widget.model19model != null) {
+                          BaseBloc.get<Model19Bloc>(context).add(
+                              UpdaeModel19Event(
+                                  model19: Model19(
+                                      id: widget.model19model?.id,
+                                      teacherId: selectTeacher!.id,
+                                      exitTime: double.parse(sumHours.text),
+                                      numDays: int.parse(numDays.text))));
+                        } else {
+                          BaseBloc.get<Model19Bloc>(context).add(
+                              AddModel19event(
+                                  baseEnity: Model19(
+                                      teacherId: selectTeacher!.id,
+                                      exitTime: double.parse(sumHours.text),
+                                      numDays: int.parse(numDays.text))));
+                        }
+                      }
+                    }),
                 body: Form(
                   key: keyForm,
                   child: ListView(
@@ -113,30 +135,6 @@ class _AddModel19State extends State<AddModel19> {
                       const SizedBox(
                         height: 10,
                       ),
-                      BtnApp(
-                          label: e.tr('save'),
-                          onTap: () {
-                            if (keyForm.currentState!.validate()) {
-                              if (widget.model19model != null) {
-                                BaseBloc.get<Model19Bloc>(context).add(
-                                    UpdaeModel19Event(
-                                        model19: Model19(
-                                            id: widget.model19model?.id,
-                                            teacherId: selectTeacher!.id,
-                                            exitTime:
-                                                double.parse(sumHours.text),
-                                            numDays: int.parse(numDays.text))));
-                              } else {
-                                BaseBloc.get<Model19Bloc>(context).add(
-                                    AddModel19event(
-                                        baseEnity: Model19(
-                                            teacherId: selectTeacher!.id,
-                                            exitTime:
-                                                double.parse(sumHours.text),
-                                            numDays: int.parse(numDays.text))));
-                              }
-                            }
-                          })
                     ],
                   ),
                 ),

@@ -16,58 +16,72 @@ class InstructorDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child:
-          GetBuilder<TeacherPageController>(builder: (teacherPageController) {
-        return teacherPageController.isLoading
-            ? _dropDownLoader()
-            : Container(
-                width: context.width,
-                height: 50,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppColors.GREYCOLOR.withOpacity(0.6)),
-                child: DropdownMenu<teacherNamesModel>(
-                  inputDecorationTheme: const InputDecorationTheme(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      outlineBorder: BorderSide.none,
-                      border:
-                          UnderlineInputBorder(borderSide: BorderSide.none)),
-                  trailingIcon: SvgPicture.asset(Images.DROP_DOWN_ICON),
-                  width: context.width / 1.1,
-                  menuHeight: 200,
-                  textStyle: AlMaraiaBold.copyWith(fontSize: 16),
-                  menuStyle: const MenuStyle(
-                    side: MaterialStatePropertyAll(
-                        BorderSide(style: BorderStyle.none)),
-                    backgroundColor:
-                        MaterialStatePropertyAll(AppColors.GREYCOLOR),
+    return GetBuilder<TeacherPageController>(builder: (teacherPageController) {
+      return teacherPageController.isLoading
+          ? _dropDownLoader()
+          : Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    width: context.width,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.SECONDERYCOLOR),
+                    ),
+                    child: DropdownMenu<teacherNamesModel>(
+                      inputDecorationTheme: const InputDecorationTheme(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                          outlineBorder: BorderSide.none,
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide.none)),
+                      trailingIcon: SvgPicture.asset(
+                        Images.DROP_DOWN_ICON,
+                        color: AppColors.SECONDERYCOLOR,
+                      ),
+                      width: context.width / 1.1,
+                      menuHeight: 200,
+                      textStyle: AlMaraiaBold.copyWith(
+                          fontSize: 16, color: AppColors.GREYCOLOR),
+                      menuStyle: const MenuStyle(
+                        side: MaterialStatePropertyAll(
+                            BorderSide(style: BorderStyle.none)),
+                        backgroundColor:
+                            MaterialStatePropertyAll(AppColors.GREYCOLOR),
+                      ),
+                      initialSelection:
+                          teacherPageController.selectedTeacherModel,
+                      requestFocusOnTap: false,
+                      onSelected: (value) {
+                        teacherPageController.changeSelectedInstructorId(
+                            teacherModel: value!);
+                        teacherPageController.FilterTeacherTableList();
+                      },
+                      dropdownMenuEntries: teacherPageController.teacherList
+                          .map<DropdownMenuEntry<teacherNamesModel>>(
+                              (teacherNamesModel tmodel) {
+                        return DropdownMenuEntry<teacherNamesModel>(
+                            value: tmodel,
+                            label: easy.tr("${tmodel.teacherName}"),
+                            enabled: true,
+                            style: ButtonStyle(
+                                textStyle: MaterialStatePropertyAll(
+                                    AlMaraiaBold.copyWith(
+                              fontSize: 16,
+                            ))));
+                      }).toList(),
+                    ),
                   ),
-                  initialSelection: teacherPageController.selectedTeacherModel,
-                  requestFocusOnTap: false,
-                  onSelected: (value) {
-                    teacherPageController.changeSelectedInstructorId(
-                        teacherModel: value!);
-                    teacherPageController.FilterTeacherTableList();
-                  },
-                  dropdownMenuEntries: teacherPageController.teacherList
-                      .map<DropdownMenuEntry<teacherNamesModel>>(
-                          (teacherNamesModel tmodel) {
-                    return DropdownMenuEntry<teacherNamesModel>(
-                        value: tmodel,
-                        label: easy.tr("${tmodel.teacherName}"),
-                        enabled: true,
-                        style: ButtonStyle(
-                            textStyle:
-                                MaterialStatePropertyAll(AlMaraiaBold.copyWith(
-                          fontSize: 16,
-                        ))));
-                  }).toList(),
                 ),
-              );
-      }),
-    );
+                IconButton(
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/filter_icon.svg",
+                      height: 50,
+                    )),
+              ],
+            );
+    });
   }
 
   Widget _dropDownLoader() {
@@ -77,8 +91,8 @@ class InstructorDropDown extends StatelessWidget {
       height: Get.context!.height / 15,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: AppColors.GREYCOLOR.withOpacity(0.6)),
+        borderRadius: BorderRadius.circular(10),
+      ),
     ));
   }
 }

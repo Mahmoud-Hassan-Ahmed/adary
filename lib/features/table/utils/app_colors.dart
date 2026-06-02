@@ -5,7 +5,7 @@ class AppColors {
   static const Color MAINCOLOR = Colors.white;
   static const Color FONTCOLOR = Colors.black;
   // ignore: constant_identifier_names
-  static const Color SECONDERYCOLOR = Color(0xFF1A6A7D);
+  static const Color SECONDERYCOLOR = Color.fromRGBO(60, 154, 166, 1);
   static const Color GREYFONTCOLOR = Color(0xFF9CA3AF);
   static const Color DARKENGREYFONTCOLOR = Color(0xFF707070);
   static const Color BACKGROUNDGREYCOLOR = Color(0xFFCECACA);

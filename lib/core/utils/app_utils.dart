@@ -66,6 +66,13 @@ abstract class AppUtils {
 
   static String latestMessage = "";
 
+  static bool checkPermission(List<String> permissions) {
+    return AppUtils.permissions.isEmpty ||
+        permissions.any(
+          (permission) => AppUtils.permissions.contains(permission),
+        );
+  }
+
   static void showCustomSnackbar(String message, SnackType type,
       {String title = ''}) {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

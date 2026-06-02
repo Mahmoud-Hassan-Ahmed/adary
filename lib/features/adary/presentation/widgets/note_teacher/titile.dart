@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Titile extends StatelessWidget {
-  const Titile({super.key, required this.label});
+  const Titile({super.key, required this.label, this.color, this.fontSize});
   final String label;
+  final Color? color;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -11,14 +13,17 @@ class Titile extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(
-          height: 5,
+          height: 10,
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: fontSize ?? 16,
+              fontWeight: FontWeight.bold,
+              color: color),
         ),
         const SizedBox(
-          height: 5,
+          height: 10,
         ),
       ],
     );

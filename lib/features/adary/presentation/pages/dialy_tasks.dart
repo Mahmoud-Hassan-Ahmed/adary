@@ -1,5 +1,7 @@
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/style.dart';
+import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/presentation/widgets/task/add_task_teacher.dart';
 import 'package:adary/features/adary/presentation/widgets/task/current.dart';
 import 'package:adary/features/adary/presentation/widgets/task/finsh.dart';
 import 'package:adary/features/adary/presentation/widgets/task/next.dart';
@@ -16,47 +18,85 @@ class DialyTasks extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: Text('dialy_missions'.tr(),
-                style: AbhayaLibre.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54)),
-            bottom: TabBar(
-              labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.checkbox),
-              unselectedLabelStyle: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontSize: 14),
-              tabs: [
-                Tab(
-                  child: Text(
-                    'current'.tr(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            centerTitle: true,
+            iconTheme: const IconThemeData(color: AppColors.APP_COLOR),
+            actions: [
+              if (AppUtils.checkPermission([
+                '/daily-supervision/edit/',
+              ]))
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) {
+                        return const AddTeacherTask();
+                      },
+                    );
+                  },
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.APP_COLOR,
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
                   ),
                 ),
-                Tab(
-                  child: Text(
-                    'nexted'.tr(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    'finished'.tr(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+            ],
+            title: Text(
+              'dialy_missions'.tr(),
+              style: AbhayaLibre.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.APP_COLOR,
+              ),
             ),
           ),
-          body: const TabBarView(
-            children: [CurrentTask(), NextTask(), FinishTask()],
+          body: Column(
+            children: [
+              /// 🔹 Segmented TabBar
+              Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: AppColors.APP_COLOR),
+                ),
+                child: TabBar(
+                  indicator: BoxDecoration(
+                    color: AppColors.APP_COLOR,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: AppColors.APP_COLOR,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+
+                  /// 🔥 إزالة تأثير الضغط
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+
+                  tabs: [
+                    Tab(text: 'current'.tr()),
+                    Tab(text: 'nexted'.tr()),
+                    Tab(text: 'finished'.tr()),
+                  ],
+                ),
+              ),
+
+              /// 🔹 المحتوى
+              const Expanded(
+                child: TabBarView(
+                  children: [
+                    CurrentTask(),
+                    NextTask(),
+                    FinishTask(),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

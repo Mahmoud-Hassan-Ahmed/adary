@@ -68,23 +68,6 @@ class _NextTaskState extends State<NextTask> {
           }
           return SafeArea(
             child: Scaffold(
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: BtnApp(
-                      label: 'new_mission'.tr(),
-                      onTap: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddTeacherTask(
-                              pagingController: _pagingController,
-                            );
-                          },
-                        );
-                      }),
-                )
-              ]),
               body: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: PagedListView<int, DailyTaskModel>(
@@ -99,18 +82,12 @@ class _NextTaskState extends State<NextTask> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                item.date,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium!
-                                    .copyWith(color: AppColors.FONTCOLOR),
-                              ),
                               ...item.dailyTasks.map((e) => ItemTask(
+                                    item: item,
                                     canDekete: true,
                                     visitModel: e,
                                     pagingController: _pagingController,
-                                  ))
+                                  )),
                             ],
                           );
                         })),

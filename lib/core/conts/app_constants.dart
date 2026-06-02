@@ -10,7 +10,7 @@ class AppConstants {
   static const String COUNTRY_CODE = 'country_code';
   static const String languageCode = 'language_code';
   static const String NO_INTERNET_MESSAGE = 'No Internet Connection !';
-  static const String BASE_URL = 'http://192.168.1.2:8000/';
+  static const String BASE_URL = 'https://www.smartble.net/';
   static const String USERNAMEKEY = 'username';
   static const String APPKEY = 'app-key';
   static const String getNotes = 'api/notes/teachers-notes/';

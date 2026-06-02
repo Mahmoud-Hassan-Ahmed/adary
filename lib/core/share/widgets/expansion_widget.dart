@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ExpansionWidget extends StatefulWidget {
   const ExpansionWidget(
       {super.key,
       required this.title,
       required this.body,
+      this.color,
+      this.ispadding = true,
       this.isSelect = false});
   final List<Widget> title;
   final List<Widget> body;
   final bool isSelect;
+  final bool ispadding;
+  final Color? color;
 
   @override
   State<ExpansionWidget> createState() => _ExpansionWidgetState();
@@ -41,7 +46,8 @@ class _ExpansionWidgetState extends State<ExpansionWidget>
   Widget build(BuildContext context) {
     return ExpansionTile(
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
-      childrenPadding: const EdgeInsets.all(20),
+      childrenPadding:
+          widget.ispadding ? const EdgeInsets.all(20) : EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -52,24 +58,17 @@ class _ExpansionWidgetState extends State<ExpansionWidget>
           _controller.reverse();
         }
       },
-      backgroundColor: Colors.yellow.shade200,
+      backgroundColor: widget.color ?? Colors.white,
       collapsedBackgroundColor: widget.isSelect ? Colors.yellow.shade200 : null,
       trailing: AnimatedBuilder(
         animation: _rotationAnimation,
         builder: (context, child) {
           return Transform.rotate(
             angle: _rotationAnimation.value * 3.14,
-            child: CircleAvatar(
-              radius: 15,
-              backgroundColor: _rotationAnimation.value > 0.5
-                  ? Colors.blueGrey
-                  : Colors.grey.shade300,
-              child: Icon(
-                Icons.keyboard_arrow_down,
-                color: _rotationAnimation.value > 0.5
-                    ? Colors.white
-                    : Colors.black,
-              ),
+            child: SvgPicture.asset(
+              "assets/icons/arrow-down-contained.svg",
+              width: 30,
+              height: 30,
             ),
           );
         },

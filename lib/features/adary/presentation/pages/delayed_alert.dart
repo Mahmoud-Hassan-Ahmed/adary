@@ -8,6 +8,7 @@ import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/domain/usecases/get_models18_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/delay/delay_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/admin_prepation.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_delayed_alert.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/item_delay_alert.dart';
 import 'package:adary/injections/injection_main.dart';
@@ -28,6 +29,7 @@ class DelayedAlert extends StatefulWidget {
 class _DelayedAlertState extends State<DelayedAlert> {
   final PagingController<int, Model18Model> _pagingController =
       PagingController(firstPageKey: 1);
+
   final entity = PaginationEntity(page: 1);
   final getModel18useCase = sl<GetModels18UseCase>();
   @override
@@ -63,6 +65,7 @@ class _DelayedAlertState extends State<DelayedAlert> {
 
   @override
   Widget build(BuildContext context) {
+    AdminPrepation.pagingController = _pagingController;
     return BlocProvider(
       create: (context) => sl<DelayBloc>(),
       child: BlocBuilder<DelayBloc, DelayState>(
@@ -82,44 +85,45 @@ class _DelayedAlertState extends State<DelayedAlert> {
           }
           return SafeArea(
             child: Scaffold(
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains('api/notes/model18/add/')) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return AddDelayedAlert(
-                              pagingController: _pagingController,
-                            );
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        'del'.tr(),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                // TextButton(
-                //   onPressed: () {},
-                //   child: Text(
-                //     'تصدير PDF',
-                //     style: AbhayaLibreSemiBold.copyWith(
-                //         color: Colors.black,
-                //         decoration: TextDecoration.underline),
-                //   ),
-                // ),
-              ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   if (AppUtils.permissions.isNotEmpty &&
+              //           AppUtils.permissions
+              //               .any((p) => p.contains('api/notes/model18/add/')) ||
+              //       AppUtils.permissions.isEmpty)
+              //     Expanded(
+              //       child: ElevatedButton(
+              //         onPressed: () {
+              //           showModalBottomSheet(
+              //             isScrollControlled: true,
+              //             context: context,
+              //             builder: (context) {
+              //               return AddDelayedAlert(
+              //                 pagingController: _pagingController,
+              //               );
+              //             },
+              //           );
+              //         },
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor: Colors.black,
+              //           elevation: 4,
+              //         ),
+              //         child: Text(
+              //           'del'.tr(),
+              //           style: TextStyle(color: Colors.white),
+              //         ),
+              //       ),
+              //     ),
+              //   // TextButton(
+              //   //   onPressed: () {},
+              //   //   child: Text(
+              //   //     'تصدير PDF',
+              //   //     style: AbhayaLibreSemiBold.copyWith(
+              //   //         color: Colors.black,
+              //   //         decoration: TextDecoration.underline),
+              //   //   ),
+              //   // ),
+              // ]),
+
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

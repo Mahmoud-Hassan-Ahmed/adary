@@ -9,10 +9,12 @@ import 'package:adary/features/adary/domain/usecases/get_students_use_case.dart'
 import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/add_social.dart';
 import 'package:adary/features/adary/presentation/widgets/social/item_student.dart';
+import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -72,37 +74,50 @@ class _ClassesListState extends State<ClassesList> {
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(
-                title: 'MaritalStatus'.tr(),
-              ),
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains("/api/notes/add_social/")) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: BtnApp(
-                        label: 'add student'.tr(),
-                        onTap: () {
-                          showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return AddSocial(
-                                pagingController: _pagingController,
-                              );
-                            },
+              appBar: MyAppBar(title: 'MaritalStatus'.tr(), actions: [
+                IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return AddSocial(
+                            pagingController: _pagingController,
                           );
-                        }),
-                  )
+                        },
+                      );
+                    },
+                    icon: SvgPicture.asset("assets/icons/icon-add.svg"))
               ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   if (AppUtils.permissions.isNotEmpty &&
+              //           AppUtils.permissions
+              //               .any((p) => p.contains("/api/notes/add_social/")) ||
+              //       AppUtils.permissions.isEmpty)
+              //     Expanded(
+              //       child: BtnApp(label: 'add student'.tr(), onTap: () {}),
+              //     )
+              // ]),
               body: PagedListView<int, StudentModel>(
-                  padding: EdgeInsets.zero,
+                  padding: const EdgeInsets.all(10),
                   physics: const BouncingScrollPhysics(),
                   pagingController: _pagingController,
                   builderDelegate: PagedChildBuilderDelegate<StudentModel>(
                       noItemsFoundIndicatorBuilder: (context) => Center(
-                            child: Image.asset('assets/images/add.png'),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/add.png'),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const LabelMainText(
+                                  text: 'لا يوجد حالات إجتماعية للعرض',
+                                  color: Colors.black,
+                                )
+                              ],
+                            ),
                           ),
                       itemBuilder: (context, item, index) {
                         return ItemsStudent(

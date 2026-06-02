@@ -62,3 +62,9 @@ final class ChnageNotifyState3 extends ClassVisitState {}
 final class DoneUpdateVisitState extends ClassVisitState {}
 
 final class DoneDeleteVisitState extends ClassVisitState {}
+
+final class DoneGetIdEvaluationState extends ClassVisitState {
+  final EvaluationModel visit;
+
+  DoneGetIdEvaluationState({required this.visit});
+}

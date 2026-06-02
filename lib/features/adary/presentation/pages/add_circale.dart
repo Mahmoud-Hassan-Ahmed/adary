@@ -6,6 +6,7 @@ import 'package:adary/core/model/select_model.dart';
 import 'package:adary/core/share/inputs/input_app.dart';
 import 'package:adary/core/share/inputs/select_mutiple.dart';
 import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/date_widget.dart';
 import 'package:adary/core/share/widgets/file_input.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
@@ -16,6 +17,7 @@ import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/circular/circular_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,7 @@ class _AddCircaleState extends State<AddCircale> {
   String? dateHijri;
   bool valueSelect = false;
   bool sendSms = false;
+  bool sendwhats = false;
   bool valueSelect2 = true;
   File? file;
   final formState = GlobalKey<FormState>();
@@ -91,6 +94,8 @@ class _AddCircaleState extends State<AddCircale> {
             valueSelect = !valueSelect;
           } else if (state is ChnageNotifyState3) {
             sendSms = !sendSms;
+          } else if (state is ChnageNotifyState4) {
+            sendwhats = !sendwhats;
           } else if (state is ChnageNotifyState2) {
             valueSelect2 = !valueSelect2;
             if (valueSelect2) {
@@ -99,8 +104,12 @@ class _AddCircaleState extends State<AddCircale> {
               selected = [];
             }
           } else if (state is DoneAddCircularState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('added_circular'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('added_circular'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة التعميم بنجاح', title: 'إضافة تعميم جديد'));
+            });
             Navigator.pop(context);
             widget.pagingController.refresh();
           } else if (state is DoneGetAllCirularsState) {
@@ -112,18 +121,23 @@ class _AddCircaleState extends State<AddCircale> {
               }
             }
           } else if (state is DoneUpdateCircularState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('updated_circular'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('updated_circular'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('updated_circular'), title: 'إضافة تعميم جديد'));
+            });
             Navigator.pop(context);
             widget.pagingController.refresh();
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: e.tr('back')),
+              appBar: MyAppBar(title: e.tr('إضافة تعميم جديد ')),
               bottomNavigationBar: BottomNavigatorBar(items: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
+                  child: BtnApp(
+                    label: e.tr('save'),
+                    onTap: () {
                       if (formState.currentState!.validate()) {
                         if (!valueSelect2 && selected.isEmpty) {
                           AppUtils.showCustomSnackbar(
@@ -165,14 +179,6 @@ class _AddCircaleState extends State<AddCircale> {
                         }
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      e.tr('save'),
-                      style: const TextStyle(color: Colors.white),
-                    ),
                   ),
                 ),
               ]),
@@ -205,27 +211,6 @@ class _AddCircaleState extends State<AddCircale> {
                     Titile(
                       label: e.tr('choose_teachers'),
                     ),
-                    Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            BaseBloc.get<CircularBloc>(context)
-                                .add(ChnageNotifyEvent());
-                          },
-                          child: RadioBtn(
-                              group: valueSelect2 ? 2 : 0,
-                              label: e.tr('all_teachers'),
-                              value: 2,
-                              valueChanged: (v) {
-                                BaseBloc.get<CircularBloc>(context)
-                                    .emitState(ChnageNotifyState2());
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                     SelectMutiple(
                       selectedItems: selected,
                       items: teachers,
@@ -238,29 +223,53 @@ class _AddCircaleState extends State<AddCircale> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Titile(
-                      label: e.tr('not_teachers'),
+                    InkWell(
+                      onTap: () {
+                        BaseBloc.get<CircularBloc>(context)
+                            .add(ChnageNotifyEvent());
+                      },
+                      child: RadioBtn(
+                          group: valueSelect2 ? 2 : 0,
+                          label: e.tr('all_teachers'),
+                          value: 2,
+                          valueChanged: (v) {
+                            BaseBloc.get<CircularBloc>(context)
+                                .emitState(ChnageNotifyState2());
+                          }),
                     ),
-                    // const SizedBox(
-                    //   height: 10,
-                    // ),
-                    Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        BaseBloc.get<CircularBloc>(context)
+                            .add(ChnageNotifyEvent());
+                      },
+                      child: RadioBtn(
+                          group: valueSelect ? 1 : 0,
+                          label: e.tr('أشعار المعلميين عن طريق الواتس اب '),
+                          value: 1,
+                          valueChanged: (v) {
                             BaseBloc.get<CircularBloc>(context)
                                 .add(ChnageNotifyEvent());
-                          },
-                          child: RadioBtn(
-                              group: valueSelect ? 1 : 0,
-                              label: e.tr('yes'),
-                              value: 1,
-                              valueChanged: (v) {
-                                BaseBloc.get<CircularBloc>(context)
-                                    .add(ChnageNotifyEvent());
-                              }),
-                        ),
-                      ],
+                          }),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        BaseBloc.get<CircularBloc>(context)
+                            .add(ChnageNotifyEvent2());
+                      },
+                      child: RadioBtn(
+                          group: sendwhats ? 4 : 5,
+                          label: e.tr('أشعار المعلميين عن طريق التطبيق '),
+                          value: 4,
+                          valueChanged: (v) {
+                            BaseBloc.get<CircularBloc>(context)
+                                .add(ChnageNotifyEvent2());
+                          }),
                     ),
                     if (AppUtils.appUser?.smsService != null &&
                         AppUtils.appUser!.smsService!.isActive)
@@ -270,10 +279,7 @@ class _AddCircaleState extends State<AddCircale> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Titile(
-                              label: e.tr('send_sms'),
-                            ),
-                            // const SizedBox(
+
                             //   height: 10,
                             // ),
                             Row(

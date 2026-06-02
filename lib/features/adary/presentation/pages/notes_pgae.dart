@@ -70,31 +70,32 @@ class _NotesPageState extends State<NotesPage> {
           }
           return SafeArea(
             child: Scaffold(
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return FractionallySizedBox(
-                          child: AddNotePage(
-                            pagingController: _pagingController,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    elevation: 4,
-                  ),
-                  child: Text(
-                    'new_note'.tr(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   ElevatedButton(
+              //     onPressed: () {
+              //       showModalBottomSheet(
+              //         isScrollControlled: true,
+              //         context: context,
+              //         builder: (context) {
+              //           return FractionallySizedBox(
+              //             child: AddNotePage(
+              //               pagingController: _pagingController,
+              //             ),
+              //           );
+              //         },
+              //       );
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.black,
+              //       elevation: 4,
+              //     ),
+              //     child: Text(
+              //       'new_note'.tr(),
+              //       style: const TextStyle(color: Colors.white),
+              //     ),
+              //   ),
+              // ]),
+
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 import 'package:adary/features/table/controller/calender_controller.dart';
 import 'package:adary/features/table/controller/class_room_controller.dart';
 import 'package:adary/features/table/helper/route_helper.dart';
@@ -12,6 +13,7 @@ import 'package:adary/features/table/view/screen/laps/widget/laps_drop_down.dart
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'dart:math' as math;
@@ -53,61 +55,122 @@ class _LapsState extends State<Laps> {
       child: SafeArea(
         child: Scaffold(
             body: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                   children: [
                     const LapsDropDown(),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Calendar()),
-                    const SizedBox(
-                      height: 10,
+                    Calendar(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LabelMainText(
+                          fontSize: 14,
+                          bold: true,
+                          text:
+                              '${easy.tr('اليوم:')} ${easy.DateFormat('d MMMM yyyy', 'ar').format(DateTime.now())}',
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              Get.toNamed(
+                                  RouteHelper.getAllClassesTAbleRoute());
+                            },
+                            child: LabelMainText(
+                                fontSize: 14,
+                                textunderline: true,
+                                text: easy.tr("view_full_table"))),
+                      ],
                     ),
                     GetBuilder<ClassRoomController>(
                         builder: (classRoomController) {
-                      return classRoomController.tablesList.length > 1
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: SizedBox(
-                                  child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 25,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(25),
-                                      color: AppColors.SECONDERYCOLOR,
-                                    ),
-                                    child: Transform.rotate(
-                                      angle: Get.find<LocalizationController>()
-                                              .isLtr
-                                          ? math.pi / 2
-                                          : math.pi / -2,
-                                      child: Center(
-                                          child: Lottie.asset(
-                                        Images.ARROW_RIGHT,
-                                        fit: BoxFit.cover,
+                      return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          decoration: const BoxDecoration(
+                            color: AppColors.SECONDERYCOLOR,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (classRoomController.tablesList.length !=
+                                        1 &&
+                                    classRoomController.tablesList.isNotEmpty)
+                                  IconButton(
+                                      onPressed: () {
+                                        AppUtils.log(classRoomController
+                                            .tablesList[classRoomController
+                                                .currentIndex]
+                                            .toString());
+                                      },
+                                      icon: SvgPicture.asset(
+                                        "assets/icons/previw.svg",
+                                        color:
+                                            classRoomController.currentIndex > 0
+                                                ? Colors.white
+                                                : Colors.grey,
                                       )),
-                                    ),
+                                if (classRoomController.tablesList.isNotEmpty)
+                                  LabelMainText(
+                                    text: classRoomController.tablesList[
+                                            classRoomController.currentIndex]
+                                        ['classroom_name'],
+                                    color: Colors.white,
                                   ),
-                                  Text(
-                                    easy.tr("scroll"),
-                                    style: AlMaraiaBold.copyWith(fontSize: 16),
-                                  ),
-                                ],
-                              )),
-                            )
-                          : const SizedBox.shrink();
+                                if (classRoomController.tablesList.length !=
+                                        1 &&
+                                    classRoomController.tablesList.isNotEmpty)
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: SvgPicture.asset(
+                                        "assets/icons/next.svg",
+                                        color:
+                                            classRoomController.currentIndex <
+                                                    classRoomController
+                                                            .tablesList.length -
+                                                        1
+                                                ? Colors.white
+                                                : Colors.grey,
+                                      )),
+                              ]));
+                      // ? Padding(
+                      //     padding:
+                      //         const EdgeInsets.symmetric(horizontal: 20),
+                      //     child: SizedBox(
+                      //         child: Row(
+                      //       mainAxisAlignment:
+                      //           MainAxisAlignment.spaceBetween,
+                      //       children: [
+                      //         Container(
+                      //           width: 60,
+                      //           height: 25,
+                      //           decoration: BoxDecoration(
+                      //             borderRadius: BorderRadius.circular(25),
+                      //             color: AppColors.SECONDERYCOLOR,
+                      //           ),
+                      //           child: Transform.rotate(
+                      //             angle: Get.find<LocalizationController>()
+                      //                     .isLtr
+                      //                 ? math.pi / 2
+                      //                 : math.pi / -2,
+                      //             child: Center(
+                      //                 child: Lottie.asset(
+                      //               Images.ARROW_RIGHT,
+                      //               fit: BoxFit.cover,
+                      //             )),
+                      //           ),
+                      //         ),
+                      //         Text(
+                      //           easy.tr("scroll"),
+                      //           style: AlMaraiaBold.copyWith(fontSize: 16),
+                      //         ),
+                      //       ],
+                      //     )),
+                      //   )
                     }),
-                    const SizedBox(
-                      height: 20,
-                    ),
                     GetBuilder<ClassRoomController>(
                         builder: (classRoomController) {
                       return classRoomController.isLoading
@@ -117,45 +180,45 @@ class _LapsState extends State<Laps> {
                               : _Tables(orientation,
                                   classes: classRoomController.tablesList);
                     }),
-                    SizedBox(
-                      height: orientation == Orientation.portrait
-                          ? context.height / 19
-                          : context.width / 19,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                      child: Divider(
-                        color: AppColors.GREYCOLOR,
-                      ),
-                    ),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions.contains(
-                                '/dashboard-mobile/classes/in-classes/') ||
-                        AppUtils.permissions.isEmpty)
-                      GetBuilder<ClassRoomController>(
-                          builder: (classRoomController) {
-                        return classRoomController.tablesList.length > 0
-                            ? GestureDetector(
-                                onTap: () {
-                                  Get.toNamed(
-                                      RouteHelper.getAllClassesTAbleRoute());
-                                },
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                    easy.tr("view_full_table"),
-                                    style: AlMaraiaBold.copyWith(
-                                        fontSize: 16,
-                                        decoration: TextDecoration.underline),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink();
-                      }),
-                    const SizedBox(
-                      height: 60,
-                    ),
+                    // SizedBox(
+                    //   height: orientation == Orientation.portrait
+                    //       ? context.height / 19
+                    //       : context.width / 19,
+                    // ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //       horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+                    //   child: Divider(
+                    //     color: AppColors.GREYCOLOR,
+                    //   ),
+                    // ),
+                    // if (AppUtils.permissions.isNotEmpty &&
+                    //         AppUtils.permissions.contains(
+                    //             '/dashboard-mobile/classes/in-classes/') ||
+                    //     AppUtils.permissions.isEmpty)
+                    //   GetBuilder<ClassRoomController>(
+                    //       builder: (classRoomController) {
+                    //     return classRoomController.tablesList.length > 0
+                    //         ? GestureDetector(
+                    //             onTap: () {
+                    //               Get.toNamed(
+                    //                   RouteHelper.getAllClassesTAbleRoute());
+                    //             },
+                    //             child: Align(
+                    //               alignment: Alignment.bottomCenter,
+                    //               child: Text(
+                    //                 easy.tr("view_full_table"),
+                    //                 style: AlMaraiaBold.copyWith(
+                    //                     fontSize: 16,
+                    //                     decoration: TextDecoration.underline),
+                    //               ),
+                    //             ),
+                    //           )
+                    //         : const SizedBox.shrink();
+                    //   }),
+                    // const SizedBox(
+                    //   height: 60,
+                    // ),
                   ],
                 ))),
       ),
@@ -325,6 +388,7 @@ class _LapsState extends State<Laps> {
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemCount: classes.length,
+              onPageChanged: classRoomController.onPageChanged,
               controller: classRoomController.tableClassController,
               itemBuilder: (context, index) {
                 return Padding(
@@ -335,123 +399,173 @@ class _LapsState extends State<Laps> {
   }
 
   Widget _table(orientation, {required Map<String, dynamic> singleClass}) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: Dimensions.RADIUS_DEFAULT + 2),
-        child: SizedBox(
-            width: context.width,
-            height: orientation == Orientation.portrait
-                ? context.height / 1.3
-                : context.width / 1.3,
-            child: DottedBorder(
-              borderType: BorderType.RRect,
-              dashPattern: const [10, 10],
-              color: Colors.grey,
-              strokeWidth: 1,
-              radius: const Radius.circular(12),
-              padding: const EdgeInsets.all(6),
-              child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  child: SizedBox(
-                    height: orientation == Orientation.portrait
-                        ? context.height / 0.8
-                        : context.width / 0.8,
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                          child: Row(
+    return Column(
+      children: [
+        // const SizedBox(height: 20),
+
+        /// Title
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(
+        //       horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+        //   child: Row(
+        //     children: [
+        //       Text(
+        //         singleClass["classroom_name"].toString(),
+        //         style: AlMaraiaBold.copyWith(
+        //           fontSize: 18,
+        //           color: AppColors.SECONDERYCOLOR,
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        // ),
+
+        /// TABLE
+        Expanded(
+          child: GetBuilder<TeacherPageController>(
+            builder: (teacherPageController) {
+              return GetBuilder<CalednerController>(
+                builder: (calednerController) {
+                  return SingleChildScrollView(
+                    child: Table(
+                      border: TableBorder.all(
+                        color: AppColors.SECONDERYCOLOR,
+                        width: 1,
+                      ),
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: List.generate(
+                        teacherPageController.classesNamesAndNumbers.length,
+                        (index) {
+                          return TableRow(
                             children: [
-                              Text(
-                                singleClass["classroom_name"].toString(),
-                                style: AlMaraiaBold.copyWith(
-                                    fontSize: 18,
-                                    color: AppColors.SECONDERYCOLOR),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: orientation == Orientation.portrait
-                              ? context.height / 1.9
-                              : context.width / 1.9,
-                          child: GetBuilder<TeacherPageController>(
-                              builder: (teacherPageController) {
-                            return GetBuilder<CalednerController>(
-                                builder: (calednerController) {
-                              return GridView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: teacherPageController
-                                      .classesNamesAndNumbers.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 1,
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 6,
-                                    mainAxisExtent:
-                                        orientation == Orientation.portrait
-                                            ? context.height / 16
-                                            : context.width / 16,
+                              /// Session
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      teacherPageController
+                                          .classesNamesAndNumbers[index]
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          singleClass["table"][
+                                                  "${calednerController.selectedDayIndex}"]
+                                              ["${index + 1}"]["start_time"],
+                                          style: const TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.SECONDERYCOLOR),
+                                        ),
+                                        const SizedBox(width: 2),
+                                        const Text(
+                                          '-',
+                                          style: TextStyle(
+                                              color: AppColors.SECONDERYCOLOR),
+                                        ),
+                                        const SizedBox(width: 2),
+                                        Text(
+                                          singleClass["table"][
+                                                  "${calednerController.selectedDayIndex}"]
+                                              ["${index + 1}"]["end_time"],
+                                          style: const TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.SECONDERYCOLOR),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              /// Subject
+                              Center(
+                                child: Text(
+                                  StringHanler.cutString(
+                                    txt: singleClass["table"][
+                                                "${calednerController.selectedDayIndex}"]
+                                            ["${index + 1}"]["cell_text"]
+                                        .toString(),
+                                    isName: false,
+                                    pattern: "\n",
                                   ),
-                                  itemBuilder: (_, index) {
-                                    return _tableRow(
-                                        session: teacherPageController
-                                            .classesNamesAndNumbers[index]
-                                            .toString(),
-                                        start_time: singleClass["table"]
-                                                ["${calednerController.selectedDayIndex}"]
-                                            ["${index + 1}"]["start_time"],
-                                        end_time: singleClass["table"]
-                                                ["${calednerController.selectedDayIndex}"]
-                                            ["${index + 1}"]["end_time"],
-                                        subject: StringHanler.cutString(
-                                            txt: singleClass["table"]
-                                                        ["${calednerController.selectedDayIndex}"]
-                                                    ["${index + 1}"]["cell_text"]
-                                                .toString(),
-                                            isName: false,
-                                            pattern: "\n"),
-                                        instructorName: StringHanler.cutString(txt: singleClass["table"]["${Get.find<CalednerController>().selectedDayIndex}"]["${index + 1}"]["cell_text"].toString(), isName: true, pattern: "\n"));
-                                  });
-                            });
-                          }),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(
-                                  () => AllTable(
-                                        singleClass: singleClass,
-                                      ),
-                                  transition: Transition.cupertino);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  easy.tr("view_table"),
+                                  textAlign: TextAlign.center,
                                   style: AlMaraiaBold.copyWith(
-                                      fontSize: 16,
-                                      decoration: TextDecoration.underline),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
+                                    fontSize: 15,
+                                    color: AppColors.FONTCOLOR,
+                                  ),
+                                ),
+                              ),
+
+                              /// Instructor
+                              Center(
+                                child: Text(
+                                  StringHanler.cutString(
+                                    txt: singleClass["table"][
+                                                "${calednerController.selectedDayIndex}"]
+                                            ["${index + 1}"]["cell_text"]
+                                        .toString(),
+                                    isName: true,
+                                    pattern: "\n",
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  style: AlMaraia.copyWith(
+                                    fontSize: 13,
+                                    color: AppColors.FONTCOLOR,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  )),
-            )));
+                  );
+                },
+              );
+            },
+          ),
+        ),
+
+        // const SizedBox(height: 20),
+
+        // /// View Table Button
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(
+        //       horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+        //   child: GestureDetector(
+        //     onTap: () {
+        //       Get.to(
+        //         () => AllTable(singleClass: singleClass),
+        //         transition: Transition.cupertino,
+        //       );
+        //     },
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.end,
+        //       children: [
+        //         Text(
+        //           easy.tr("view_table"),
+        //           style: AlMaraiaBold.copyWith(
+        //             fontSize: 16,
+        //             decoration: TextDecoration.underline,
+        //           ),
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // ),
+
+        // const SizedBox(height: 10),
+      ],
+    );
   }
 
   Widget _TableCardLoader(orientation) {

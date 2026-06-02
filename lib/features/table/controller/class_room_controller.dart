@@ -41,6 +41,11 @@ class ClassRoomController extends GetxController implements GetxService {
   List<tableModel> _classesTableList = [];
   List<tableModel> get classesTableList => _classesTableList;
   List<ClassesMeta> get classesNames => _classesNames;
+  int currentIndex = 0;
+  void onPageChanged(int index) {
+    currentIndex = index;
+    update();
+  }
 
   final Map<String, String> _sessions = {
     "0": "first",

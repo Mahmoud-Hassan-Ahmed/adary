@@ -18,7 +18,11 @@ class BtnIcon extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(icon),
+          SvgPicture.asset(
+            icon,
+            height: 30,
+            width: 30,
+          ),
           Text(
             label,
             style: Theme.of(context).textTheme.labelMedium,

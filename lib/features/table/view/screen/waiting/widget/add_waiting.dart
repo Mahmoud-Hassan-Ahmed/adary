@@ -1,3 +1,7 @@
+import 'package:adary/core/share/widgets/btn_app.dart';
+import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
+import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 import 'package:adary/features/table/controller/calender_controller.dart';
 import 'package:adary/features/table/controller/teatcher_controller.dart';
 import 'package:adary/features/table/utils/app_colors.dart';
@@ -33,90 +37,72 @@ class _AddWaititngState extends State<AddWaititng> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              BackBtn(),
-              const SizedBox(
-                height: Dimensions.PADDING_SIZE_EXTRA_LARGE + 10,
-              ),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: SizedBox(
-                    width: 200,
-                    height: 54,
-                    child: Wrap(
-                      children: [
-                        Text(
-                          easy.tr("upsent_teacher"),
-                          style: AlMaraiaBold.copyWith(fontSize: 22),
-                        ),
-                      ],
-                    ),
-                  )),
-              SizedBox(
-                height: 5,
-              ),
-
-              GetBuilder<TeacherController>(builder: (teacherController) {
-                return teacherController.isLoading
-                    ? _loader()
-                    : _content(teacherController: teacherController);
-              }),
-              SizedBox(
-                height: 17,
-              ),
-
-              // end of instructor list
-
-              GetBuilder<TeacherController>(builder: (teacherController) {
-                return teacherController.isLoading
-                    ? _addLoader()
-                    : GestureDetector(
-                        onTap: () async {
-                          await teacherController
-                              .setAbsentTeachers(
-                                  dayNum: Get.find<CalednerController>()
-                                      .selectedDayIndex)
-                              .then((value) {
-                            if (Get.find<TeacherController>()
-                                .failedmessages
-                                .isNotEmpty) {
-                              _showMyDialog();
-                            }
-                          });
-                        },
-                        child: Container(
-                          width: 300,
-                          height: 56,
-                          decoration: BoxDecoration(
-                              color: AppColors.SECONDERYCOLOR,
-                              borderRadius: BorderRadius.circular(
-                                  Dimensions.RADIUS_DEFAULT)),
-                          child: teacherController.isSending
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.MAINCOLOR,
-                                  ),
-                                )
-                              : Center(
-                                  child: Text(
-                                    "اضافة",
-                                    style: AlMaraiaBold.copyWith(
-                                        fontSize: 16,
-                                        color: AppColors.MAINCOLOR),
-                                  ),
-                                ),
-                        ),
-                      );
-              }),
-              // end of add btn
-            ],
+    return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(14),
+        child: GetBuilder<TeacherController>(builder: (teacherController) {
+          return teacherController.isLoading
+              ? _addLoader()
+              : BtnApp(
+                  label: 'حسناً ',
+                  onTap: () async {
+                    await teacherController
+                        .setAbsentTeachers(
+                            dayNum:
+                                Get.find<CalednerController>().selectedDayIndex)
+                        .then((value) {
+                      if (Get.find<TeacherController>()
+                          .failedmessages
+                          .isNotEmpty) {
+                        _showMyDialog();
+                      } else {
+                        AppUtils.go(const DoneAddedPage(
+                            label: 'تم إضافة المعلمين المتغيبين بنجاح',
+                            title: 'حصص الانتظار   '));
+                      }
+                    });
+                  },
+                );
+        }),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 10,
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                LabelMainText(
+                  text: easy.tr("upsent_teacher"),
+                  fontSize: 15,
+                  color: Colors.blue,
+                ),
+                BackBtn(),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+
+          Expanded(
+            child: GetBuilder<TeacherController>(builder: (teacherController) {
+              return teacherController.isLoading
+                  ? _loader()
+                  : _content(teacherController: teacherController);
+            }),
+          ),
+          SizedBox(
+            height: 17,
+          ),
+
+          // end of instructor list
+
+          // end of add btn
+        ],
       ),
     );
   }
@@ -167,69 +153,65 @@ class _AddWaititngState extends State<AddWaititng> {
 
   Widget _content({required TeacherController teacherController}) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 52),
-        child: SizedBox(
-          height: 400,
-          child: GridView.builder(
-            physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            itemCount: teacherController.teacherList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              crossAxisSpacing: 1,
-              mainAxisSpacing: 1,
-              mainAxisExtent: context.height / 15,
-            ),
-            itemBuilder: (_, index) => Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      teacherController.toggleAbsent(
-                          instructorID:
-                              teacherController.teacherList[index].id!);
-                    },
-                    child: Container(
-                      width: 25,
-                      height: 25,
-                      decoration: BoxDecoration(
-                        color:
-                            teacherController.teacherList[index].hasAbsentToday!
-                                ? AppColors.SECONDERYCOLOR
-                                : AppColors.MAINCOLOR,
-                        border: Border.all(
-                            color: teacherController
-                                    .teacherList[index].hasAbsentToday!
-                                ? AppColors.SECONDERYCOLOR
-                                : AppColors.FONTCOLOR,
-                            width: 2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                          child: teacherController
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: GridView.builder(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemCount: teacherController.teacherList.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            crossAxisSpacing: 1,
+            mainAxisSpacing: 1,
+            mainAxisExtent: context.height / 15,
+          ),
+          itemBuilder: (_, index) => Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    teacherController.toggleAbsent(
+                        instructorID: teacherController.teacherList[index].id!);
+                  },
+                  child: Container(
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color:
+                          teacherController.teacherList[index].hasAbsentToday!
+                              ? AppColors.SECONDERYCOLOR
+                              : AppColors.MAINCOLOR,
+                      border: Border.all(
+                          color: teacherController
                                   .teacherList[index].hasAbsentToday!
-                              ? Icon(
-                                  Icons.done,
-                                  color: AppColors.MAINCOLOR,
-                                  size: 20,
-                                )
-                              : const SizedBox.shrink()),
+                              ? AppColors.SECONDERYCOLOR
+                              : AppColors.FONTCOLOR,
+                          width: 2),
+                      borderRadius: BorderRadius.circular(5),
                     ),
+                    child: Center(
+                        child:
+                            teacherController.teacherList[index].hasAbsentToday!
+                                ? Icon(
+                                    Icons.done,
+                                    color: AppColors.MAINCOLOR,
+                                    size: 20,
+                                  )
+                                : const SizedBox.shrink()),
                   ),
-                  const SizedBox(
-                    width: 4,
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                SizedBox(
+                  width: 200,
+                  child: Text(
+                    teacherController.teacherList[index].name.toString(),
+                    style: AlMaraiaBold.copyWith(
+                        fontSize: 16, overflow: TextOverflow.ellipsis),
                   ),
-                  SizedBox(
-                    width: 200,
-                    child: Text(
-                      teacherController.teacherList[index].name.toString(),
-                      style: AlMaraiaBold.copyWith(
-                          fontSize: 16, overflow: TextOverflow.ellipsis),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ));

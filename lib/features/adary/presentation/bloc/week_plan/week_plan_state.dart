@@ -36,3 +36,17 @@ final class DoneGetTeachers extends WeekPlanState {
     required this.list,
   });
 }
+
+final class DoneGetWeeksGroup extends WeekPlanState {
+  final List<WeekGroupModel> list;
+
+  const DoneGetWeeksGroup({
+    required this.list,
+  });
+}
+
+final class DoneAddWeekGroupState extends WeekPlanState {}
+
+final class DoneUpdateWeekGroupState extends WeekPlanState {}
+
+final class DoneDeleteWeekGroupState extends WeekPlanState {}

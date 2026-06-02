@@ -35,6 +35,12 @@ final class DeletVisitEvent extends ClassVisitEvent {
   const DeletVisitEvent({required this.enity});
 }
 
+final class GetEvaluationByVisitEvent extends ClassVisitEvent {
+  final int v;
+
+  const GetEvaluationByVisitEvent({required this.v});
+}
+
 final class ExportVisitsEvent extends ClassVisitEvent {
   final FileDownloadEneity fileDownloadEneity;
 

@@ -13,6 +13,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
 import 'package:adary/features/adary/domain/entities/teacher_task.dart';
 import 'package:adary/features/adary/presentation/bloc/delay_task/delay_task_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/titile.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -72,16 +73,26 @@ class AddTeacherTask extends StatelessWidget {
           } else if (state is ChangeTime1State) {
             time1 = state.value;
           } else if (state is DobneAddTaskTeacherState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('added_mission'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('added_mission'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إسناد المهمة بنجاح',
+                  title: 'إسناد مهمة إلي المعلم '));
+            });
             Navigator.pop(context);
 
             if (pagingController != null) {
               pagingController!.refresh();
             }
           } else if (state is DobneUpdateTaskTeacherState) {
-            AppUtils.showCustomSnackbar(
-                e.tr('updated_mission'), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(
+            //     e.tr('updated_mission'), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('updated_mission'),
+                  title: 'إسناد مهمة إلي المعلم '));
+            });
             Navigator.pop(context);
 
             if (pagingController != null) {
@@ -182,23 +193,35 @@ class AddTeacherTask extends StatelessWidget {
                               .emitState(SelectDateState(value: hijriDate));
                         },
                       ),
-                      Titile(label: e.tr('from_houre')),
-                      TimeButton(
-                        onChange: (v) {
-                          BaseBloc.get<DelayTaskBloc>(context).emitState(
-                              ChangeTime1State(
-                                  value: DateFormat('HH:mm').format(v)));
-                        },
-                        selectDate: time1,
-                      ),
-                      Titile(label: e.tr('to_houre')),
-                      TimeButton(
-                        onChange: (v) {
-                          BaseBloc.get<DelayTaskBloc>(context).emitState(
-                              ChangeTime2State(
-                                  value: DateFormat('HH:mm').format(v)));
-                        },
-                        selectDate: time2,
+                      Titile(label: e.tr('choose_time')),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TimeButton(
+                              label: '${e.tr('from_houre')}',
+                              onChange: (v) {
+                                BaseBloc.get<DelayTaskBloc>(context).emitState(
+                                    ChangeTime1State(
+                                        value: DateFormat('HH:mm').format(v)));
+                              },
+                              selectDate: time1,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TimeButton(
+                              label: '${e.tr('to_houre')}',
+                              onChange: (v) {
+                                BaseBloc.get<DelayTaskBloc>(context).emitState(
+                                    ChangeTime2State(
+                                        value: DateFormat('HH:mm').format(v)));
+                              },
+                              selectDate: time2,
+                            ),
+                          ),
+                        ],
                       ),
                       Titile(label: e.tr('repeat')),
                       SelectInput(

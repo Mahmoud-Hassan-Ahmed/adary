@@ -1,5 +1,5 @@
 class Api {
-  static String domain = 'http://192.168.1.2:8000/';
+  static String domain = 'https://www.smartble.net/';
   static String baseUrl = '$domain';
   static String notes = 'api/notes/note/';
   static String teachers = 'api/notes/teachers/';
@@ -10,6 +10,7 @@ class Api {
   static String classes = 'api/notes/classes/';
   static String students = 'api/notes/students/';
   static String studentsPage = 'api/notes/students_pgae/';
+  static String studentList = 'api/notes/studentList/';
   static String circulars = 'api/notes/circulars/';
   static String model18 = 'api/notes/model18/';
   static String weekly = 'api/weekly-plan/week-info/';
@@ -24,4 +25,20 @@ class Api {
   static String taskList = 'daily-supervision/api/tasks/';
   static String createTask = 'daily-supervision/api/daily-tasks/create/';
   static String me = 'dashboard-mobile/my-account/';
+  static String attendnce = 'api/notes/attendance/';
+  static String behavoir = 'api/notes/behavior_record/';
+  static String behavoir_note = 'api/notes/behavior_note/';
+  static String exam = '/daily-supervision/api/exam-hall-groups/';
+  static String examByDay = '/halls-by-day/';
+  static String evaluation = '/api/notes/evaluation/';
+  static String evaluationPlanning = '/api/notes/planning/create/';
+  static String evaluationInteraction = '/api/notes/interaction/create/';
+  static String evaluationManagment = '/api/notes/management/create/';
+  static String evaluationImplementation = '/api/notes/implementation/create/';
+  static String evidenceCategories = '/api/notes/evi-categories/';
+  static String evidencesSchool = '/api/notes/evidence-school/';
+  static String weekGroup = '/api/notes/week-groups/';
+  static String attendanceStatistics = 'api/notes/attendance/statistics/';
+  static String behaviorStatistics = 'api/notes/behavior/statistics/';
+  static String downloadReport = 'api/notes/reports/generate/';
 }

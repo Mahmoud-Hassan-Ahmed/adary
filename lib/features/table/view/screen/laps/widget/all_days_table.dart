@@ -34,7 +34,7 @@ class _AllTableState extends State<AllDaysTable> {
       color: AppColors.SECONDERYCOLOR,
       child: SafeArea(
         child: Scaffold(
-          appBar: MyAppBar(title: easy.tr('back')),
+          appBar: MyAppBar(title: easy.tr('الجدول المدرسي')),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -43,14 +43,13 @@ class _AllTableState extends State<AllDaysTable> {
                 //   height: 60,
                 // ),
                 // MainAppBar(),
-                const SizedBox(
-                  height: 20,
+
+                const Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: const LapsDropDown(),
                 ),
-                const LapsDropDown(),
                 // end of drop down
-                const SizedBox(
-                  height: 20,
-                ),
 
                 SizedBox(
                   height: orientation == Orientation.portrait
@@ -78,6 +77,9 @@ class _AllTableState extends State<AllDaysTable> {
                                           grade: classRoomController
                                                   .tablesList[index]
                                               ['classroom_name']),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       AppTable(
                                         table: classRoomController
                                             .tablesList[index],

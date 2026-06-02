@@ -7,6 +7,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
 import 'package:adary/features/adary/domain/entities/task_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/task/task_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,11 @@ class _AddTaskState extends State<AddTask> {
       child: BlocBuilder<TaskBloc, TaskState>(
         builder: (context, state) {
           if (state is DoneAddTask) {
-            AppUtils.showCustomSnackbar('added_mission'.tr(), SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar('added_mission'.tr(), SnackType.SUCESS);
+            WidgetsBinding.instance.addPostFrameCallback((callback) {
+              AppUtils.go(const DoneAddedPage(
+                  label: 'تم إضافة المهمة بنجاح', title: 'إضافة مهمة جديدة '));
+            });
 
             Navigator.pop(context);
             widget.fun!();
@@ -58,7 +63,25 @@ class _AddTaskState extends State<AddTask> {
               key: formState,
               child: SafeArea(
                 child: Scaffold(
-                  appBar: MyAppBar(title: 'back'.tr()),
+                  appBar: MyAppBar(title: 'إضافة مهمة جديدة '.tr()),
+                  bottomNavigationBar: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: BtnApp(
+                        label: 'save'.tr(),
+                        onTap: () {
+                          if (formState.currentState!.validate()) {
+                            if (widget.taskModel == null) {
+                              BaseBloc.get<TaskBloc>(context).add(AddTaskEvent(
+                                  entity: TaskEntity(name: name.text)));
+                            } else {
+                              BaseBloc.get<TaskBloc>(context).add(UpdateTask(
+                                  entity: TaskEntity(
+                                      name: name.text,
+                                      id: widget.taskModel!.id)));
+                            }
+                          }
+                        }),
+                  ),
                   body: ListView(
                     padding: const EdgeInsets.only(
                         top: 0, right: 10, left: 10, bottom: 10),
@@ -67,25 +90,6 @@ class _AddTaskState extends State<AddTask> {
                           textEditingController: name,
                           label: 'name'.tr(),
                           hint: 'write_here'.tr()),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      BtnApp(
-                          label: 'save'.tr(),
-                          onTap: () {
-                            if (formState.currentState!.validate()) {
-                              if (widget.taskModel == null) {
-                                BaseBloc.get<TaskBloc>(context).add(
-                                    AddTaskEvent(
-                                        entity: TaskEntity(name: name.text)));
-                              } else {
-                                BaseBloc.get<TaskBloc>(context).add(UpdateTask(
-                                    entity: TaskEntity(
-                                        name: name.text,
-                                        id: widget.taskModel!.id)));
-                              }
-                            }
-                          })
                     ],
                   ),
                 ),

@@ -93,6 +93,37 @@ class AddDelayedAlert extends StatelessWidget {
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
                 appBar: MyAppBar(title: e.tr('back')),
+                bottomNavigationBar: BtnApp(
+                    label: e.tr('save'),
+                    onTap: () {
+                      if (formKry.currentState!.validate()) {
+                        if (model18model == null) {
+                          BaseBloc.get<DelayBloc>(context).add(AddModel18Event(
+                              model18: Model18(
+                                  dayDate: dateHijri,
+                                  dayName: (selectDay as Relations).value,
+                                  teacherId: selectTeacher?.id,
+                                  startLateness: time1,
+                                  endLateness: time2,
+                                  fromLateness: time3,
+                                  toLateness: time4)));
+                        } else {
+                          BaseBloc.get<DelayBloc>(context).add(
+                              UpdateModel18Event(
+                                  model18: Model18(
+                                      id: model18model!.id,
+                                      dayDate: dateHijri,
+                                      dayName: (selectDay as Relations).value,
+                                      teacherId: selectTeacher?.id,
+                                      startLateness: time1,
+                                      endLateness: time2,
+                                      fromLateness: time3,
+                                      toLateness: time4)));
+                        }
+                      } else {
+                        print("invalide form");
+                      }
+                    }),
                 body: Form(
                   key: formKry,
                   child: ListView(
@@ -214,43 +245,6 @@ class AddDelayedAlert extends StatelessWidget {
                             ),
                           ],
                         ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      BtnApp(
-                          label: e.tr('save'),
-                          onTap: () {
-                            if (formKry.currentState!.validate()) {
-                              if (model18model == null) {
-                                BaseBloc.get<DelayBloc>(context).add(
-                                    AddModel18Event(
-                                        model18: Model18(
-                                            dayDate: dateHijri,
-                                            dayName:
-                                                (selectDay as Relations).value,
-                                            teacherId: selectTeacher?.id,
-                                            startLateness: time1,
-                                            endLateness: time2,
-                                            fromLateness: time3,
-                                            toLateness: time4)));
-                              } else {
-                                BaseBloc.get<DelayBloc>(context).add(
-                                    UpdateModel18Event(
-                                        model18: Model18(
-                                            id: model18model!.id,
-                                            dayDate: dateHijri,
-                                            dayName:
-                                                (selectDay as Relations).value,
-                                            teacherId: selectTeacher?.id,
-                                            startLateness: time1,
-                                            endLateness: time2,
-                                            fromLateness: time3,
-                                            toLateness: time4)));
-                              }
-                            } else {
-                              print("invalide form");
-                            }
-                          })
                     ],
                   ),
                 ),

@@ -3,10 +3,15 @@ import 'dart:convert';
 import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/datasources/db.dart';
+import 'package:adary/features/adary/data/models/attendance_statistics_model.dart';
+import 'package:adary/features/adary/data/models/behavior_statistics_model.dart';
 import 'package:adary/features/adary/data/models/circular_model.dart';
 import 'package:adary/features/adary/data/models/class_health.dart';
 import 'package:adary/features/adary/data/models/class_room.dart';
 import 'package:adary/features/adary/data/models/classes.dart';
+import 'package:adary/features/adary/data/models/evaluation_model.dart';
+import 'package:adary/features/adary/data/models/evidence_model.dart';
+import 'package:adary/features/adary/data/models/exam_model.dart';
 import 'package:adary/features/adary/data/models/health_model.dart';
 import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/data/models/model_19.dart';
@@ -15,12 +20,14 @@ import 'package:adary/features/adary/data/models/note_entity_model.dart';
 import 'package:adary/features/adary/data/models/note_teacher.dart';
 import 'package:adary/features/adary/data/models/pagination_model.dart';
 import 'package:adary/features/adary/data/models/student_model.dart';
+import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
 import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
 import 'package:adary/features/adary/data/models/teacher_circular.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/data/models/visits_model.dart';
+import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
@@ -28,11 +35,15 @@ import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
+import 'package:adary/features/adary/domain/entities/evidence_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
+import 'package:adary/features/adary/domain/entities/filter_per.dart';
+import 'package:adary/features/adary/domain/entities/filter_report_entity.dart';
 import 'package:adary/features/adary/domain/entities/health_entity.dart';
 import 'package:adary/features/adary/domain/entities/login_entity.dart';
 import 'package:adary/features/adary/domain/entities/note_entity.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
+import 'package:adary/features/adary/domain/entities/register_student_entity.dart';
 import 'package:adary/features/adary/domain/entities/student_entity.dart';
 import 'package:adary/features/adary/domain/entities/task_entity.dart';
 import 'package:adary/features/adary/domain/entities/teacher_circular_entity.dart';
@@ -546,5 +557,184 @@ class DbImp implements Db {
     final response = await dio.get(
         '${Api.weekly}?page=${entity.page}&teacher_id=${entity.teacher}&start_date=${entity.startDate ?? ''}&end_date=${entity.endDate ?? ''}');
     return PageinationModel.fromJson(response.data, WeeklyPan.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<StudentPer>> filterPer(FilterPer entity) async {
+    final response =
+        await dio.get(Api.attendnce, queryParameters: entity.toJson());
+
+    return PageinationModel.fromJson(response.data, StudentPer.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<StudentInfo>> filterstudents(FilterPer entity) async {
+    final response =
+        await dio.get(Api.studentList, queryParameters: entity.toJson());
+
+    return PageinationModel.fromJson(response.data, StudentInfo.fromJson);
+  }
+
+  @override
+  Future<void> registerStudemt(List<BaseEnity> date) async {
+    AppUtils.log("sendPost");
+    final response = await dio.post(
+      Api.attendnce,
+      data: date.map((a) => a.toJson()).toList(),
+    );
+  }
+
+  @override
+  Future<PageinationModel<StudentBehavior>> filterbehavoir(
+      FilterPer entity) async {
+    final response =
+        await dio.get(Api.behavoir, queryParameters: entity.toJson());
+
+    return PageinationModel.fromJson(response.data, StudentBehavior.fromJson);
+  }
+
+  @override
+  Future<void> addBehavoir(List<BaseEnity> date) async {
+    AppUtils.log("sendPost");
+    final response = await dio.post(
+      Api.behavoir,
+      data: date
+          .where((test) => (test as BehavoirRecordEntity).submit)
+          .map((a) => a.toJson())
+          .toList(),
+    );
+  }
+
+  @override
+  Future<List<BehaviorNote>> getNotesBehavoir() async {
+    final response = await dio.get(Api.behavoir_note,
+        queryParameters: {"school": AppUtils.appUser!.id});
+    return AppUtils.generateList(response.data, BehaviorNote.fromJson);
+  }
+
+  @override
+  Future<void> addBehavoirNote(BaseEnity entity) async {
+    final response = await dio.post(Api.behavoir, data: entity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<Exam>> getExames(PaginationEntity entity) async {
+    final response = await dio.get('${Api.exam}?page=${entity.page}');
+    return PageinationModel.fromJson(response.data, Exam.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<ExamDay>> getExamesDays(
+      PaginationEntity entity) async {
+    final response = await dio.get(
+        '${Api.exam}${entity.classId}${Api.examByDay}?page=${entity.page}');
+    return PageinationModel.fromJson(response.data, ExamDay.fromJson);
+  }
+
+  @override
+  Future<void> addExam(BaseEnity entity) async {
+    final response = await dio.post(Api.exam, data: entity.toJson());
+  }
+
+  @override
+  Future<EvaluationModel> getIdEvaluationVisit(int visitId) async {
+    final response = await dio.get('${Api.evaluation}${visitId}/');
+    return EvaluationModel.fromJson(response.data);
+  }
+
+  @override
+  Future<void> updateEvaluationImplementation(Implementation entity) async {
+    await dio.post("${Api.evaluationImplementation}${entity.id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> updateEvaluationInteraction(Interaction entity) async {
+    await dio.post("${Api.evaluationInteraction}${entity.id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> updateEvaluationManagment(Managment entity) async {
+    await dio.post("${Api.evaluationManagment}${entity.id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> updateEvaluationPlanning(Planning entity) async {
+    await dio.post("${Api.evaluationPlanning}${entity.id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<List<EvidenceCategoryModel>> getEvidenceCategories() async {
+    final response = await dio.get(Api.evidenceCategories);
+    return AppUtils.generateList(response.data, EvidenceCategoryModel.fromJson);
+  }
+
+  @override
+  Future<PageinationModel<EvidenceTeacherModel>> getEvidences(
+      EvidencePaginationEntity entity) async {
+    final response =
+        await dio.get(Api.evidencesSchool, queryParameters: entity.toJson());
+    return PageinationModel.fromJson(
+        response.data, EvidenceTeacherModel.fromJson);
+  }
+
+  @override
+  Future<void> addCategoryEveidence(EvidenceCategoryModel entity) async {
+    if (entity.add == 'a') {
+      await dio.post(Api.evidenceCategories, data: entity.toJson());
+    } else if (entity.add == 'd') {
+      await dio.delete("${Api.evidenceCategories}${entity.id}/");
+    } else if (entity.add == 'u') {
+      await dio.patch("${Api.evidenceCategories}${entity.id}/",
+          data: entity.toJson());
+    }
+  }
+
+  @override
+  Future<void> addWeekGroup(BaseEnity entity) async {
+    await dio.post(Api.weekGroup, data: entity.toJson());
+  }
+
+  @override
+  Future<void> deleteWeekGroup(DeleteEntity entity) async {
+    await dio.delete("${Api.weekGroup}${entity.id}/");
+  }
+
+  @override
+  Future<void> updateWeekGroup(WeekGroupModel entity) async {
+    await dio.patch("${Api.weekGroup}${entity.id}/", data: entity.toJson());
+  }
+
+  @override
+  Future<List<WeekGroupModel>> getWeekkGroup() async {
+    final response = await dio
+        .get(Api.weekGroup, queryParameters: {"school": AppUtils.appUser?.id});
+    return AppUtils.generateList(response.data, WeekGroupModel.fromJson);
+  }
+
+  @override
+  Future<AttendanceStatisticsModel> getAttendanceStatistics() async {
+    final response = await dio.get(Api.attendanceStatistics);
+    return AttendanceStatisticsModel.fromJson(response.data);
+  }
+
+  @override
+  Future<List<BehaviorStatisticsModel>> getBehaviorStatistics() async {
+    final response = await dio.get(Api.behaviorStatistics);
+    return BehaviorStatisticsModel.fromList(response.data);
+  }
+
+  @override
+  Future<void> rateFile(EvidenceTeacherModel entity) async {
+    await dio.patch("${Api.evidencesSchool}${entity.id}/",
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> downloadReport(FilterReportEntity entity) async {
+    await dio.download(Api.downloadReport, entity.Path, data: entity.toJson());
   }
 }

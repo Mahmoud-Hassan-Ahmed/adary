@@ -1,7 +1,12 @@
+import 'package:adary/features/adary/data/models/attendance_statistics_model.dart';
+import 'package:adary/features/adary/data/models/behavior_statistics_model.dart';
 import 'package:adary/features/adary/data/models/circular_model.dart';
 import 'package:adary/features/adary/data/models/class_health.dart';
 import 'package:adary/features/adary/data/models/class_room.dart';
 import 'package:adary/features/adary/data/models/classes.dart';
+import 'package:adary/features/adary/data/models/evaluation_model.dart';
+import 'package:adary/features/adary/data/models/evidence_model.dart';
+import 'package:adary/features/adary/data/models/exam_model.dart';
 import 'package:adary/features/adary/data/models/health_model.dart';
 import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/data/models/model_19.dart';
@@ -10,11 +15,13 @@ import 'package:adary/features/adary/data/models/note_entity_model.dart';
 import 'package:adary/features/adary/data/models/note_teacher.dart';
 import 'package:adary/features/adary/data/models/pagination_model.dart';
 import 'package:adary/features/adary/data/models/student_model.dart';
+import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
 import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
 import 'package:adary/features/adary/data/models/teacher_circular.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/data/models/visits_model.dart';
+import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
@@ -22,7 +29,11 @@ import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
+import 'package:adary/features/adary/domain/entities/evidence_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
+import 'package:adary/features/adary/domain/entities/filter_per.dart'
+    show FilterPer;
+import 'package:adary/features/adary/domain/entities/filter_report_entity.dart';
 import 'package:adary/features/adary/domain/entities/health_entity.dart';
 import 'package:adary/features/adary/domain/entities/login_entity.dart';
 import 'package:adary/features/adary/domain/entities/note_entity.dart';
@@ -104,4 +115,35 @@ abstract class Db {
   Future<void> me();
   Future<void> loadCalendart();
   Future<PageinationModel<WeeklyPan>> getWeeks(PaginationEntity entity);
+
+  Future<PageinationModel<StudentPer>> filterPer(FilterPer entity);
+  Future<PageinationModel<StudentBehavior>> filterbehavoir(FilterPer entity);
+  Future<PageinationModel<StudentInfo>> filterstudents(FilterPer entity);
+  Future<void> registerStudemt(List<BaseEnity> date);
+  Future<void> addBehavoir(List<BaseEnity> date);
+  Future<List<BehaviorNote>> getNotesBehavoir();
+  Future<void> addBehavoirNote(BaseEnity entity);
+  Future<void> addExam(BaseEnity entity);
+  Future<PageinationModel<Exam>> getExames(PaginationEntity entity);
+  Future<PageinationModel<ExamDay>> getExamesDays(PaginationEntity entity);
+
+  Future<EvaluationModel> getIdEvaluationVisit(int visitId);
+  Future<void> updateEvaluationPlanning(Planning entity);
+  Future<void> updateEvaluationInteraction(Interaction entity);
+  Future<void> updateEvaluationManagment(Managment entity);
+  Future<void> updateEvaluationImplementation(Implementation entity);
+  Future<PageinationModel<EvidenceTeacherModel>> getEvidences(
+      EvidencePaginationEntity entity);
+  Future<List<EvidenceCategoryModel>> getEvidenceCategories();
+  Future<void> addCategoryEveidence(EvidenceCategoryModel entity);
+
+  Future<List<WeekGroupModel>> getWeekkGroup();
+  Future<void> addWeekGroup(BaseEnity entity);
+  Future<void> deleteWeekGroup(DeleteEntity entity);
+  Future<void> updateWeekGroup(WeekGroupModel entity);
+  Future<AttendanceStatisticsModel> getAttendanceStatistics();
+  Future<List<BehaviorStatisticsModel>> getBehaviorStatistics();
+
+  Future<void> rateFile(EvidenceTeacherModel entity);
+  Future<void> downloadReport(FilterReportEntity entity);
 }

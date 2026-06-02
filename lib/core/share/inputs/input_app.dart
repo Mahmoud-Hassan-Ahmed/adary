@@ -1,3 +1,4 @@
+import 'package:adary/core/conts/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -27,18 +28,18 @@ class InputApp extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(
-          height: 5,
+          height: 10,
         ),
         Container(
           // height: double.parse((60 * 1).toString()),
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.grey, width: 2)),
+              border: Border.all(color: AppColors.APP_COLOR, width: 1)),
           child: TextFormField(
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -50,8 +51,11 @@ class InputApp extends StatelessWidget {
             focusNode: focusNode,
             keyboardType: textInputType,
             controller: textEditingController,
-            decoration:
-                InputDecoration(border: InputBorder.none, hintText: hint),
+            style: const TextStyle(color: Colors.grey),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: hint,
+                hintStyle: TextStyle(color: Colors.grey)),
           ),
         ),
       ],

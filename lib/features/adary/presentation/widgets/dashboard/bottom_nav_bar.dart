@@ -9,46 +9,50 @@ class BottomNavItem extends StatelessWidget {
   final Function onTap;
   final bool isSelected;
   final String pageName;
-  BottomNavItem(
-      {required this.iconPath,
+  const BottomNavItem(
+      {super.key,
+      required this.iconPath,
       required this.onTap,
       this.isSelected = false,
       required this.pageName});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: iconPath != null ? 85 : 50,
-      width: context.width / 4.2,
-      child: IconButton(
-        icon: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (iconPath != null)
-              IconButton(
-                icon: SvgPicture.asset(
-                  iconPath!,
-                  color: isSelected
-                      ? AppColors.FONTCOLOR
-                      : AppColors.SECONDERYCOLOR,
-                  width: 25,
-                  height: 25,
-                ),
-                onPressed: () => onTap(),
-              ),
-            Text(
-              pageName,
-              overflow: TextOverflow.ellipsis,
-              style: AbhayaLibre.copyWith(
-                  color: isSelected
-                      ? AppColors.FONTCOLOR
-                      : AppColors.SECONDERYCOLOR,
-                  fontSize: 15),
+    return IconButton(
+      icon: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: 4,
+            width: isSelected ? 40 : 0,
+            decoration: BoxDecoration(
+              color: AppColors.APP_COLOR,
+              borderRadius: BorderRadius.circular(10),
             ),
-          ],
-        ),
-        onPressed: () => onTap(),
+          ),
+          if (iconPath != null)
+            IconButton(
+              icon: SvgPicture.asset(
+                iconPath!,
+                color:
+                    isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
+                width: 25,
+                height: 25,
+              ),
+              onPressed: () => onTap(),
+            ),
+          Text(
+            pageName,
+            overflow: TextOverflow.ellipsis,
+            style: AbhayaLibre.copyWith(
+                color:
+                    isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
+                fontSize: 15),
+          ),
+        ],
       ),
+      onPressed: () => onTap(),
     );
   }
 }

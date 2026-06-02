@@ -1,63 +1,61 @@
-import 'package:adary/core/conts/icons.dart';
 import 'package:adary/core/enums/snack_bar_type_enum.dart';
-import 'package:adary/core/share/widgets/bottom_navigator_bar.dart';
-import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
-import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
-import 'package:adary/features/adary/domain/usecases/get_week_palnes_use_case.dart';
-import 'package:adary/features/adary/domain/usecases/get_weekly_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_weekly_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/week_plan/week_plan_bloc.dart';
-import 'package:adary/features/adary/presentation/widgets/visits/filter_week.dart';
 import 'package:adary/features/adary/presentation/widgets/visits/plans.dart';
+import 'package:adary/features/adary/presentation/widgets/week_plans/week_item.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class WeekPlaning extends StatefulWidget {
-  const WeekPlaning({
+  WeekPlaning({
     super.key,
+    required this.pagingController,
+    required this.entity,
   });
+  final PagingController<int, WeeklyPan> pagingController;
+  PaginationEntity entity;
 
   @override
   State<WeekPlaning> createState() => _WeekPlaningState();
 }
 
 class _WeekPlaningState extends State<WeekPlaning> {
-  final PagingController<int, WeeklyPan> _pagingController =
-      PagingController(firstPageKey: 1);
-  late PaginationEntity entity;
-
   final getModel20useCase = sl<GetWeeklyUseCase>();
   @override
   void initState() {
-    entity = PaginationEntity(page: 1);
-    _pagingController.addPageRequestListener((pageKey) {
+    widget.entity = PaginationEntity(page: 1);
+    widget.pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
     super.initState();
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    var result = await getModel20useCase(entity..page = pageKey);
+    var result = await getModel20useCase(widget.entity..page = pageKey);
     try {
       result.fold((l) => null, (paginationModel) {
         final isLastPage = paginationModel.next == null;
         if (isLastPage) {
-          _pagingController.appendLastPage(paginationModel.results);
+          widget.pagingController.appendLastPage(paginationModel.results);
         } else {
-          _pagingController.appendPage(paginationModel.results, pageKey + 1);
+          widget.pagingController
+              .appendPage(paginationModel.results, pageKey + 1);
         }
       });
     } catch (error) {
-      _pagingController.error = error;
+      widget.pagingController.error = error;
       AppUtils.log(error.toString());
     }
   }
+
+  int selectPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -67,64 +65,49 @@ class _WeekPlaningState extends State<WeekPlaning> {
         builder: (context, state) {
           if (state is DoneDeletePlanState) {
             AppUtils.showCustomSnackbar('deleted_plan'.tr(), SnackType.SUCESS);
-            _pagingController.refresh();
+            widget.pagingController.refresh();
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: 'week_palns'.tr()),
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return FilterWeek(
-                            paginationEntity: entity,
-                            pagingController: _pagingController,
-                          );
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      elevation: 4,
-                    ),
-                    child: Text(
-                      'filter'.tr(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ]),
+              // appBar: MyAppBar(title: 'week_palns'.tr()),
               body: PagedListView<int, WeeklyPan>(
                   padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),
-                  pagingController: _pagingController,
+                  pagingController: widget.pagingController,
                   builderDelegate: PagedChildBuilderDelegate<WeeklyPan>(
                       noItemsFoundIndicatorBuilder: (context) => Center(
                             child: Image.asset('assets/images/add.png'),
                           ),
                       itemBuilder: (context, item, index) {
-                        return ListTile(
+                        return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => Plans(
                                       weekId: item,
                                     )));
                           },
-                          leading: Image.asset(AppIcon.pdf),
-                          title: Text(
-                            item.weekNumberText,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          subtitle: Text(
-                            "${"num_plans".tr()} ${item.weeklyPlansCount}",
-                            // textAlign: TextAlign.end,
-                            style: Theme.of(context).textTheme.labelMedium,
+                          child: WeekItem(
+                            weeklyPan: item,
                           ),
                         );
+                        // return ListTile(
+                        //   onTap: () {
+                        //     Navigator.of(context).push(MaterialPageRoute(
+                        //         builder: (context) => Plans(
+                        //               weekId: item,
+                        //             )));
+                        //   },
+                        //   leading: Image.asset(AppIcon.pdf),
+                        //   title: Text(
+                        //     item.weekNumberText,
+                        //     style: Theme.of(context).textTheme.labelMedium,
+                        //   ),
+                        //   subtitle: Text(
+                        //     "${"num_plans".tr()} ${item.weeklyPlansCount}",
+                        //     // textAlign: TextAlign.end,
+                        //     style: Theme.of(context).textTheme.labelMedium,
+                        //   ),
+                        // );
                       })),
             ),
           );
@@ -135,7 +118,7 @@ class _WeekPlaningState extends State<WeekPlaning> {
 
   @override
   void dispose() {
-    _pagingController.dispose();
+    // widget.pagingController.dispose();
     super.dispose();
   }
 }

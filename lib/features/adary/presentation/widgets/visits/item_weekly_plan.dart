@@ -80,7 +80,7 @@ class ItemWeeklyPlan extends StatelessWidget {
               //           onTap: () async {
               //             print(visitModel.file);
               //             final pdf = await AppUtils.downloadFile(
-              //                 'http://192.168.1.2:8000${visitModel.file}',
+              //                 'https://www.smartble.net${visitModel.file}',
               //                 '${visitModel.teacher.name}.pdf');
               //             if (pdf != null) {
               //               OpenFilex.open(pdf);

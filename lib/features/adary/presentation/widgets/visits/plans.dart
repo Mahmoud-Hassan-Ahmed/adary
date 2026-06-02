@@ -6,6 +6,7 @@ import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/domain/usecases/get_week_palnes_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/week_plan/week_plan_bloc.dart';
 import 'package:adary/features/adary/presentation/widgets/visits/item_week_paln.dart';
+import 'package:adary/features/adary/presentation/widgets/week_plans/Pdf_card.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -69,20 +70,27 @@ class _PlansState extends State<Plans> {
               appBar: MyAppBar(
                 title: widget.weekId.weekNumberText.toString(),
               ),
-              body: PagedListView<int, Plan>(
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  pagingController: _pagingController,
-                  builderDelegate: PagedChildBuilderDelegate<Plan>(
-                      noItemsFoundIndicatorBuilder: (context) => Center(
-                            child: Image.asset('assets/images/add.png'),
-                          ),
-                      itemBuilder: (context, item, index) {
-                        return ItemWeekPaln(
-                          visitModel: item,
-                          pagingController: _pagingController,
-                        );
-                      })),
+              body: PagedGridView<int, Plan>(
+                padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
+                pagingController: _pagingController,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // 👈 3 items per row
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.6, // adjust based on your PDF card height
+                ),
+                builderDelegate: PagedChildBuilderDelegate<Plan>(
+                  noItemsFoundIndicatorBuilder: (context) => Center(
+                    child: Image.asset('assets/images/add.png'),
+                  ),
+                  itemBuilder: (context, item, index) {
+                    return PdfCardWithFlutterPdfView(
+                      pdfUrl: item.file,
+                    );
+                  },
+                ),
+              ),
             ),
           );
         },

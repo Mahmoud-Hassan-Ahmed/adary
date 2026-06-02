@@ -1,3 +1,4 @@
+import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
@@ -6,7 +7,9 @@ import 'package:adary/features/adary/data/models/health_model.dart';
 import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/domain/usecases/get_healths_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/health/health_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/add_heath_page.dart';
 import 'package:adary/features/adary/presentation/widgets/health/health_item.dart';
+import 'package:adary/features/adary/presentation/widgets/task/add_task_teacher.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +69,29 @@ class _HealthesPageState extends State<HealthesPage> {
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: widget.classId.name),
+              appBar: MyAppBar(title: widget.classId.name, actions: [
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) {
+                        return const AddHeathPage(
+                            // refreshKey: _refreshIndicatorKey,
+                            );
+                      },
+                    );
+                  },
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.APP_COLOR,
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
+                  ),
+                ),
+              ]),
               body: PagedListView<int, HealthCondition>(
                   padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),

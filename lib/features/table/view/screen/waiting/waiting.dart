@@ -1,3 +1,4 @@
+import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/table/controller/calender_controller.dart';
@@ -49,110 +50,96 @@ class _WaitingState extends State<Waiting> {
             onRefresh: () => Get.find<WaitingController>().loadAllData(),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
                   // SizedBox(
                   //   height: 137,
                   // ),
-                  const Calendar(),
+
                   //end of calender
                   // SizedBox(
                   //   height: 56,
                   // ),
 
-                  if (AppUtils.permissions.isNotEmpty &&
-                          AppUtils.permissions.contains(
-                              '/waiting-classes/add-waiting-classes/') ||
-                      AppUtils.permissions.isEmpty)
+                  // if (AppUtils.permissions.isNotEmpty &&
+                  //         AppUtils.permissions.contains(
+                  //             '/waiting-classes/add-waiting-classes/') ||
+                  //     AppUtils.permissions.isEmpty)
+                  if (AppUtils.checkPermission(
+                      ['/waiting-classes/add-waiting-class-on-cell/']))
                     GetBuilder<WaitingController>(builder: (waitingController) {
                       return waitingController.isLoading
                           ? _addInstructorLoader()
                           : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                              child: Center(
-                                child: GestureDetector(
-                                  // onTap: () => Get.toNamed(
-                                  //     RouteHelper.getAwaitingRoute(
-                                  //         dayNum: Get.find<CalednerController>()
-                                  //             .selectedDayIndex
-                                  //             .toString())),
-                                  onTap: () {
-                                    AppUtils.go(AddWaititng(
-                                      day: Get.find<CalednerController>()
-                                          .selectedDayIndex
-                                          .toString(),
-                                    ));
-                                  },
-                                  child: Container(
-                                    width: 327,
-                                    height: 56,
-                                    decoration: BoxDecoration(
-                                        color: AppColors.SECONDERYCOLOR,
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
-                                    child: Center(
-                                      child: Text(
-                                        easy.tr("add_to_upsent_teacher"),
-                                        style: AlMaraiaBold.copyWith(
-                                            fontSize: 21,
-                                            color: AppColors.MAINCOLOR),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ));
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: BtnApp(
+                                    icon: "assets/icons/plus.svg",
+                                    radius: 10,
+                                    label: easy.tr('add_absent_teachers'),
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: Get.context!,
+                                        isScrollControlled:
+                                            true, // مهم عشان ياخد ارتفاع كبير
+                                        backgroundColor: Colors
+                                            .transparent, // عشان تعمل radius
+                                        builder: (context) {
+                                          return Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.9, // 90% من الشاشة
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                top: Radius.circular(20),
+                                              ),
+                                            ),
+                                            child: AddWaititng(
+                                              day:
+                                                  Get.find<CalednerController>()
+                                                      .selectedDayIndex
+                                                      .toString(),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }),
+                              ),
+                            );
                     }),
+
+                  const Calendar(),
                   //end of add absent btn
-                  const SizedBox(
-                    height: 34,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Dimensions.PADDING_SIZE_DEFAULT),
-                    child: Row(
-                      children: [
-                        Text(
-                          easy.tr("upsent_teacher_classes"),
-                          style: AlMaraiaBold.copyWith(
-                              fontSize: 18, color: AppColors.SECONDERYCOLOR),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: Dimensions.PADDING_SIZE_DEFAULT),
                     child: Row(
                       children: [
                         Text(
-                          easy.tr("add_to_waiting_teacher"),
-                          style: AlMaraia.copyWith(
-                              fontSize: 17,
-                              color: AppColors.GREYFONTCOLOR,
-                              fontWeight: FontWeight.normal),
+                          easy.tr("upsent_teacher_classes"),
+                          style: AlMaraiaBold.copyWith(
+                              fontSize: 18, color: AppColors.FONTCOLOR),
                         )
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 25,
+
+                  const SizedBox(
+                    height: 10,
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
+
                   GetBuilder<WaitingController>(builder: (waitingController) {
                     return waitingController.isLoading
                         ? _tableLoader(orientation)
                         : _absentTable(orientation,
                             waitingList: waitingController.filterdWaitingList);
                   }),
-                  const SizedBox(
-                    height: 20,
-                  )
                 ],
               ),
             ),
@@ -214,9 +201,9 @@ class _WaitingState extends State<Waiting> {
                         ),
                       ),
                     ),
-                    _tableCell(width: 102, txt: "", isBtn: false),
-                    _tableCell(width: 65, txt: "", isBtn: false),
-                    _tableCell(width: 102, txt: "", isBtn: true),
+                    _tableCell(txt: "", isBtn: false),
+                    _tableCell(txt: "", isBtn: false),
+                    _tableCell(txt: "", isBtn: true),
                   ],
                 ),
                 Row(
@@ -238,9 +225,9 @@ class _WaitingState extends State<Waiting> {
                         ),
                       ),
                     ),
-                    _tableCell(width: 102, txt: "", isBtn: false),
-                    _tableCell(width: 65, txt: "", isBtn: false),
-                    _tableCell(width: 102, txt: "", isBtn: true),
+                    _tableCell(txt: "", isBtn: false),
+                    _tableCell(txt: "", isBtn: false),
+                    _tableCell(txt: "", isBtn: true),
                   ],
                 ),
                 // end of table content
@@ -248,74 +235,122 @@ class _WaitingState extends State<Waiting> {
             )));
   }
 
-  Widget _absentTable(orientation,
-      {required List<waitingListModel> waitingList}) {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _tableHeader(orientation),
-            // end of header
-            waitingList.isEmpty
-                ? Center(
-                    child: Text(
-                      easy.tr("no_session_for_today_txt"),
-                      style: AlMaraiaBold.copyWith(
-                          fontSize: 21, color: AppColors.SECONDERYCOLOR),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            ...List.generate(waitingList.length, (index) {
-              return Row(
-                children: [
-                  Container(
-                    width: 31,
-                    height: 93,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.GREYFONTCOLOR),
+  Widget _absentTable(
+    Orientation orientation, {
+    required List<waitingListModel> waitingList,
+  }) {
+    return Column(
+      children: [
+        /// لو مفيش بيانات
+        if (waitingList.isEmpty)
+          Center(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 40,
+                ),
+                Image.asset("assets/images/note_exists.png"),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  easy.tr("no_session_for_today_txt"),
+                  style: AlMaraiaBold.copyWith(
+                    fontSize: 14,
+                    color: AppColors.FONTCOLOR,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Column(
+            children: List.generate(waitingList.length, (index) {
+              final item = waitingList[index];
+
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: AppColors.GREYFONTCOLOR),
+                ),
+                child: Row(
+                  children: [
+                    /// 🔹 رقم
+                    Container(
+                      width: 40,
+                      height: 93,
+                      decoration: const BoxDecoration(
                         color: AppColors.SECONDERYCOLOR,
-                        borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(15),
-                            bottomRight: Radius.circular(15))),
-                    child: Center(
-                      child: Text(
-                        "${index + 1}",
-                        style: AlMaraiaBold.copyWith(
-                            color: AppColors.MAINCOLOR, fontSize: 24),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "${index + 1}",
+                          style: AlMaraiaBold.copyWith(
+                            color: AppColors.MAINCOLOR,
+                            fontSize: 20,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  _tableCell(
-                      width:
-                          orientation == Orientation.portrait ? 102 : 102 * 2,
-                      txt:
-                          "${waitingList[index].cell!.classroomName!}\n${StringHanler.cutString(txt: waitingList[index].cell!.cellText.toString(), isName: false, pattern: "\n")}",
-                      isBtn: false),
-                  _tableCell(
-                      width: orientation == Orientation.portrait ? 85 : 85 * 2,
-                      txt: waitingList[index].class_number_text.toString(),
-                      isBtn: false),
-                  _tableCell(
-                      width:
-                          orientation == Orientation.portrait ? 102 : 102 * 3,
-                      txt: waitingList[index]
-                          .waitingTeacher!
-                          .teacherName
-                          .toString(),
-                      isBtn: true,
-                      cellId: waitingList[index].cell!.cellId.toString(),
-                      waiting_class_id: waitingList[index].waitingClassId,
-                      materialName:
-                          "${StringHanler.cutString(txt: waitingList[index].cell!.cellText.toString(), isName: false, pattern: "\n")}",
-                      className: "${waitingList[index].cell!.classroomName!}"),
-                ],
+
+                    /// 🔹 باقي الأعمدة
+                    Expanded(
+                      flex: 2,
+                      child: _tableCell(
+                        txt:
+                            "${item.cell!.classroomName!}\n${StringHanler.cutString(
+                          txt: item.cell!.cellText.toString(),
+                          isName: false,
+                          pattern: "\n",
+                        )}",
+                        isBtn: false,
+                      ),
+                    ),
+
+                    Expanded(
+                      flex: 1,
+                      child: _tableCell(
+                        txt: item.class_number_text.toString(),
+                        isBtn: false,
+                      ),
+                    ),
+
+                    Expanded(
+                      flex: 3,
+                      child: _tableCell(
+                        txt: item.waitingTeacher!.teacherName.toString(),
+                        isBtn: false,
+                      ),
+                    ),
+
+                    Expanded(
+                      flex: 2,
+                      child: _tableCell(
+                        txt: '',
+                        isBtn: true,
+                        cellId: item.cell!.cellId.toString(),
+                        waiting_class_id: item.waitingClassId,
+                        materialName: StringHanler.cutString(
+                          txt: item.cell!.cellText.toString(),
+                          isName: false,
+                          pattern: "\n",
+                        ),
+                        className: item.cell!.classroomName!,
+                      ),
+                    ),
+                  ],
+                ),
               );
-            })
-            // end of table content
-          ],
-        ));
+            }),
+          )
+      ],
+    );
   }
 
   Widget _tableHeader(orientation) {
@@ -323,7 +358,7 @@ class _WaitingState extends State<Waiting> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
+        const SizedBox(
           width: 31,
         ),
         SizedBox(
@@ -366,87 +401,89 @@ class _WaitingState extends State<Waiting> {
     );
   }
 
-  Widget _tableCell(
-      {required double width,
-      required String txt,
-      required bool isBtn,
-      String? cellId,
-      String? materialName,
-      int? waiting_class_id,
-      String? className}) {
+  Widget _tableCell({
+    required String txt,
+    required bool isBtn,
+    String? cellId,
+    String? materialName,
+    int? waiting_class_id,
+    String? className,
+  }) {
     return Container(
-        width: width,
-        height: 93,
-        child: DottedBorder(
-            borderType: BorderType.RRect,
-            dashPattern: [7, 6],
-            color: Colors.black,
-            strokeWidth: 1,
-            child: Center(
-              child: Column(
+      padding: const EdgeInsets.all(6),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            /// 🔹 النص
+            ///
+            if (txt.isNotEmpty)
+              Text(
+                txt,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AlMaraia.copyWith(fontSize: 14),
+              ),
+
+            if (isBtn) const SizedBox(height: 10),
+
+            /// 🔹 الأزرار
+            if (isBtn)
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    txt,
-                    style: AlMaraia.copyWith(
-                        fontSize: 17, overflow: TextOverflow.ellipsis),
+                  /// edit
+                  GestureDetector(
+                    onTap: () => Get.toNamed(
+                      RouteHelper.getUpUseRoute(
+                        cellId: cellId.toString(),
+                        teacherNAme: txt,
+                        materialName: materialName.toString(),
+                        className: className.toString(),
+                      ),
+                    ),
+                    child: SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: SvgPicture.asset(
+                        Images.EDIT_BTN_ICON,
+                        color: AppColors.SECONDERYCOLOR,
+                      ),
+                    ),
                   ),
-                  isBtn
-                      ? const SizedBox(
-                          height: 10,
-                        )
-                      : const SizedBox.shrink(),
-                  isBtn
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () => Get.toNamed(
-                                  RouteHelper.getUpUseRoute(
-                                      cellId: cellId.toString(),
-                                      teacherNAme: txt,
-                                      materialName: materialName.toString(),
-                                      className: className.toString())),
-                              child: SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: SvgPicture.asset(Images.EDIT_BTN_ICON),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            GetBuilder<WaitingController>(
-                                builder: (waitingController) {
-                              return GestureDetector(
-                                  onTap: () {
-                                    _showMyDialog(
-                                        waiting_class_id: waiting_class_id!);
-                                  },
-                                  child: waitingController.isDeleteing &&
-                                          waitingController
-                                                  .selectedWaitingClassID ==
-                                              waiting_class_id
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 3,
-                                            color: AppColors.SECONDERYCOLOR,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                        ));
-                            })
-                          ],
-                        )
-                      : const SizedBox.shrink()
+
+                  const SizedBox(width: 10),
+
+                  /// delete
+                  GetBuilder<WaitingController>(
+                    builder: (waitingController) {
+                      return GestureDetector(
+                        onTap: () {
+                          _showMyDialog(waiting_class_id: waiting_class_id!);
+                        },
+                        child: waitingController.isDeleteing &&
+                                waitingController.selectedWaitingClassID ==
+                                    waiting_class_id
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  color: AppColors.SECONDERYCOLOR,
+                                ),
+                              )
+                            : SvgPicture.asset("assets/icons/delete.svg"),
+                      );
+                    },
+                  ),
                 ],
               ),
-            )));
+          ],
+        ),
+      ),
+    );
   }
 
   void _showMyDialog({required int waiting_class_id}) {

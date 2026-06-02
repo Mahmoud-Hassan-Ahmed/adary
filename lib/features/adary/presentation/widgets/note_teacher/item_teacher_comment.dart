@@ -26,46 +26,51 @@ class _ItemTeacherCommentState extends State<ItemTeacherComment> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ExpansionWidget(
-          isSelect: widget.teacherNote.isActive,
-          title: [
-            Checkbox(
-                fillColor: widget.teacherNote.isActive
-                    ? const WidgetStatePropertyAll(AppColors.checkbox)
-                    : null,
-                value: widget.teacherNote.isActive,
-                onChanged: (v) {
-                  widget.teacherNote.isActive = v ?? false;
-                  setState(() {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          border: Border.all(color: AppColors.APP_COLOR),
+          borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          ExpansionWidget(
+            isSelect: widget.teacherNote.isActive,
+            title: [
+              Checkbox(
+                  fillColor: widget.teacherNote.isActive
+                      ? const WidgetStatePropertyAll(AppColors.checkbox)
+                      : null,
+                  value: widget.teacherNote.isActive,
+                  onChanged: (v) {
                     widget.teacherNote.isActive = v ?? false;
-                  });
-                }),
-            Text(widget.teacher.name),
-          ],
-          body: [
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: TextFormField(
-                onChanged: (value) {
-                  widget.teacherNote.comment = value;
-                },
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(10),
-                  hintText: 'write_note_commint'.tr(),
-                  border: InputBorder.none,
+                    setState(() {
+                      widget.teacherNote.isActive = v ?? false;
+                    });
+                  }),
+              Text(widget.teacher.name),
+            ],
+            body: [
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.APP_COLOR),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
+                child: TextFormField(
+                  onChanged: (value) {
+                    widget.teacherNote.comment = value;
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(10),
+                    hintText: 'write_note_commint'.tr(),
+                    border: InputBorder.none,
+                  ),
+                  maxLines: 4,
                 ),
-                maxLines: 4,
-              ),
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-      ],
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -6,7 +6,9 @@ import 'package:adary/features/adary/domain/usecases/get_hijri_date.dart';
 import 'package:adary/features/adary/presentation/pages/login_screen.dart';
 import 'package:adary/features/adary/presentation/pages/start_page.dart';
 import 'package:adary/features/table/helper/route_helper.dart';
+import 'package:adary/features/table/view/screen/dashboard/dashboardScreen.dart';
 import 'package:adary/injections/injection_main.dart';
+import 'package:adary/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
@@ -69,9 +71,10 @@ class MyApp extends StatelessWidget {
         transitionDuration: const Duration(milliseconds: 250),
         localizationsDelegates: context.localizationDelegates,
         // home: (),
-        home: AppUtils.appUser != null
-            ? const DashboardScreen()
-            : const LoginScreen(),
+        home: SplashPage(),
+        // AppUtils.appUser != null
+        //     ? const DashboardScreen()
+        //     : const LoginScreen(),
       ),
     );
   }

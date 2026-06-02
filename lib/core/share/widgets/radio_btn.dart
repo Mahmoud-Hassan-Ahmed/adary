@@ -20,35 +20,33 @@ class RadioBtn extends StatelessWidget {
       onTap: () {
         valueChanged(value);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(20),
-            color: value == group ? AppColors.radiobgColor : null),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            EasyRadio<int>(
-              activeFillColor: AppColors.checkbox,
-              dotColor: Colors.white,
-              value: value,
-              groupValue: group,
-              onChanged: (v) {
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          EasyRadio<int>(
+            value: value,
+            groupValue: group,
+            dotStyle: const DotStyle.check(StrokeCap.square),
+            shape: const RadioShape.square(),
+            activeFillColor: AppColors.APP_COLOR,
+            dotColor: Colors.white,
+            onChanged: (int? v) {
+              if (v != null) {
                 valueChanged(v);
-              },
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: group == value ? Colors.white : Colors.black,
-                  fontSize: 14),
-            ),
-          ],
-        ),
+              }
+            },
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            label,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Colors.black, fontSize: 16),
+          ),
+        ],
       ),
     );
   }

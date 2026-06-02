@@ -12,6 +12,7 @@ import 'package:adary/injections/injection_main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -41,36 +42,51 @@ class _TasksPageState extends State<TasksPage> {
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: 'missions'.tr()),
-              bottomNavigationBar: BottomNavigatorBar(items: [
-                if (AppUtils.permissions.isNotEmpty &&
-                        AppUtils.permissions
-                            .any((p) => p.contains("/api/daily-tasks/add/")) ||
-                    AppUtils.permissions.isEmpty)
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) {
-                            return add.AddTask(fun: () {
-                              _refreshIndicatorKey.currentState?.show();
-                            });
-                          },
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        elevation: 4,
-                      ),
-                      child: Text(
-                        'new_missiom'.tr(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+              appBar: MyAppBar(title: 'missions'.tr(), actions: [
+                IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return add.AddTask(fun: () {
+                            _refreshIndicatorKey.currentState?.show();
+                          });
+                        },
+                      );
+                    },
+                    icon: SvgPicture.asset("assets/icons/icon-add.svg"))
               ]),
+              // bottomNavigationBar: BottomNavigatorBar(items: [
+              //   if (AppUtils.permissions.isNotEmpty &&
+              //           AppUtils.permissions
+              //               .any((p) => p.contains("/api/daily-tasks/add/")) ||
+              //       AppUtils.permissions.isEmpty)
+              //     Expanded(
+              //       child: ElevatedButton(
+              //         onPressed: () {
+              //           showModalBottomSheet(
+              //             isScrollControlled: true,
+              //             context: context,
+              //             builder: (context) {
+              //               return add.AddTask(fun: () {
+              //                 _refreshIndicatorKey.currentState?.show();
+              //               });
+              //             },
+              //           );
+              //         },
+              //         style: ElevatedButton.styleFrom(
+              //           backgroundColor: Colors.black,
+              //           elevation: 4,
+              //         ),
+              //         child: Text(
+              //           'new_missiom'.tr(),
+              //           style: const TextStyle(color: Colors.white),
+              //         ),
+              //       ),
+              //     ),
+              // ]),
+
               body: RefreshIndicator(
                 key: _refreshIndicatorKey,
                 onRefresh: () async {

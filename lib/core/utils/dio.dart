@@ -28,7 +28,8 @@ class DioConfig {
         //   AppUtils.log(user.access ?? 'not here access token ');
         //   options.headers["Authorization"] = "Bearer  ${user.access}";
         // }
-        final login = await AppUtils.instance.getLogin();
+        final login = AppUtils.instance.getLogin();
+        AppUtils.log(login?.username ?? '');
         if (login != null &&
             (options.data is! Map ||
                 (options.data as Map)['username'] == null)) {
@@ -39,6 +40,7 @@ class DioConfig {
             'Accept-Language': local.languageCode
           });
         }
+        AppUtils.log(options.headers.toString());
         options.headers.addAll({'Accept-Language': 'ar'});
 
         return handler.next(options);
@@ -46,6 +48,7 @@ class DioConfig {
       onError: (error, handler) {
         EasyLoading.dismiss();
         final respose = error.response;
+        AppUtils.log(error.toString());
 
         if (respose?.data['detail'] != null) {
           AppUtils.showCustomSnackbar(

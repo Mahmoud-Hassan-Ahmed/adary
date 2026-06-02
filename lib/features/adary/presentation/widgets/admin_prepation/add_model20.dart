@@ -77,6 +77,32 @@ class AddModel20 extends StatelessWidget {
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
                 appBar: MyAppBar(title: e.tr('back')),
+                bottomNavigationBar: BtnApp(
+                    label: e.tr('save'),
+                    onTap: () {
+                      if (formKey.currentState!.validate()) {
+                        if (model20model != null) {
+                          BaseBloc.get<Model20Bloc>(context).add(
+                              UpdateMode20Event(
+                                  model20: Model20(
+                                      id: model20model?.id,
+                                      teacherId: selectTeacher!.id,
+                                      atDay: (selectDay1 as Relations).value,
+                                      atDayDate: dateHijri1,
+                                      toDay: (selectDay2 as Relations).value,
+                                      toDayDate: dateHijri2)));
+                        } else {
+                          BaseBloc.get<Model20Bloc>(context).add(
+                              AddModel20Event(
+                                  enity: Model20(
+                                      teacherId: selectTeacher!.id,
+                                      atDay: (selectDay1 as Relations).value,
+                                      atDayDate: dateHijri1,
+                                      toDay: (selectDay2 as Relations).value,
+                                      toDayDate: dateHijri2)));
+                        }
+                      }
+                    }),
                 body: Form(
                   key: formKey,
                   child: ListView(
@@ -142,36 +168,6 @@ class AddModel20 extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        BtnApp(
-                            label: e.tr('save'),
-                            onTap: () {
-                              if (formKey.currentState!.validate()) {
-                                if (model20model != null) {
-                                  BaseBloc.get<Model20Bloc>(context).add(
-                                      UpdateMode20Event(
-                                          model20: Model20(
-                                              id: model20model?.id,
-                                              teacherId: selectTeacher!.id,
-                                              atDay: (selectDay1 as Relations)
-                                                  .value,
-                                              atDayDate: dateHijri1,
-                                              toDay: (selectDay2 as Relations)
-                                                  .value,
-                                              toDayDate: dateHijri2)));
-                                } else {
-                                  BaseBloc.get<Model20Bloc>(context).add(
-                                      AddModel20Event(
-                                          enity: Model20(
-                                              teacherId: selectTeacher!.id,
-                                              atDay: (selectDay1 as Relations)
-                                                  .value,
-                                              atDayDate: dateHijri1,
-                                              toDay: (selectDay2 as Relations)
-                                                  .value,
-                                              toDayDate: dateHijri2)));
-                                }
-                              }
-                            })
                       ]),
                 ),
               ),

@@ -10,7 +10,6 @@ final class DateSelect {
   final DateTime? gregorianDate2;
   final String? hijriDate2;
   final DateTime gregorianDate;
-
   DateSelect(
       {required this.hijriDate,
       required this.gregorianDate,
@@ -19,10 +18,16 @@ final class DateSelect {
 }
 
 class HijriCalendarWidget extends StatefulWidget {
-  const HijriCalendarWidget(
-      {super.key, required this.onChange, this.isRange = false});
+  const HijriCalendarWidget({
+    super.key,
+    required this.onChange,
+    this.isRange = false,
+    this.isHijari = true,
+  });
   final ValueChanged<DateSelect> onChange;
   final bool isRange;
+  final bool isHijari;
+
   @override
   State<HijriCalendarWidget> createState() => _HijriCalendarWidgetState();
 }
@@ -76,8 +81,12 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
         headerTitleBuilder: (context, day) {
           String formattedDate = DateFormat('dd-MM-yyyy', 'en').format(day);
           final hijriDate = AppUtils.datesMap[formattedDate];
-          return Text(
-              '${hijriDate?['month']} ${hijriDate?['day']?.split('-')[2]}');
+          return widget.isHijari
+              ? Text(
+                  '${hijriDate?['month']} ${hijriDate?['day']?.split('-')[2]}',
+                  textAlign: TextAlign.center,
+                )
+              : Text(formattedDate, textAlign: TextAlign.center);
         },
 
         withinRangeBuilder: (context, day, focusedDay) {
@@ -91,14 +100,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   '${day.day}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
-                  if (hijriDate != null)
+                  if (!widget.isHijari)
+                    Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  if (hijriDate != null && widget.isHijari)
                     Text(
                       hijriDate['day']?.split('-')[0] ?? '',
                       style: const TextStyle(
@@ -147,14 +157,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   '${day.day}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
-                  if (hijriDate != null)
+                  if (!widget.isHijari)
+                    Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  if (hijriDate != null && widget.isHijari)
                     Text(
                       hijriDate['day']?.split('-')[0] ?? '',
                       style: const TextStyle(
@@ -176,14 +187,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   '${day.day}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
-                  if (hijriDate != null)
+                  if (!widget.isHijari)
+                    Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  if (hijriDate != null && widget.isHijari)
                     Text(
                       hijriDate['day']?.split('-')[0] ?? '',
                       style: const TextStyle(
@@ -201,14 +213,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text(
-                //   '${day.day}',
-                //   style: const TextStyle(
-                //       fontSize: 12,
-                //       fontWeight: FontWeight.bold,
-                //       color: Colors.grey),
-                // ),
-                if (hijriDate != null)
+                if (!widget.isHijari)
+                  Text(
+                    '${day.day}',
+                    style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  ),
+                if (hijriDate != null && widget.isHijari)
                   Text(
                     hijriDate['day']?.split('-')[0] ?? '',
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
@@ -229,14 +242,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   '${day.day}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
-                  if (hijriDate != null)
+                  if (!widget.isHijari)
+                    Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  if (hijriDate != null && widget.isHijari)
                     Text(
                       hijriDate['day']?.split('-')[0] ?? '',
                       style: const TextStyle(
@@ -258,14 +272,15 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Text(
-                  //   '${day.day}',
-                  //   style: const TextStyle(
-                  //       fontSize: 16,
-                  //       color: Colors.white,
-                  //       fontWeight: FontWeight.bold),
-                  // ),
-                  if (hijriDate != null)
+                  if (!widget.isHijari)
+                    Text(
+                      '${day.day}',
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  if (hijriDate != null && widget.isHijari)
                     Text(
                       hijriDate['day']?.split('-')[0] ?? '',
                       style: const TextStyle(
@@ -280,17 +295,18 @@ class _HijriCalendarWidgetState extends State<HijriCalendarWidget> {
           String formattedDate = DateFormat('dd-MM-yyyy', 'en').format(date);
           final hijriDate = AppUtils.datesMap[formattedDate];
 
-          AppUtils.log(AppUtils.datesMap.length.toString());
+          // AppUtils.log(AppUtils.datesMap.length.toString());
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text(
-                //   '${date.day}',
-                //   style: const TextStyle(
-                //       fontSize: 16, fontWeight: FontWeight.bold),
-                // ),
-                if (hijriDate != null)
+                if (!widget.isHijari)
+                  Text(
+                    '${date.day}',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                if (hijriDate != null && widget.isHijari)
                   Text(
                     hijriDate['day']?.split('-')[0] ?? '',
                     style: const TextStyle(fontSize: 16, color: Colors.blue),
