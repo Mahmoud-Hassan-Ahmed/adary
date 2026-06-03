@@ -18,9 +18,9 @@ class _SplashPageState extends State<SplashPage> {
     Future.delayed(const Duration(seconds: 3)).then((onValue) => {
           AppUtils.appUser = AppUtils.instance.getUser(),
           if (AppUtils.appUser != null)
-            {AppUtils.go(const DashboardScreen())}
+            {AppUtils.goAndReplace(const DashboardScreen())}
           else
-            {AppUtils.go(const LoginScreen())}
+            {AppUtils.goAndReplace(const LoginScreen())}
         });
     super.initState();
   }

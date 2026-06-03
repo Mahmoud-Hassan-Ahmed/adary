@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/conts/images.dart';
 import 'package:adary/core/conts/style.dart';
+import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/choose_lang.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/share/widgets/navBar.dart';
 import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/presentation/pages/login_screen.dart';
 import 'package:adary/features/adary/presentation/widgets/profiles/subscription_manager.dart';
 import 'package:adary/features/table/utils/app_colors.dart';
@@ -12,8 +18,28 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImage;
+  bool _isUploading = false;
+  String? _logoUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _logoUrl = AppUtils.appUser?.logo;
+  }
+
   Widget _customBox(
       {bool hasArrow = true,
       required String text,
@@ -53,6 +79,133 @@ class Profile extends StatelessWidget {
     );
   }
 
+  Widget _buildProfileImage() {
+    if (_selectedImage != null) {
+      return Image.file(
+        File(_selectedImage!.path),
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+      );
+    }
+
+    final logo = _logoUrl ?? AppUtils.appUser?.logo;
+    if (logo != null && logo.isNotEmpty) {
+      final imageUrl = Api.baseUrl.endsWith('/')
+          ? '${Api.baseUrl}$logo'
+          : '${Api.baseUrl}/$logo';
+      return Image.network(
+        imageUrl,
+        width: 80,
+        height: 80,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            Images.PROFILE_COVER,
+            width: 80,
+            height: 80,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    return Image.asset(
+      Images.PROFILE_COVER,
+      width: 80,
+      height: 80,
+      fit: BoxFit.cover,
+    );
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (pickedImage == null) return;
+
+    setState(() {
+      _selectedImage = pickedImage;
+      _isUploading = true;
+    });
+
+    try {
+      final user = AppUtils.appUser;
+      if (user == null) {
+        AppUtils.showCustomSnackbar('User not found', SnackType.FAILURE);
+        return;
+      }
+
+      final uri =
+          Uri.parse('${Api.baseUrl}dashboard-mobile/update-school-icon/');
+      final request = http.MultipartRequest('POST', uri);
+      request.headers.addAll({
+        'username': user.username,
+        'app-key': user.ky,
+        'Accept-Language': 'ar',
+      });
+
+      request.files
+          .add(await http.MultipartFile.fromPath('icon', pickedImage.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('logo', pickedImage.path));
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(responseBody);
+        String? newLogo;
+        if (data is Map<String, dynamic>) {
+          if (data['data'] != null && data['data'] is Map<String, dynamic>) {
+            newLogo = data['data']['logo']?.toString();
+          }
+          newLogo ??= data['logo']?.toString();
+        }
+
+        if (newLogo != null && newLogo.isNotEmpty) {
+          final updatedUser = AppUser(
+            id: user.id,
+            school: user.school,
+            username: user.username,
+            schoolSystem: user.schoolSystem,
+            dateSystem: user.dateSystem,
+            isSmartbleActive: user.isSmartbleActive,
+            isFollowerActive: user.isFollowerActive,
+            smartblePlanInfo: user.smartblePlanInfo,
+            followerPlanInfo: user.followerPlanInfo,
+            whatsappService: user.whatsappService,
+            smsService: user.smsService,
+            ky: user.ky,
+            password: user.password,
+            logo: newLogo,
+            data_follower: user.data_follower,
+          );
+          await AppUtils.instance.setUser(updatedUser);
+          setState(() {
+            _logoUrl = newLogo;
+            _selectedImage = null;
+          });
+          AppUtils.showCustomSnackbar(
+              'Image changed successfully', SnackType.SUCESS);
+        } else {
+          AppUtils.showCustomSnackbar(
+              'Image uploaded, but response did not return the updated logo.',
+              SnackType.FAILURE);
+        }
+      } else {
+        AppUtils.showCustomSnackbar(responseBody, SnackType.FAILURE);
+      }
+    } catch (e) {
+      AppUtils.showCustomSnackbar('Failed to upload image', SnackType.FAILURE);
+    } finally {
+      setState(() {
+        _isUploading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -66,11 +219,8 @@ class Profile extends StatelessWidget {
                 child: Column(
                   children: [
                     ClipOval(
-                        child: Image.asset(
-                      Images.PROFILE_COVER,
-                      width: 80,
-                      height: 80,
-                    )),
+                      child: _buildProfileImage(),
+                    ),
                     Text(
                       AppUtils.appUser?.school ?? '',
                       style: AbhayaLibreMedium.copyWith(
@@ -96,8 +246,8 @@ class Profile extends StatelessWidget {
                         BtnApp(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 10),
-                          label: 'تغير الصورة',
-                          onTap: () {},
+                          label: _isUploading ? 'Uploading...' : 'تغير الصورة',
+                          onTap: _isUploading ? () {} : _pickAndUploadImage,
                           radius: 15,
                         ),
                       ],
