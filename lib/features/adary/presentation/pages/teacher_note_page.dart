@@ -24,11 +24,12 @@ class _TeacherNotePageState extends State<TeacherNotePage>
   @override
   Widget build(BuildContext context) {
     int tabsCount = [
-      '/api/notes/teachers-notes/',
-      '/api/notes/note/',
-      '/api/notes/teachers/',
+      '/notes/monitor-note/',
+      '/notes/new/',
+      '/notes/notes-teacher-list/',
     ].where((perm) => AppUtils.permissions.any((p) => p.contains(perm))).length;
-    TabController _tabController = TabController(length: 3, vsync: this);
+    TabController _tabController =
+        TabController(length: tabsCount, vsync: this);
     ;
     return BlocProvider(
       create: (context) => sl<TeacherNotesBloc>(),
@@ -98,30 +99,35 @@ class _TeacherNotePageState extends State<TeacherNotePage>
                         overlayColor:
                             MaterialStateProperty.all(Colors.transparent),
                         tabs: [
-                          Tab(
-                            child: Text(
-                              'send_not'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.checkPermission(
+                              ['/notes/monitor-note/']))
+                            Tab(
+                              child: Text(
+                                'send_not'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
-                          Tab(
-                            child: Text(
-                              'nots_list'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.checkPermission(['/notes/new/']))
+                            Tab(
+                              child: Text(
+                                'nots_list'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
-                          Tab(
-                            child: Text(
-                              'notes'.tr(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              // style: Theme.of(context).textTheme.titleMedium,
+                          if (AppUtils.checkPermission(
+                              ['/notes/notes-teacher-list/']))
+                            Tab(
+                              child: Text(
+                                'notes'.tr(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),

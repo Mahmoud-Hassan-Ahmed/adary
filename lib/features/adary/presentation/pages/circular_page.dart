@@ -98,21 +98,24 @@ class _CircularPageState extends State<CircularPage> {
                 ],
               ),
               appBar: MyAppBar(title: 'circulars'.tr(), actions: [
-                IconButton(
-                  onPressed: () {
-                    AppUtils.go(AddCircale(
-                      pagingController: _pagingController,
-                    ));
-                  },
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.APP_COLOR,
+                if (AppUtils.checkPermission([
+                  '/circular/add-circular/',
+                ]))
+                  IconButton(
+                    onPressed: () {
+                      AppUtils.go(AddCircale(
+                        pagingController: _pagingController,
+                      ));
+                    },
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.APP_COLOR,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
                     ),
-                    child: const Icon(Icons.add, color: Colors.white),
                   ),
-                ),
               ]),
               body: PagedListView<int, AdministrativeCircular>(
                   padding: EdgeInsets.zero,

@@ -11,7 +11,7 @@ import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/class_visit.dart';
 import 'package:adary/features/adary/presentation/widgets/social/rating_view.dart';
-import 'package:adary/features/adary/presentation/widgets/visits/plan_visit.dart';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +136,7 @@ class ItemVisit extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: Text(
-                        "التقيم العام".tr(),
+                        "rate_public".tr(),
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium!
@@ -174,10 +174,7 @@ class ItemVisit extends StatelessWidget {
                 content: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions.any((p) =>
-                                p.contains("api/notes/Visits/delete/")) ||
-                        AppUtils.permissions.isEmpty)
+                    if (AppUtils.checkPermission(['/visits/delete-visit/']))
                       BtnIcon(
                           label: 'delete'.tr(),
                           icon: AppIcon.rash,
@@ -216,10 +213,7 @@ class ItemVisit extends StatelessWidget {
                             },
                           );
                         }),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions.any((p) =>
-                                p.contains("api/notes/Visits/update/")) ||
-                        AppUtils.permissions.isEmpty)
+                    if (AppUtils.checkPermission(['/visits/edit-visit/']))
                       BtnIcon(
                           label: 'edit'.tr(),
                           icon: AppIcon.edit,
@@ -251,9 +245,9 @@ class ItemVisit extends StatelessWidget {
                             .add(GetEvaluationByVisitEvent(v: visitModel.id!));
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: "edit",
-                          child: Text("تقييم زيارة الفصل "),
+                          child: Text("class_visit_rate".tr()),
                         ),
                       ],
                       icon: const Icon(
@@ -263,7 +257,7 @@ class ItemVisit extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "تاريخ  الزيارة : ${visitModel.dateHijri}",
+                        "${"visit_date".tr()} : ${visitModel.dateHijri}",
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme

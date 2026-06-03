@@ -57,7 +57,7 @@ class ItemCicular extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    'التاريخ : ${visitModel.dateHijri}',
+                    '${'date'.tr()}  : ${visitModel.dateHijri}',
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium!
@@ -79,7 +79,7 @@ class ItemCicular extends StatelessWidget {
                   children: [
                     if (AppUtils.permissions.isNotEmpty &&
                             AppUtils.permissions
-                                .contains('api/notes/circular/delete/') ||
+                                .contains('/circular/delete-circular/') ||
                         AppUtils.permissions.isEmpty)
                       BtnIcon(
                           label: 'delete'.tr(),
@@ -104,24 +104,17 @@ class ItemCicular extends StatelessWidget {
                                               id: visitModel.id ?? 0)));
                                 }).show();
                           }),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions
-                                .contains('api/notes/circular/download/') ||
-                        AppUtils.permissions.isEmpty)
-                      BtnIcon(
-                          label: 'download'.tr(),
-                          icon: "assets/icons/material-symbols_download.svg",
-                          onTap: () async {
-                            final pdf = await AppUtils.downloadFile(
-                                visitModel.fileUrl, '${visitModel.title}.pdf');
-                            if (pdf != null) {
-                              OpenFilex.open(pdf);
-                            }
-                          }),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions
-                                .contains('api/notes/circular/update/') ||
-                        AppUtils.permissions.isEmpty)
+                    BtnIcon(
+                        label: 'download'.tr(),
+                        icon: "assets/icons/material-symbols_download.svg",
+                        onTap: () async {
+                          final pdf = await AppUtils.downloadFile(
+                              visitModel.fileUrl, '${visitModel.title}.pdf');
+                          if (pdf != null) {
+                            OpenFilex.open(pdf);
+                          }
+                        }),
+                    if (AppUtils.checkPermission(['/circular/edit-circular/']))
                       BtnIcon(
                           label: 'edit'.tr(),
                           icon: "assets/icons/edit-contained.svg",
@@ -131,10 +124,7 @@ class ItemCicular extends StatelessWidget {
                               pagingController: pagingController,
                             ));
                           }),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions
-                                .contains('api/notes/circular/download/') ||
-                        AppUtils.permissions.isEmpty)
+                    if (AppUtils.checkPermission(['/circular/api/circular/']))
                       BtnIcon(
                           label: 'list_teachers'.tr(),
                           icon: 'assets/icons/pepicons-pencil_persons.svg',

@@ -42,19 +42,20 @@ class ClassHealthPage extends StatelessWidget {
           return SafeArea(
             child: Scaffold(
               appBar: MyAppBar(title: 'healths'.tr(), actions: [
-                IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return AddHeathPage(
-                            refreshKey: _refreshIndicatorKey,
-                          );
-                        },
-                      );
-                    },
-                    icon: SvgPicture.asset("assets/icons/icon-add.svg"))
+                if (AppUtils.checkPermission(['/health/add-health/']))
+                  IconButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddHeathPage(
+                              refreshKey: _refreshIndicatorKey,
+                            );
+                          },
+                        );
+                      },
+                      icon: SvgPicture.asset("assets/icons/icon-add.svg"))
               ]),
               bottomNavigationBar: BottomNavigatorBar(
                 items: [
@@ -157,8 +158,8 @@ class ClassHealthPage extends StatelessWidget {
                                 children: [
                                   Text(
                                     classes[index].healthCount > 0
-                                        ? '${classes[index].healthCount} حالة'
-                                        : 'لا يوجد حالات',
+                                        ? '${classes[index].healthCount} ${'status'.tr()}'
+                                        : 'no_exit_status'.tr(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelSmall!

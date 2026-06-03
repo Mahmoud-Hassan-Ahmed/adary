@@ -42,6 +42,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
   late TextEditingController nameVisitor;
   final formState = GlobalKey<FormState>();
   bool valueSelect = false;
+  bool valueSelect2 = false;
   bool sendSms = false;
 
   @override
@@ -92,9 +93,9 @@ class _AddClassVisitState extends State<AddClassVisit> {
           } else if (state is DoneAddVisitState) {
             widget.pagingController?.refresh();
             WidgetsBinding.instance.addPostFrameCallback((callback) {
-              AppUtils.go(const DoneAddedPage(
-                  label: 'تم إضافة الزيارة  الصفية بنجاح',
-                  title: 'إضافة زيارة صفية جديدة'));
+              AppUtils.go(DoneAddedPage(
+                  label: e.tr('new_visit_added'),
+                  title: e.tr('new_visit_add')));
             });
             // AppUtils.showCustomSnackbar(e.tr('added_visit'), SnackType.SUCESS);
 
@@ -106,6 +107,8 @@ class _AddClassVisitState extends State<AddClassVisit> {
             Navigator.pop(context);
           } else if (state is ChnageNotifyState) {
             valueSelect = !valueSelect;
+          } else if (state is ChnageNotifyState2) {
+            valueSelect2 = !valueSelect2;
           } else if (state is ChnageNotifyState3) {
             sendSms = !sendSms;
           }
@@ -113,7 +116,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
             child: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Scaffold(
-                appBar: MyAppBar(title: e.tr('إضافة زيارة صفية جديدة')),
+                appBar: MyAppBar(title: e.tr('new_visit_add')),
                 bottomNavigationBar: BottomNavigatorBar(items: [
                   Expanded(
                     child: Padding(
@@ -159,7 +162,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                             }
                           }
                         },
-                        label: 'حفظ ',
+                        label: e.tr('save'),
                       ),
                     ),
                   ),
@@ -237,7 +240,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                             },
                             child: RadioBtn(
                                 group: valueSelect ? 1 : 0,
-                                label: e.tr('اشعار المعلم عن طريق التطبيق'),
+                                label: e.tr('teacher_notification'),
                                 value: 1,
                                 valueChanged: (v) {
                                   BaseBloc.get<ClassVisitBloc>(context)
@@ -254,15 +257,15 @@ class _AddClassVisitState extends State<AddClassVisit> {
                           InkWell(
                             onTap: () {
                               BaseBloc.get<ClassVisitBloc>(context)
-                                  .emitState(ChnageNotifyState());
+                                  .emitState(ChnageNotifyState2());
                             },
                             child: RadioBtn(
-                                group: valueSelect ? 1 : 0,
-                                label: e.tr('إرسال إشعار عن طريق الواتساب '),
+                                group: valueSelect2 ? 1 : 0,
+                                label: e.tr('whatsapp_notification'),
                                 value: 1,
                                 valueChanged: (v) {
                                   BaseBloc.get<ClassVisitBloc>(context)
-                                      .emitState(ChnageNotifyState());
+                                      .emitState(ChnageNotifyState2());
                                 }),
                           ),
                         ],
@@ -282,7 +285,7 @@ class _AddClassVisitState extends State<AddClassVisit> {
                             },
                             child: RadioBtn(
                                 group: sendSms ? 1 : 0,
-                                label: e.tr('يستطيع المعلم رؤيته '),
+                                label: e.tr('student_can_see_visit'),
                                 value: 1,
                                 valueChanged: (v) {
                                   BaseBloc.get<ClassVisitBloc>(context)

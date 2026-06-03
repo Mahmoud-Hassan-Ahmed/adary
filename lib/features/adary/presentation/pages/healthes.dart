@@ -70,27 +70,28 @@ class _HealthesPageState extends State<HealthesPage> {
           return SafeArea(
             child: Scaffold(
               appBar: MyAppBar(title: widget.classId.name, actions: [
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return const AddHeathPage(
-                            // refreshKey: _refreshIndicatorKey,
-                            );
-                      },
-                    );
-                  },
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.APP_COLOR,
+                if (AppUtils.checkPermission(['/health/add-health/']))
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) {
+                          return const AddHeathPage(
+                              // refreshKey: _refreshIndicatorKey,
+                              );
+                        },
+                      );
+                    },
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.APP_COLOR,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
                     ),
-                    child: const Icon(Icons.add, color: Colors.white),
                   ),
-                ),
               ]),
               body: PagedListView<int, HealthCondition>(
                   padding: EdgeInsets.zero,

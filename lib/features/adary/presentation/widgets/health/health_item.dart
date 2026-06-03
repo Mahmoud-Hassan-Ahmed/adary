@@ -166,10 +166,7 @@ class HealthItem extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      if (AppUtils.permissions.isNotEmpty &&
-                              AppUtils.permissions.any((p) =>
-                                  p.contains("api/notes/health/delete/")) ||
-                          AppUtils.permissions.isEmpty)
+                      if (AppUtils.checkPermission(['/health/delete-health/']))
                         BtnIcon(
                             label: 'delete'.tr(),
                             icon: 'assets/icons/delete.svg',
@@ -196,10 +193,7 @@ class HealthItem extends StatelessWidget {
                       const SizedBox(
                         width: 40,
                       ),
-                      if (AppUtils.permissions.isNotEmpty &&
-                              AppUtils.permissions.any((p) =>
-                                  p.contains("api/notes/health/update/")) ||
-                          AppUtils.permissions.isEmpty)
+                      if (AppUtils.checkPermission(['/health/edit-health/']))
                         BtnIcon(
                             label: 'edit'.tr(),
                             icon: AppIcon.edit,

@@ -5,10 +5,6 @@ import 'package:adary/features/adary/data/models/evaluation_model.dart';
 import 'package:adary/features/adary/presentation/bloc/evaluations/evaluations_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/class_visit.dart';
 import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
-import 'package:adary/features/adary/presentation/widgets/task/add_task_teacher.dart';
-import 'package:adary/features/adary/presentation/widgets/task/current.dart';
-import 'package:adary/features/adary/presentation/widgets/task/finsh.dart';
-import 'package:adary/features/adary/presentation/widgets/task/next.dart';
 import 'package:adary/features/adary/presentation/widgets/visits/evaliation_form.dart';
 import 'package:adary/features/adary/presentation/widgets/visits/rate.dart';
 import 'package:adary/injections/injection_main.dart';
@@ -31,8 +27,9 @@ class RatingPage extends StatelessWidget {
               state is DoneUpdateManagementEvaluationState ||
               state is DoneUpdateImplementationEvaluationState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              AppUtils.go(const DoneAddedPage(
-                  label: 'تم تحديث التقييم بنجاح', title: 'تقيم الزيارة'));
+              AppUtils.go(DoneAddedPage(
+                  label: 'updated_evaluation'.tr(),
+                  title: 'visit_rating'.tr()));
             });
           }
           return DefaultTabController(
@@ -110,31 +107,31 @@ class RatingPage extends StatelessWidget {
                                   _buildTab(
                                     index: 0,
                                     controller: controller,
-                                    title: 'التخطيط والإعداد',
+                                    title: 'planning'.tr(),
                                     icon: 'assets/icons/rate1.svg',
                                   ),
                                   _buildTab(
                                     index: 1,
                                     controller: controller,
-                                    title: 'التنفيذ والتدريس'.tr(),
+                                    title: 'implementation'.tr(),
                                     icon: 'assets/icons/rate2.svg',
                                   ),
                                   _buildTab(
                                     index: 2,
                                     controller: controller,
-                                    title: 'إدارة الفصل'.tr(),
+                                    title: 'class_management'.tr(),
                                     icon: 'assets/icons/rate3.svg',
                                   ),
                                   _buildTab(
                                     index: 2,
                                     controller: controller,
-                                    title: 'التفاعل والتقييم'.tr(),
+                                    title: 'class_interactions'.tr(),
                                     icon: 'assets/icons/rate4.svg',
                                   ),
                                   _buildTab(
                                     index: 2,
                                     controller: controller,
-                                    title: 'النتائج والتوصيات'.tr(),
+                                    title: 'results_and_recommendations'.tr(),
                                     icon: 'assets/icons/rate5.svg',
                                   ),
                                 ],
@@ -150,67 +147,69 @@ class RatingPage extends StatelessWidget {
                               RatingForm(
                                 id: visit?.id ?? 0,
                                 index: 0,
-                                label1: "وضوح أهداف الدرس",
+                                label1: 'clarity_lesson_objectives'.tr(),
                                 start1: visit.planning?.clarityLesson ?? 0,
-                                label2: "ملاءمة محتوى الدرس للوقت المخصص",
+                                label2: 'lesson_content_time_appropriate'.tr(),
                                 start2:
                                     visit.planning?.lessonContentAppropriate ??
                                         0,
-                                label3: "استخدام مواد تعليمية مناسبة",
+                                label3:
+                                    'use_appropriate_teaching_materials'.tr(),
                                 start3: visit.planning
                                         ?.appropriateEducationalMethods ??
                                     0,
                                 note: visit.planning?.note ?? '',
-                                label4: "ملاحظات حول التخطيط والإعداد",
-                                hint: "ادخل ملاحظاتك حول التخطيط والإعداد",
+                                label4: 'planning_notes'.tr(),
+                                hint: 'planning_notes_hint'.tr(),
                               ),
                               RatingForm(
                                 id: visit?.id ?? 0,
                                 index: 1,
-                                label1: "وضوح الشرح وأسلوب العرض",
+                                label1: 'clarity_explanation_presentation'.tr(),
                                 start1:
                                     visit.implementation?.clarityExplanation ??
                                         0,
-                                label2: "تنويع استراتيجيات التدريس",
+                                label2: 'variety_teaching_strategies'.tr(),
                                 start2:
                                     visit.implementation?.diversityStrategies ??
                                         0,
-                                label3: "مراعاة الفروق الفردية بين الطلاب ",
+                                label3: 'consider_individual_differences'.tr(),
                                 start3: visit.implementation?.investTime ?? 0,
                                 note: visit.implementation?.note ?? '',
-                                label4: "ملاحظات حول التنفيذ والتدريس",
-                                hint: "ادخل ملاحظاتك حول التنفيذ والتدريس",
+                                label4: 'implementation_notes'.tr(),
+                                hint: 'implementation_notes_hint'.tr(),
                               ),
                               RatingForm(
                                 id: visit?.id ?? 0,
                                 index: 2,
-                                label1: "التحكم في سلوك الطلاب والانضباط ",
+                                label1: 'control_student_behavior'.tr(),
                                 start1: visit.managment
                                         ?.controllingStudentBehavior ??
                                     0,
-                                label2: "تنظيم الفصل الدراسي",
+                                label2: 'organizing_classroom'.tr(),
                                 start2:
                                     visit.managment?.organizingClassroom ?? 0,
-                                label3: "الاستفادة الفعالة من وقت الحصة",
+                                label3: 'effective_use_of_class_time'.tr(),
                                 start3: visit.managment?.investClassTime ?? 0,
                                 note: visit.managment?.note ?? '',
-                                label4: "ملاحظات حول إدارة الفصل",
-                                hint: "ادخل ملاحظاتك حول إدارة الفصل",
+                                label4: 'management_notes'.tr(),
+                                hint: 'management_notes_hint'.tr(),
                               ),
                               RatingForm(
                                 id: visit?.id ?? 0,
                                 index: 3,
-                                label1: "تفاعل الطلاب ومشاركتهم",
+                                label1:
+                                    'student_interaction_participation'.tr(),
                                 start1:
                                     visit.interaction?.studentInteraction ?? 0,
-                                label2: "استخدام أساليب تقييم متنوعة",
+                                label2: 'use_varied_assessment_methods'.tr(),
                                 start2:
                                     visit.interaction?.variousEvaluation ?? 0,
-                                label3: "توفير التغذية الراجعة للطلاب",
+                                label3: 'provide_feedback_to_students'.tr(),
                                 start3: visit.interaction?.provideFeed ?? 0,
                                 note: visit.interaction?.note ?? '',
-                                label4: "ملاحظات حول التفاعل والتقييم",
-                                hint: "ادخل ملاحظاتك حول التفاعل والتقييم",
+                                label4: 'interaction_notes'.tr(),
+                                hint: 'interaction_notes_hint'.tr(),
                               ),
                               EvaluationPage(
                                 visit: visit,

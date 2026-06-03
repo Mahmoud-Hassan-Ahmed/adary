@@ -17,9 +17,14 @@ void main(List<String> args) {
   }
 
   final sourceFiles = collectDartFiles(libDir);
-  final keys = extractTranslationKeys(sourceFiles);
+  final trKeys = extractTranslationKeys(sourceFiles);
+  final rawUiKeys = extractRawUiStrings(sourceFiles);
+  final keys = <String>{}
+    ..addAll(trKeys)
+    ..addAll(rawUiKeys);
+
   if (keys.isEmpty) {
-    print('No translation keys found in lib/.');
+    print('No translation keys or UI strings found in lib/.');
     return;
   }
 
@@ -96,8 +101,48 @@ Set<String> extractTranslationKeys(List<File> files) {
   return keys;
 }
 
+Set<String> extractRawUiStrings(List<File> files) {
+  final patterns = [
+    RegExp(r'''Text\(\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''label\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''title\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''hintText\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''helperText\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''errorText\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''message\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''desc\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''content\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''btnOkText\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''btnCancelText\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+    RegExp(r'''text\s*:\s*(['"])(.*?)\1(?!\s*\.tr)'''),
+  ];
+
+  final keys = <String>{};
+  for (final file in files) {
+    final content = file.readAsStringSync();
+    for (final pattern in patterns) {
+      for (final match in pattern.allMatches(content)) {
+        final value = match.group(2);
+        if (_isValidRawUiString(value)) {
+          keys.add(value!);
+        }
+      }
+    }
+  }
+  return keys;
+}
+
+bool _isValidRawUiString(String? value) {
+  if (value == null || value.isEmpty) return false;
+  if (value.trim().isEmpty) return false;
+  if (value.contains(r'${') || value.contains(r'$')) return false;
+  if (value.startsWith('http') || value.contains('://')) return false;
+  return true;
+}
+
 bool _isValidTranslationKey(String? value) {
   if (value == null || value.isEmpty) return false;
+  if (value.trim().isEmpty) return false;
   if (value.contains(r'${') || value.contains(r'$')) return false;
   return true;
 }

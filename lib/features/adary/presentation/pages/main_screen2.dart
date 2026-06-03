@@ -122,10 +122,9 @@ class MainScreen2 extends StatelessWidget {
                       width: 20,
                     ),
                     if (AppUtils.checkPermission([
-                      '/notes/circulars/',
-                      '/notes/add_circular/',
-                      '/notes/circular/download/',
-                      '/notes/circular/update/'
+                      '/circular/list/',
+                      '/circular/add-circular/',
+                      '/circular/edit-circular/'
                     ]))
                       Expanded(
                         child: _Custom_Box(
@@ -151,11 +150,7 @@ class MainScreen2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (AppUtils.checkPermission([
-                      '/notes/healths/',
-                      '/notes/add_health/',
-                      '/notes/healths/download/',
-                      '/notes/health/update/',
-                      '/notes/health/delete/'
+                      '/health/healths/',
                     ]))
                       Expanded(
                         child: _Custom_Box(
@@ -175,11 +170,7 @@ class MainScreen2 extends StatelessWidget {
                       width: 20,
                     ),
                     if (AppUtils.checkPermission([
-                      '/notes/Visits/',
-                      '/notes/add_Visits/',
-                      '/notes/Visits/download/',
-                      '/notes/Visits/update/',
-                      '/notes/Visits/delete/'
+                      '/visits/visits/',
                     ]))
                       Expanded(
                         child: _Custom_Box(
@@ -331,31 +322,30 @@ class MainScreen2 extends StatelessWidget {
                               }
                             }),
                       ),
-                    if (AppUtils.permissions.isNotEmpty &&
-                            AppUtils.permissions.any((p) =>
-                                p.contains('/api/notes/laps/') ||
-                                p.contains("/api/notes/add_laps/") ||
-                                p.contains("api/notes/laps/download/") ||
-                                p.contains("api/notes/laps/update/") ||
-                                p.contains("api/notes/laps/delete/")) ||
-                        AppUtils.permissions.isEmpty)
-                      const SizedBox(
-                        width: 20,
-                      ),
-                    Expanded(
-                      child: _Custom_Box(
-                          subTitle: "المواظبة والسلوك ".tr(),
-                          des: "المواظبة والسلوك ".tr(),
-                          imagePath: "assets/icons/icon-prev.svg",
-                          onTap: () {
-                            if (AppUtils.appUser != null &&
-                                AppUtils.appUser!.isFollowerActive) {
-                              AppUtils.go(const Perseverance());
-                            } else {
-                              _showNotSubsription(context);
-                            }
-                          }),
+                    const SizedBox(
+                      width: 20,
                     ),
+                    if (AppUtils.checkPermission([
+                      '/notes/laps/',
+                      '/notes/add_laps/',
+                      '/notes/laps/download/',
+                      '/notes/laps/update/',
+                      '/notes/laps/delete/'
+                    ]))
+                      Expanded(
+                        child: _Custom_Box(
+                            subTitle: "perseverance ".tr(),
+                            des: "perseverance ".tr(),
+                            imagePath: "assets/icons/icon-prev.svg",
+                            onTap: () {
+                              if (AppUtils.appUser != null &&
+                                  AppUtils.appUser!.isFollowerActive) {
+                                AppUtils.go(const Perseverance());
+                              } else {
+                                _showNotSubsription(context);
+                              }
+                            }),
+                      ),
                   ],
                 ),
               ],

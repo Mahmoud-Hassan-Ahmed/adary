@@ -78,20 +78,21 @@ class _VisitsPageState extends State<VisitsPage> {
           }
           return SafeArea(
             child: Scaffold(
-              appBar: MyAppBar(title: 'الزيارات الصفية'.tr(), actions: [
-                IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return AddClassVisit(
-                            pagingController: _pagingController,
-                          );
-                        },
-                      );
-                    },
-                    icon: SvgPicture.asset('assets/icons/icon-btn-add.svg'))
+              appBar: MyAppBar(title: 'Visits'.tr(), actions: [
+                if (AppUtils.checkPermission(['/visits/add-visit/']))
+                  IconButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return AddClassVisit(
+                              pagingController: _pagingController,
+                            );
+                          },
+                        );
+                      },
+                      icon: SvgPicture.asset('assets/icons/icon-btn-add.svg'))
               ]),
               bottomNavigationBar: BottomNavigatorBar(
                 items: [
