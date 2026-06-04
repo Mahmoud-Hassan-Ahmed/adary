@@ -41,4 +41,6 @@ class Api {
   static String attendanceStatistics = 'api/notes/attendance/statistics/';
   static String behaviorStatistics = 'api/notes/behavior/statistics/';
   static String downloadReport = 'api/notes/reports/generate/';
+  static String requests = '/daily-supervision/secure-class/requests/';
+  static String changeStatus = '/daily-supervision/secure-class/requests/';
 }

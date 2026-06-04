@@ -1037,7 +1037,9 @@
   "use_varied_assessment_methods":"Use of varied assessment methods",
   "provide_feedback_to_students":"Providing feedback to students",
   "interaction_notes":"Notes on interaction and assessment",
-  "interaction_notes_hint":"Enter your notes about interaction and assessment"
+  "interaction_notes_hint":"Enter your notes about interaction and assessment",
+  "secure_session":"Secure Sessions"
+
 
 
 

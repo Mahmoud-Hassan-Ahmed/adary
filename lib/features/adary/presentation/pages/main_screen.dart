@@ -5,6 +5,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
 import 'package:adary/features/adary/presentation/pages/dialy_task.dart';
 import 'package:adary/features/adary/presentation/pages/examination.dart';
+import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
 import 'package:adary/features/table/view/screen/dashboard/dashboardScreen.dart';
 import 'package:adary/features/table/view/screen/waiting/waiting.dart';
 import 'package:adary/injections/injection_main.dart';
@@ -176,7 +177,29 @@ class MainScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(
-                  height: 19,
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _Custom_Box(
+                          subTitle: "secure_sessions".tr(),
+                          imagePath: "assets/icons/scure_session.svg",
+                          onTap: () {
+                            if (AppUtils.appUser != null &&
+                                AppUtils.appUser!.isFollowerActive) {
+                              AppUtils.go(const SecureSessions());
+                            } else {
+                              _showNotSubsription(context);
+                            }
+                          }),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    )
+                  ],
                 ),
               ],
             ),

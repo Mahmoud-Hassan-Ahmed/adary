@@ -19,6 +19,7 @@ import 'package:adary/features/adary/data/models/model_20.dart';
 import 'package:adary/features/adary/data/models/note_entity_model.dart';
 import 'package:adary/features/adary/data/models/note_teacher.dart';
 import 'package:adary/features/adary/data/models/pagination_model.dart';
+import 'package:adary/features/adary/data/models/requests_model.dart';
 import 'package:adary/features/adary/data/models/student_model.dart';
 import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
@@ -31,6 +32,7 @@ import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
+import 'package:adary/features/adary/domain/entities/change_status_entity.dart';
 import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
@@ -736,5 +738,19 @@ class DbImp implements Db {
   @override
   Future<void> downloadReport(FilterReportEntity entity) async {
     await dio.download(Api.downloadReport, entity.Path, data: entity.toJson());
+  }
+
+  @override
+  Future<PageinationModel<LeaveRequestModel>> getRequests(
+      PaginationEntity status) async {
+    final response = await dio.get(Api.requests,
+        queryParameters: {"status": status.teacher, "page": status.page});
+    return PageinationModel.fromJson(response.data, LeaveRequestModel.fromJson);
+  }
+
+  @override
+  Future<void> chanageStatus(ChangeStatusEntity entity) async {
+    await dio.post("${Api.changeStatus}${entity.id}/action/",
+        data: entity.toJson());
   }
 }

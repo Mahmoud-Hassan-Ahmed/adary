@@ -16,6 +16,7 @@ import 'package:adary/features/adary/domain/usecases/add_healths_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_note_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_visit_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/add_week_group_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/change_status_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_category_evi_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_implementation_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/create_intraction_user_case.dart';
@@ -67,6 +68,7 @@ import 'package:adary/features/adary/domain/usecases/get_model19_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_model20_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_models18_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_notes_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_requests_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_student_attendnce.dart';
 import 'package:adary/features/adary/domain/usecases/get_student_calss_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_students_behavoir.dart';
@@ -114,6 +116,7 @@ import 'package:adary/features/adary/presentation/bloc/model19/model19_bloc.dart
 import 'package:adary/features/adary/presentation/bloc/model20/model20_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/note/note_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/perseverance/perseverance_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/scure_session.dart/secure_session_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/social/social_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/students/students_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/task/task_bloc.dart';
@@ -293,6 +296,10 @@ Future<void> init() async {
         updateWeekGroupUseCase: sl(),
         deleteWeekGroupUseCase: sl()),
   );
+  sl.registerFactory(() => SecureSessionBloc(
+        getRequestsUseCase: sl(),
+        changeStatusUseCase: sl(),
+      ));
   sl.registerFactory(
     () => LoginBloc(loginUseCase: sl()),
   );
@@ -300,6 +307,18 @@ Future<void> init() async {
   //### usecase
   sl.registerLazySingleton(
     () => GetNotesUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => ChangeStatusUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetRequestsUseCase(
       repo: sl(),
       db: sl(),
     ),

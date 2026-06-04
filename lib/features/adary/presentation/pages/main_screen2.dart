@@ -334,8 +334,8 @@ class MainScreen2 extends StatelessWidget {
                     ]))
                       Expanded(
                         child: _Custom_Box(
-                            subTitle: "perseverance ".tr(),
-                            des: "perseverance ".tr(),
+                            subTitle: "perseverance".tr(),
+                            des: "perseverance".tr(),
                             imagePath: "assets/icons/icon-prev.svg",
                             onTap: () {
                               if (AppUtils.appUser != null &&
