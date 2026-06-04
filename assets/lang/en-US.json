@@ -1025,5 +1025,7 @@
     "is_trial":"In Trial Period",
     "expire_at":"Expires At",
     "whatsapp_service":"WhatsApp Service",
-    "remaining":"Remaining Messages"
+    "remaining":"Remaining Messages",
+    "secure_session":"Secure Session"
+
   }

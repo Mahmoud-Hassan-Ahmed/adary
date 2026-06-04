@@ -383,6 +383,33 @@ class MainScreen extends StatelessWidget {
                         )
                       ],
                     )),
+                const SizedBox(
+                  height: 19,
+                ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _Custom_Box(
+                              subTitle: "secure_session".tr(),
+                              imagePath: "assets/icons/scure_session.svg",
+                              onTap: () {
+                                if (AppUtils.appUser != null &&
+                                    AppUtils.appUser!.isFollowerActive) {
+                                  AppUtils.go(const WeekPlaning());
+                                } else {
+                                  _showNotSubsription(context);
+                                }
+                              }),
+                        ),
+                        const Expanded(
+                          child: SizedBox(),
+                        )
+                      ],
+                    )),
               ],
             ),
           ),

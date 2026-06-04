@@ -1052,7 +1052,8 @@
     "expire_at":"تنتهي في",
     "whatsapp_service":"خدمة الواتساب",
     "remaining":"المتبقي من الرسائل",
-    "delete_account":"حذف الحساب"
+    "delete_account":"حذف الحساب",
+    "secure_session":"طلبات تأمين الحصة "
     
   }
   
