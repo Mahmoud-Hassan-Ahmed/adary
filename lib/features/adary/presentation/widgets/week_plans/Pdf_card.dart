@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart' show PDFView;
 import 'package:http/http.dart' as http;
@@ -58,14 +59,14 @@ class PdfCard extends StatelessWidget {
                       debugPrint("Delete $pdfUrl");
                     }
                   },
-                  itemBuilder: (context) => const [
+                  itemBuilder: (context) => [
                     PopupMenuItem(
                       value: "download",
-                      child: Text("تحميل"),
+                      child: Text('download'.tr()),
                     ),
                     PopupMenuItem(
                       value: "delete",
-                      child: Text("حذف"),
+                      child: Text('delete'.tr()),
                     ),
                   ],
                 ),
@@ -76,8 +77,8 @@ class PdfCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           /// Title
-          const Text(
-            "الخطة الأسبوعية",
+          Text(
+            'weekly_plan_singular'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -209,14 +210,14 @@ class _PdfCardWithFlutterPdfViewState extends State<PdfCardWithFlutterPdfView> {
                           debugPrint("Delete ${widget.pdfUrl}");
                         }
                       },
-                      itemBuilder: (context) => const [
+                      itemBuilder: (context) => [
                         PopupMenuItem(
                           value: "download",
-                          child: Text("تحميل"),
+                          child: Text('download'.tr()),
                         ),
                         PopupMenuItem(
                           value: "delete",
-                          child: Text("حذف"),
+                          child: Text('delete'.tr()),
                         ),
                       ],
                     ),
@@ -228,8 +229,8 @@ class _PdfCardWithFlutterPdfViewState extends State<PdfCardWithFlutterPdfView> {
             const SizedBox(height: 6),
 
             // ===== TITLE =====
-            const Text(
-              "الخطة الأسبوعية",
+            Text(
+              'weekly_plan_singular'.tr(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

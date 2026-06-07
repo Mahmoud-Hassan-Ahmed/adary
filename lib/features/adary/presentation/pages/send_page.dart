@@ -5,6 +5,7 @@ import 'package:adary/features/adary/presentation/widgets/send/custom_Box.dart';
 import 'package:adary/features/adary/presentation/widgets/send/instructor.dart';
 import 'package:adary/features/adary/presentation/widgets/send/parent.dart';
 import 'package:adary/features/adary/presentation/widgets/send/student.dart';
+import 'package:easy_localization/easy_localization.dart' as e;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,7 +25,7 @@ class SendScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
-                Text("ارسال الى",
+                Text(e.tr('send_to'),
                     style: AbhayaLibre.copyWith(
                         color: AppColors.FONTCOLOR,
                         fontWeight: FontWeight.bold,

@@ -134,7 +134,7 @@ class _BehaviorState extends State<Behavior> {
                       children: [
                         Row(
                           children: [
-                            const Text("التاريخ: "),
+                            Text('${'date'.tr()}: '),
                             Text(
                               DateFormat('dd/MM/yyyy')
                                   .format(widget.dateTime ?? DateTime.now()),
@@ -145,7 +145,7 @@ class _BehaviorState extends State<Behavior> {
                         ),
                         Row(
                           children: [
-                            const Text("الحصة: "),
+                            Text('${'session'.tr()}: '),
                             Text(
                               widget.sessionName ?? '',
                               style: TextStyle(color: AppColors.APP_COLOR),
@@ -154,7 +154,7 @@ class _BehaviorState extends State<Behavior> {
                         ),
                         Row(
                           children: [
-                            const Text("الفصل: "),
+                            Text('${'class'.tr()}: '),
                             Text(
                               widget.className ?? '',
                               style: TextStyle(color: AppColors.APP_COLOR),
@@ -225,12 +225,12 @@ class _BehaviorState extends State<Behavior> {
                             child: BtnApp(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 15, horizontal: 10),
-                                label: 'حفظ التسجيل ',
+                                label: 'save_record'.tr(),
                                 onTap: () async {
                                   await sl<AddBehavoirUseCase>().call(entites);
-                                  AppUtils.go(const DoneAddedPage(
-                                      label: 'تم تسجيل السلوك    ',
-                                      title: 'تسجيل السلوك   '));
+                                  AppUtils.go(DoneAddedPage(
+                                      label: 'behavior_recorded'.tr(),
+                                      title: 'record_behavior'.tr()));
                                 }),
                           )
                         ],

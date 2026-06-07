@@ -5,6 +5,7 @@ import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/presentation/bloc/week_plan/week_plan_bloc.dart';
 import 'package:adary/features/adary/presentation/widgets/week_plans/add_week.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -72,13 +73,13 @@ class WeekCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("عدد الأسابيع: ${weekGroupModel.weeksCount}",
+                    Text('weeks_count'.tr(namedArgs: {'count': weekGroupModel.weeksCount.toString()}),
                         style: const TextStyle(color: Colors.red)),
                     StatusBadge(active: weekGroupModel.isActive),
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text("عدد الخطط الأسبوعية: ${weekGroupModel.plansNumber}",
+                Text('weekly_plans_count'.tr(namedArgs: {'count': weekGroupModel.plansNumber.toString()}),
                     style: const TextStyle(color: Colors.blue)),
               ],
             ),
@@ -93,9 +94,8 @@ class WeekCard extends StatelessWidget {
                       context: context,
                       dialogType: DialogType.warning,
                       animType: AnimType.bottomSlide,
-                      title: 'هل أنت متأكد؟',
-                      desc:
-                          'سيتم حذف المجموعة وجميع الخطط الأسبوعية المرتبطة بها',
+                      title: 'are_you_sure'.tr(),
+                      desc: 'delete_group_warning'.tr(),
                       btnCancelOnPress: () {},
                       btnOkOnPress: () {
                         BaseBloc.get<WeekPlanBloc>(context)
@@ -134,7 +134,7 @@ class StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        active ? "مفعل" : "غير مفعل",
+        active ? 'activated'.tr() : 'not_activated'.tr(),
         style: TextStyle(
           color: active ? Colors.teal : Colors.orange,
           fontWeight: FontWeight.bold,
