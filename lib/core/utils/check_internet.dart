@@ -15,13 +15,13 @@ class CheckInternetConnection {
       switch (status) {
         case InternetStatus.connected:
           if (!AppUtils.netConnect) {
-            AppUtils.showCustomSnackbar(messageConnect, SnackType.SUCESS);
+            // AppUtils.showCustomSnackbar(messageConnect, SnackType.SUCESS);
             // AppUtils.netConnect = true;
           }
           break;
         case InternetStatus.disconnected:
           if (AppUtils.netConnect) {
-            AppUtils.showCustomSnackbar(messageDisconnect, SnackType.FAILURE);
+            // AppUtils.showCustomSnackbar(messageDisconnect, SnackType.FAILURE);
             // AppUtils.netConnect = false;
           }
           break;

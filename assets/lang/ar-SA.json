@@ -1124,5 +1124,6 @@
   "weekly_plan_singular": "الخطة الأسبوعية",
   "exam_date_range": "تاريخ اللجنة من {start} حتى {end}",
   "add_btn": "اضافة",
-  "general_evaluation": "التقييم العام"
+  "general_evaluation": "التقييم العام",
+  "secure_sessions":"تأمين الحصص"
 }

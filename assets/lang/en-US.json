@@ -1084,7 +1084,9 @@
   "weekly_plan_singular": "Weekly Plan",
   "exam_date_range": "Committee date from {start} to {end}",
   "add_btn": "Add",
-  "general_evaluation": "General Evaluation"
+  "general_evaluation": "General Evaluation",
+  "secure_sessions":"Secure Sessions"
+
 
 
 
