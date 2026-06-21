@@ -4,7 +4,7 @@ class AppConstants {
   static const String appName = 'Smart Table';
   static const double appVersion = 1.0;
 
-  static const String baseUrl = 'https://test.smartble.net';
+  static const String baseUrl = 'https://smartble.net';
   static const String LOGIN_URI = '/dashboard-mobile/login/';
   static const String WORK_DAYS = '/dashboard-mobile/load-workdays-data/';
   static const String CONTACT_US = '/dashboard-mobile/contact-us/';
