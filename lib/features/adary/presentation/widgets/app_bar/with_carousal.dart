@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart'
     show StringTranslateExtension;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 
@@ -37,7 +38,7 @@ class WithCarousalBar extends SliverPersistentHeaderDelegate {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0 * (1 - progress)), // يقل مع السكرول
+        padding: EdgeInsets.all(16.0 * (1 - progress)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,32 +61,25 @@ class WithCarousalBar extends SliverPersistentHeaderDelegate {
                   opacity: 1 - progress,
                   child: LabelMainText(
                     text: 'main'.tr(),
-                    fontSize: 24,
+                    fontSize: 18.sp,
                     color: Colors.white,
                   ),
                 ),
                 SizedBox()
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: SvgPicture.asset(
-                //     'assets/icons/notification.svg',
-                //     height: 24,
-                //   ),
-                // ),
               ],
             ),
             const SizedBox(height: 10),
             Opacity(
               opacity: 1 - progress,
-              child: const LabelMainText(
-                  text: 'مرحباً بك  ', fontSize: 18, color: Colors.white),
+              child: LabelMainText(
+                  text: 'مرحباً بك  ', fontSize: 14.sp, color: Colors.white),
             ),
             const SizedBox(height: 6),
             Opacity(
               opacity: 1 - progress,
               child: LabelMainText(
                   text: AppUtils.appUser!.school,
-                  fontSize: 16,
+                  fontSize: 13.sp,
                   color: Colors.white),
             ),
           ],

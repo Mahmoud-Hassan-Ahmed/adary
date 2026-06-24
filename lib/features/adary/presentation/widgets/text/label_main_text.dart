@@ -25,7 +25,7 @@ class LabelMainText extends StatelessWidget {
       style: TextStyle(
         fontFamily: 'BahijTheSansArabic',
         color: this.color ?? AppColors.APP_COLOR,
-        fontSize: this.fontSize ?? 25,
+        fontSize: this.fontSize ?? 18,
         fontWeight: bold ? FontWeight.bold : FontWeight.normal,
         fontStyle: FontStyle.normal,
         decoration: textunderline ? TextDecoration.underline : null,

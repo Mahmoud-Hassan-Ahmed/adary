@@ -76,6 +76,7 @@ class LoginScreen extends StatelessWidget {
                           children: [
                             LabelMainText(
                               text: "hello_txt".tr(),
+                              fontSize: 20,
                             ),
                           ],
                         ),
@@ -190,9 +191,9 @@ class LoginScreen extends StatelessWidget {
                           height: 30,
                         ),
                         CustomButton(
-                          widthPercentage: 100,
+                          widthPercentage: 1.0,
                           label: "log_in".tr(),
-                          fontSize: 18,
+                          fontSize: 16,
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
                             BaseBloc.get<LoginBloc>(context).add(LoginUserEvent(

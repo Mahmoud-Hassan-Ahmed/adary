@@ -1,6 +1,7 @@
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -48,7 +49,7 @@ class BottomNavItem extends StatelessWidget {
             style: AbhayaLibre.copyWith(
                 color:
                     isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
-                fontSize: 15),
+                fontSize: 11.sp),
           ),
         ],
       ),

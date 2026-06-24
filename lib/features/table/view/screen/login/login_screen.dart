@@ -37,46 +37,40 @@ class LoginScreen extends StatelessWidget {
                       width: context.width / 1.4,
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20.h),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           easy.tr("hello_txt"),
-                          style: AlMaraiaBold.copyWith(fontSize: 24),
+                          style: AlMaraiaBold.copyWith(fontSize: 20.sp),
                         )
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 16.h),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE.w),
                     child: Wrap(
                       children: [
                         Text(
                           easy.tr("sign_in_smart_table"),
                           style: AlMaraiaRegular.copyWith(
-                              fontSize: 18,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w300,
                               color: AppColors.GREYFONTCOLOR),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 45,
-                  ),
+                  SizedBox(height: 36.h),
                   Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Dimensions.PADDING_SIZE_DEFAULT.w),
                       child: CustomTextField(
                         prefixIcon: Icons.person_2_outlined,
                         hintText: easy.tr("user_name"),
@@ -92,12 +86,10 @@ class LoginScreen extends StatelessWidget {
                         },
                       )),
                   // end of user name
-                  SizedBox(
-                    height: 15,
-                  ),
+                  SizedBox(height: 12.h),
                   Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Dimensions.PADDING_SIZE_DEFAULT.w),
                       child: CustomTextField(
                         prefixIcon: Icons.lock_outline,
                         hintText: easy.tr("password_key"),
@@ -112,15 +104,15 @@ class LoginScreen extends StatelessWidget {
                         },
                       )),
                   //end of password
-                  SizedBox(
-                    height: 40,
-                  ),
+                  SizedBox(height: 32.h),
                   GetBuilder<AuthenticationController>(
                       builder: (authenticationController) {
                     return authenticationController.isLoading
                         ? Container(
-                            width: 327,
-                            height: 56,
+                            width: double.infinity,
+                            height: 52.h,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE.w),
                             decoration: BoxDecoration(
                                 color: AppColors.SECONDERYCOLOR,
                                 borderRadius: BorderRadius.circular(
@@ -131,9 +123,9 @@ class LoginScreen extends StatelessWidget {
                             )),
                           )
                         : Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal:
-                                    Dimensions.PADDING_SIZE_EXTRA_LARGE),
+                                    Dimensions.PADDING_SIZE_EXTRA_LARGE.w),
                             child: GestureDetector(
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -145,8 +137,8 @@ class LoginScreen extends StatelessWidget {
                                 }
                               },
                               child: Container(
-                                width: 350,
-                                height: 60,
+                                width: double.infinity,
+                                height: 52.h,
                                 decoration: BoxDecoration(
                                     color: AppColors.SECONDERYCOLOR,
                                     borderRadius: BorderRadius.circular(
@@ -155,7 +147,7 @@ class LoginScreen extends StatelessWidget {
                                   child: Text(
                                     easy.tr("log_in"),
                                     style: AlMaraiaBold.copyWith(
-                                        fontSize: 24,
+                                        fontSize: 17.sp,
                                         color: AppColors.MAINCOLOR),
                                   ),
                                 ),
@@ -164,56 +156,47 @@ class LoginScreen extends StatelessWidget {
                           );
                   }),
                   //end of log in btn
-                  SizedBox(
-                    height: 57,
-                  ),
+                  SizedBox(height: 40.h),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.PADDING_SIZE_EXTRA_LARGE - 10),
-                    child: Container(
-                        width: context.width,
-                        child: Column(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: (Dimensions.PADDING_SIZE_EXTRA_LARGE - 10).w),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  easy.tr("privacy_policy"),
-                                  style: AlMaraiaRegular.copyWith(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColors.GREYFONTCOLOR),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Get.toNamed(RouteHelper.gePrivacyRoute());
-                                  },
-                                  child: Text(
-                                    easy.tr("privacy_policy2"),
-                                    style: AlMaraiaRegular.copyWith(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w300,
-                                        color: AppColors.FONTCOLOR,
-                                        decoration: TextDecoration.underline),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              easy.tr("privacy_policy"),
+                              style: AlMaraiaRegular.copyWith(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w300,
+                                  color: AppColors.GREYFONTCOLOR),
                             ),
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    easy.tr("special_app"),
-                                    style: AlMaraiaRegular.copyWith(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                        color: AppColors.GREYFONTCOLOR),
-                                  ),
-                                ],
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(RouteHelper.gePrivacyRoute());
+                              },
+                              child: Text(
+                                easy.tr("privacy_policy2"),
+                                style: AlMaraiaRegular.copyWith(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.FONTCOLOR,
+                                    decoration: TextDecoration.underline),
                               ),
-                            )
+                            ),
                           ],
-                        )),
+                        ),
+                        Center(
+                          child: Text(
+                            easy.tr("special_app"),
+                            style: AlMaraiaRegular.copyWith(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w300,
+                                color: AppColors.GREYFONTCOLOR),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   // end of privacy policy
                 ],
