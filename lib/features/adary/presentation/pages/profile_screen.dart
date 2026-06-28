@@ -3,18 +3,16 @@ import 'dart:io';
 
 import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/conts/images.dart';
-import 'package:adary/core/conts/style.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/core/share/widgets/choose_lang.dart';
 import 'package:adary/core/share/widgets/my_app_bar.dart';
-import 'package:adary/core/share/widgets/navBar.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/presentation/pages/login_screen.dart';
 import 'package:adary/features/adary/presentation/widgets/profiles/subscription_manager.dart';
 import 'package:adary/features/table/utils/app_colors.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -65,7 +63,7 @@ class _ProfileState extends State<Profile> {
               ),
               Text(
                 text.tr(),
-                style: AbhayaLibreBold.copyWith(
+                style: AppTextStyles.menuItem.copyWith(
                     fontSize: fontSize, color: fColor, fontWeight: fwight),
               ),
             ],
@@ -223,8 +221,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     Text(
                       AppUtils.appUser?.school ?? '',
-                      style: AbhayaLibreMedium.copyWith(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.profileName,   // 18sp bold
                     ),
                     const SizedBox(
                       height: 8,
@@ -232,8 +229,8 @@ class _ProfileState extends State<Profile> {
 
                     Text(
                       "${"@".tr()}${AppUtils.appUser!.username}",
-                      style: AbhayaLibre.copyWith(
-                          fontSize: 18, color: AppColors.BORDERGREYCOLOR),
+                      style: AppTextStyles.profileInfo.copyWith(   // 16sp regular
+                          color: AppColors.BORDERGREYCOLOR),
                     ),
                     const SizedBox(
                       height: 5,

@@ -1,8 +1,9 @@
 import 'package:adary/core/conts/app_colors.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class LabelMainText extends StatelessWidget {
-  final String text; // Set text when calling
+  final String text;
   final double? fontSize;
   final Color? color;
   final bool bold;
@@ -10,7 +11,7 @@ class LabelMainText extends StatelessWidget {
 
   const LabelMainText({
     Key? key,
-    required this.text, // Required parameter to set text
+    required this.text,
     this.fontSize,
     this.bold = false,
     this.textunderline = false,
@@ -20,17 +21,17 @@ class LabelMainText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text, // The text you pass when calling
+      text,
       textAlign: TextAlign.right,
       style: TextStyle(
         fontFamily: 'BahijTheSansArabic',
-        color: this.color ?? AppColors.APP_COLOR,
-        fontSize: this.fontSize ?? 18,
-        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+        color: color ?? AppColors.APP_COLOR,
+        fontSize: fontSize ?? AppTextStyles.subtitle1,  // 16sp default (was 18)
+        fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
         fontStyle: FontStyle.normal,
         decoration: textunderline ? TextDecoration.underline : null,
         letterSpacing: 0,
-        height: 1.0, // 100% line-height
+        height: 1.4,
       ),
     );
   }

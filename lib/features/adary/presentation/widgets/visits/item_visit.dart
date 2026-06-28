@@ -13,6 +13,7 @@ import 'package:adary/features/adary/presentation/pages/class_visit.dart';
 import 'package:adary/features/adary/presentation/widgets/social/rating_view.dart';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -182,10 +183,7 @@ class ItemVisit extends StatelessWidget {
                             AwesomeDialog(
                                 context: context,
                                 dialogType: DialogType.warning,
-                                titleTextStyle: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                titleTextStyle: AppTextStyles.dialogTitle.copyWith(color: Colors.red),
                                 title: 'delete_visit'.tr(),
                                 desc: 'delete_visit_des'.tr(),
                                 btnCancelText: 'no'.tr(),

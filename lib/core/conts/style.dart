@@ -1,7 +1,10 @@
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
-TextStyle AbhayaLibre = const TextStyle(fontWeight: FontWeight.w400);
-TextStyle AbhayaLibreMedium = const TextStyle(fontWeight: FontWeight.w500);
-TextStyle AbhayaLibreBold = const TextStyle(fontWeight: FontWeight.w700);
-TextStyle AbhayaLibreSemiBold = const TextStyle(fontWeight: FontWeight.w600);
-TextStyle AbhayaLibreExtraBold = const TextStyle(fontWeight: FontWeight.w900);
+// Weight-based style aliases — size provided by AppTextStyles.
+// All usage should prefer AppTextStyles semantic styles directly.
+TextStyle get AbhayaLibre          => AppTextStyles.regular;
+TextStyle get AbhayaLibreMedium    => AppTextStyles.medium;
+TextStyle get AbhayaLibreBold      => AppTextStyles.bold;
+TextStyle get AbhayaLibreSemiBold  => AppTextStyles.semiBold;
+TextStyle get AbhayaLibreExtraBold => AppTextStyles.extraBold;

@@ -5,6 +5,7 @@ import 'package:adary/features/adary/presentation/bloc/task/task_bloc.dart';
 import 'package:adary/features/adary/presentation/widgets/task/add_task.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -39,10 +40,7 @@ class ItemTaskN extends StatelessWidget {
             child: Center(
               child: Text(
                 visitModel.id.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyles.bodyBold.copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -53,7 +51,7 @@ class ItemTaskN extends StatelessWidget {
           Expanded(
             child: Text(
               visitModel.name,
-              style: const TextStyle(fontSize: 12),
+              style: AppTextStyles.bodyText,    // 15sp — was too small at 12px
             ),
           ),
 
@@ -75,10 +73,7 @@ class ItemTaskN extends StatelessWidget {
                 AwesomeDialog(
                     context: context,
                     dialogType: DialogType.warning,
-                    titleTextStyle: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    titleTextStyle: AppTextStyles.dialogTitle.copyWith(color: Colors.red),
                     title: 'delete_mission'.tr(),
                     desc: 'delete_mission_des'.tr(),
                     btnCancelText: 'no'.tr(),

@@ -1,12 +1,11 @@
 import 'dart:math';
 import 'package:adary/core/conts/api.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart'
     show StringTranslateExtension;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 
 class WithCarousalBar extends SliverPersistentHeaderDelegate {
@@ -16,12 +15,6 @@ class WithCarousalBar extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    final maxHeight = screenHeight / 3;
-    final minHeight = screenHeight / 6;
-
-    // نسبة الانكماش
     double progress = shrinkOffset / (maxExtent - minExtent);
     progress = progress.clamp(0.0, 1.0);
 
@@ -61,26 +54,30 @@ class WithCarousalBar extends SliverPersistentHeaderDelegate {
                   opacity: 1 - progress,
                   child: LabelMainText(
                     text: 'main'.tr(),
-                    fontSize: 18.sp,
+                    fontSize: AppTextStyles.h1, // 18sp — screen label in header
                     color: Colors.white,
                   ),
                 ),
-                SizedBox()
+                const SizedBox()
               ],
             ),
             const SizedBox(height: 10),
             Opacity(
               opacity: 1 - progress,
               child: LabelMainText(
-                  text: 'مرحباً بك  ', fontSize: 14.sp, color: Colors.white),
+                text: 'مرحباً بك  ',
+                fontSize: AppTextStyles.h3, // 14sp — greeting subtitle
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 6),
             Opacity(
               opacity: 1 - progress,
               child: LabelMainText(
-                  text: AppUtils.appUser!.school,
-                  fontSize: 13.sp,
-                  color: Colors.white),
+                text: AppUtils.appUser!.school,
+                fontSize: AppTextStyles.bodySm, // 14sp — school name
+                color: Colors.white,
+              ),
             ),
           ],
         ),

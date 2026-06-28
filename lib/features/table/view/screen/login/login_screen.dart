@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:adary/core/conts/app_text_styles.dart';
 import '../../../utils/style.dart';
 import '../../base/custom_snack_bar.dart';
 import '../../base/custom_text_field.dart';
@@ -46,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                       children: [
                         Text(
                           easy.tr("hello_txt"),
-                          style: AlMaraiaBold.copyWith(fontSize: 20.sp),
+                          style: AlMaraiaBold.copyWith(fontSize: AppTextStyles.h3),  // 20sp
                         )
                       ],
                     ),
@@ -60,7 +61,7 @@ class LoginScreen extends StatelessWidget {
                         Text(
                           easy.tr("sign_in_smart_table"),
                           style: AlMaraiaRegular.copyWith(
-                              fontSize: 14.sp,
+                              fontSize: AppTextStyles.bodySm,      // 14sp
                               fontWeight: FontWeight.w300,
                               color: AppColors.GREYFONTCOLOR),
                         ),
@@ -147,7 +148,7 @@ class LoginScreen extends StatelessWidget {
                                   child: Text(
                                     easy.tr("log_in"),
                                     style: AlMaraiaBold.copyWith(
-                                        fontSize: 17.sp,
+                                        fontSize: AppTextStyles.subtitle1,  // 16sp
                                         color: AppColors.MAINCOLOR),
                                   ),
                                 ),
@@ -167,7 +168,7 @@ class LoginScreen extends StatelessWidget {
                             Text(
                               easy.tr("privacy_policy"),
                               style: AlMaraiaRegular.copyWith(
-                                  fontSize: 13.sp,
+                                  fontSize: AppTextStyles.caption,    // 12sp
                                   fontWeight: FontWeight.w300,
                                   color: AppColors.GREYFONTCOLOR),
                             ),
@@ -178,7 +179,7 @@ class LoginScreen extends StatelessWidget {
                               child: Text(
                                 easy.tr("privacy_policy2"),
                                 style: AlMaraiaRegular.copyWith(
-                                    fontSize: 13.sp,
+                                    fontSize: AppTextStyles.caption,  // 12sp
                                     fontWeight: FontWeight.w300,
                                     color: AppColors.FONTCOLOR,
                                     decoration: TextDecoration.underline),
@@ -190,7 +191,7 @@ class LoginScreen extends StatelessWidget {
                           child: Text(
                             easy.tr("special_app"),
                             style: AlMaraiaRegular.copyWith(
-                                fontSize: 12.sp,
+                                fontSize: AppTextStyles.caption,  // 12sp
                                 fontWeight: FontWeight.w300,
                                 color: AppColors.GREYFONTCOLOR),
                           ),

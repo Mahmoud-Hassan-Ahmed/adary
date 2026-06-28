@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:adary/core/conts/app_text_styles.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/dimensions.dart';
 import '../../utils/style.dart';
@@ -81,7 +82,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         widget.showTitle
             ? Text(widget.titleText,
                 style: MerriweatherRegular.copyWith(
-                    fontSize: Dimensions.FONT_SIZE_SMALL,
+                    fontSize: AppTextStyles.caption,             // 12sp — field title label
                     color: widget.hintColored ? Colors.red : null))
             : const SizedBox(),
         SizedBox(
@@ -92,7 +93,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           focusNode: widget.focusNode,
           textAlign: widget.textAlign,
           style: MerriweatherRegular.copyWith(
-              fontSize: Dimensions.FONT_SIZE_LARGE),
+              fontSize: AppTextStyles.subtitle1),               // 16sp — input text
           textInputAction: widget.inputAction,
           keyboardType:
               widget.isAmount ? TextInputType.number : widget.inputType,
@@ -140,7 +141,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 widget.hintText.isEmpty ? widget.titleText : widget.hintText,
             fillColor: Theme.of(context).cardColor,
             hintStyle: AlMaraiaRegular.copyWith(
-                fontSize: Dimensions.FONT_SIZE_LARGE,
+                fontSize: AppTextStyles.bodySm,                // 14sp — hint text
                 color: Theme.of(context).hintColor),
             filled: true,
             prefixIcon: widget.isPhone

@@ -1,4 +1,5 @@
 import 'package:adary/core/conts/app_colors.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -44,8 +45,7 @@ class BtnApp extends StatelessWidget {
           ),
           Text(
             label,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
+            style: AppTextStyles.buttonText.copyWith(color: Colors.white),  // 15sp bold
           ),
         ],
       ),

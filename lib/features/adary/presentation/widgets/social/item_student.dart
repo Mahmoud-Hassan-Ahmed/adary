@@ -11,6 +11,7 @@ import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_b
 
 import 'package:adary/features/adary/presentation/pages/add_social.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -72,7 +73,7 @@ class ItemsStudent extends StatelessWidget {
                             .labelMedium!
                             .copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                                fontSize: AppTextStyles.caption,    // 12sp
                                 color: AppColors.APP_COLOR),
                       ),
                       const Text(
@@ -105,7 +106,7 @@ class ItemsStudent extends StatelessWidget {
                             .labelMedium!
                             .copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13,
+                                fontSize: AppTextStyles.caption,    // 12sp
                                 color: AppColors.APP_COLOR),
                       ),
                       const Text(
@@ -147,7 +148,7 @@ class ItemsStudent extends StatelessWidget {
                             .labelMedium!
                             .copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: AppTextStyles.bodySm,    // 14sp
                                 color: AppColors.APP_COLOR),
                       ),
                       const Text(
@@ -172,7 +173,7 @@ class ItemsStudent extends StatelessWidget {
                             .labelMedium!
                             .copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: AppTextStyles.bodySm,    // 14sp
                                 color: AppColors.APP_COLOR),
                       ),
                       const Text(
@@ -199,7 +200,7 @@ class ItemsStudent extends StatelessWidget {
                     "parents_student".tr(),
                     style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: AppTextStyles.bodySm,    // 14sp
                         color: AppColors.APP_COLOR),
                   ),
                   const Text(
@@ -250,10 +251,7 @@ class ItemsStudent extends StatelessWidget {
                             AwesomeDialog(
                                 context: context,
                                 dialogType: DialogType.warning,
-                                titleTextStyle: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                titleTextStyle: AppTextStyles.dialogTitle.copyWith(color: Colors.red),
                                 title: 'delete_student'.tr(),
                                 desc: 'delete_student_des'.tr(),
                                 btnCancelText: 'no'.tr(),

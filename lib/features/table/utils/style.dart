@@ -1,25 +1,16 @@
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
-const MerriweatherRegular =
-    TextStyle(fontWeight: FontWeight.w400, fontSize: 16);
+// Legacy aliases — all backed by AppTextStyles so sizes are consistent.
+// Prefer AppTextStyles semantic styles in new code.
 
-const MerriweatherMedium = TextStyle(fontWeight: FontWeight.w500, fontSize: 16);
+TextStyle get MerriweatherRegular => AppTextStyles.regular;
+TextStyle get MerriweatherMedium  => AppTextStyles.medium;
+TextStyle get MerriweatherBold    => AppTextStyles.bold;
+TextStyle get MerriweatherBlack   => AppTextStyles.extraBold;
 
-const MerriweatherBold = TextStyle(fontWeight: FontWeight.w700, fontSize: 16);
-
-const MerriweatherBlack = TextStyle(fontWeight: FontWeight.w900, fontSize: 16);
-// ignore: non_constant_identifier_names
-
-TextStyle AlMaraia = const TextStyle(fontWeight: FontWeight.w500, fontSize: 16);
-// ignore: non_constant_identifier_names
-TextStyle AlMaraiaRegular =
-    const TextStyle(fontWeight: FontWeight.w400, fontSize: 16);
-// ignore: non_constant_identifier_names
-TextStyle AlMaraiaMeduim =
-    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16);
-// ignore: non_constant_identifier_names
-TextStyle AlMaraiaBold =
-    const TextStyle(fontWeight: FontWeight.w700, fontSize: 16);
-// ignore: non_constant_identifier_names
-TextStyle AlMaraiaBlack =
-    const TextStyle(fontWeight: FontWeight.w900, fontSize: 16);
+TextStyle get AlMaraia        => AppTextStyles.medium;
+TextStyle get AlMaraiaRegular => AppTextStyles.regular;
+TextStyle get AlMaraiaMeduim  => AppTextStyles.medium;
+TextStyle get AlMaraiaBold    => AppTextStyles.bold;
+TextStyle get AlMaraiaBlack   => AppTextStyles.extraBold;

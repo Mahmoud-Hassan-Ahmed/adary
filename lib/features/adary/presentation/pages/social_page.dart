@@ -1,5 +1,5 @@
 import 'package:adary/core/conts/app_colors.dart';
-import 'package:adary/core/conts/style.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
 import 'package:adary/features/adary/presentation/pages/class_room_page.dart';
 import 'package:adary/features/adary/presentation/pages/classes.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,20 +15,15 @@ class SocialPage extends StatelessWidget {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('soial_page'.tr(),
-                style: AbhayaLibre.copyWith(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey)),
+            title: Text(
+              'soial_page'.tr(),
+              style: AppTextStyles.pageTitle.copyWith(color: Colors.grey),  // 24sp bold
+            ),
             bottom: TabBar(
-              labelStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.checkbox),
-              unselectedLabelStyle: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontSize: 14),
+              labelStyle: AppTextStyles.tabActive.copyWith(             // 16sp bold
+                color: AppColors.checkbox,
+              ),
+              unselectedLabelStyle: AppTextStyles.tabInactive,         // 14sp regular
               tabs: [
                 Tab(
                   child: Text(
