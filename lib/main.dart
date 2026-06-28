@@ -57,13 +57,13 @@ class MyApp extends StatelessWidget {
     AppUtils.log("permissions: ${AppUtils.permissions}");
     return ScreenUtilInit(
       designSize: const Size(430, 932),
+      minTextAdapt: true,
       child: GetMaterialApp(
         builder: (context, child) {
           final easyLoadingChild = EasyLoading.init()(context, child);
-          final currentScale = MediaQuery.of(context).textScaler.scale(1.0);
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(currentScale.clamp(0.85, 1.1)),
+              textScaler: const TextScaler.linear(1.0),
             ),
             child: easyLoadingChild,
           );
