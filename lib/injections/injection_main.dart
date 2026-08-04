@@ -73,6 +73,7 @@ import 'package:adary/features/adary/domain/usecases/get_student_attendnce.dart'
 import 'package:adary/features/adary/domain/usecases/get_student_calss_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_students_behavoir.dart';
 import 'package:adary/features/adary/domain/usecases/get_students_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_duty_schedule_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_task_teacher_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_tasks_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_teachers_circular_use_case.dart';
@@ -107,6 +108,7 @@ import 'package:adary/features/adary/presentation/bloc/circular/circular_bloc.da
 import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/delay/delay_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/delay_task/delay_task_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/duty/duty_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/evaluations/evaluations_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/evidence/evidence_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/exam/exam_bloc.dart';
@@ -239,6 +241,7 @@ Future<void> init() async {
       createInteractionEvaluationUseCase: sl(),
       createManagementEvaluationUseCase: sl(),
       createPlanningEvaluationUseCase: sl()));
+  sl.registerFactory(() => DutyBloc(getDutyScheduleUseCase: sl()));
   sl.registerFactory(
     () => TaskBloc(
         createTaskUseCase: sl(),
@@ -869,6 +872,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton(
     () => GetWeeklyUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetDutyScheduleUseCase(
       repo: sl(),
       db: sl(),
     ),

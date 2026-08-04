@@ -1085,7 +1085,12 @@
   "exam_date_range": "Committee date from {start} to {end}",
   "add_btn": "Add",
   "general_evaluation": "General Evaluation",
-  "secure_sessions":"Secure Sessions"
+  "secure_sessions":"Secure Sessions",
+  "duty_supervision": "Duty & Supervision",
+  "filter_by_teacher": "Filter by teacher",
+  "no_duties": "No duty or supervision assignments in the approved roster",
+  "duty_load_failed": "Couldn't load the duty & supervision roster",
+  "duties_count": "{} assignments"
 
 
 

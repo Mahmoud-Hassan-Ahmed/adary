@@ -43,4 +43,7 @@ class Api {
   static String downloadReport = 'api/notes/reports/generate/';
   static String requests = '/daily-supervision/secure-class/requests/';
   static String changeStatus = '/daily-supervision/secure-class/requests/';
+
+  /// المناوبة والإشراف — قراءة فقط، حلّت محل المهام.
+  static String dutySchedule = 'pro/pro_duty_roster/api/teachers-schedule/';
 }

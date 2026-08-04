@@ -1125,5 +1125,10 @@
   "exam_date_range": "تاريخ اللجنة من {start} حتى {end}",
   "add_btn": "اضافة",
   "general_evaluation": "التقييم العام",
-  "secure_sessions":"تأمين الحصص"
+  "secure_sessions":"تأمين الحصص",
+  "duty_supervision": "المناوبة والإشراف",
+  "filter_by_teacher": "فلترة بالمعلم",
+  "no_duties": "لا توجد مناوبات أو إشراف في الجدول المعتمد",
+  "duty_load_failed": "تعذّر تحميل جدول المناوبة والإشراف",
+  "duties_count": "{} تكليف"
 }

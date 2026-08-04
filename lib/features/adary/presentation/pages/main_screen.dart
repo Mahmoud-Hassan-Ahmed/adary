@@ -3,7 +3,7 @@ import 'package:adary/core/conts/images.dart';
 import 'package:adary/core/conts/style.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
-import 'package:adary/features/adary/presentation/pages/dialy_task.dart';
+import 'package:adary/features/adary/presentation/pages/duty_roster_page.dart';
 import 'package:adary/features/adary/presentation/pages/examination.dart';
 import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
 import 'package:adary/features/table/view/screen/dashboard/dashboardScreen.dart';
@@ -140,18 +140,16 @@ class MainScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (AppUtils.checkPermission([
-                      '/daily-supervision/',
-                      '/daily-supervision/add-task/'
-                    ]))
+                    // المناوبة والإشراف — حلّت محل "المهام" التي أُلغيت.
+                    if (AppUtils.checkPermission(['/pro/pro_duty_roster/']))
                       Expanded(
                         child: _Custom_Box(
-                            subTitle: "SchedualedTasks".tr(),
-                            imagePath: 'assets/icons/file-07.svg',
+                            subTitle: "duty_supervision".tr(),
+                            imagePath: 'assets/icons/instructor.svg',
                             onTap: () {
                               if (AppUtils.appUser != null &&
                                   AppUtils.appUser!.isSmartbleActive) {
-                                AppUtils.go(const DialyTask());
+                                AppUtils.go(const DutyRosterPage());
                               } else {
                                 _showNotSubsription(context);
                               }

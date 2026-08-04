@@ -50,14 +50,19 @@ class DioConfig {
         final respose = error.response;
         AppUtils.log(error.toString());
 
-        if (respose?.data['detail'] != null) {
+        // الخادم لا يردّ دائمًا بـ JSON: صفحة 404 أو 500 ترجع HTML كنص، و
+        // `data['detail']` عليه يعني فهرسة نص بمفتاح نصّي فيسقط التطبيق كله
+        // بـ "String is not a subtype of int". فلا تُقرأ المفاتيح إلا من Map.
+        final data = respose?.data;
+        final message = data is Map ? (data['detail'] ?? data['msg']) : null;
+        if (message != null) {
           AppUtils.showCustomSnackbar(
-              title: 'خطأ', respose?.data['detail'] ?? '', SnackType.FAILURE);
-        } else if (respose?.data['msg'] != null) {
-          AppUtils.showCustomSnackbar(
-              title: 'خطأ', respose?.data['msg'] ?? '', SnackType.FAILURE);
+              title: 'خطأ', message.toString(), SnackType.FAILURE);
         }
-        // }
+
+        // بلا تمرير الخطأ يبقى الطلب معلَّقًا إلى الأبد فلا تخرج الشاشة من
+        // حالة التحميل — تمريره يجعله يصل إلى `Calling` ليتحوّل إلى Failure.
+        return handler.next(error);
       },
       onResponse: (response, handler) {
         EasyLoading.dismiss();

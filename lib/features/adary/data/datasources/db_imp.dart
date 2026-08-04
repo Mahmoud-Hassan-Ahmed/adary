@@ -9,6 +9,7 @@ import 'package:adary/features/adary/data/models/circular_model.dart';
 import 'package:adary/features/adary/data/models/class_health.dart';
 import 'package:adary/features/adary/data/models/class_room.dart';
 import 'package:adary/features/adary/data/models/classes.dart';
+import 'package:adary/features/adary/data/models/duty_model.dart';
 import 'package:adary/features/adary/data/models/evaluation_model.dart';
 import 'package:adary/features/adary/data/models/evidence_model.dart';
 import 'package:adary/features/adary/data/models/exam_model.dart';
@@ -37,6 +38,7 @@ import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
+import 'package:adary/features/adary/domain/entities/duty_filter_entity.dart';
 import 'package:adary/features/adary/domain/entities/evidence_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
 import 'package:adary/features/adary/domain/entities/filter_per.dart';
@@ -752,5 +754,13 @@ class DbImp implements Db {
   Future<void> chanageStatus(ChangeStatusEntity entity) async {
     await dio.post("${Api.changeStatus}${entity.id}/action/",
         data: entity.toJson());
+  }
+
+  @override
+  Future<DutyScheduleResponse> getDutySchedule(DutyFilterEntity entity) async {
+    final response = await dio.get(Api.dutySchedule,
+        queryParameters:
+            entity.teacherId == null ? null : {"teacher_id": entity.teacherId});
+    return DutyScheduleResponse.fromJson(response.data);
   }
 }

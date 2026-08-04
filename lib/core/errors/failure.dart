@@ -23,3 +23,9 @@ class OfflineFailure extends Failure {
 class FirebaseDatabaseFailure extends Failure {
   const FirebaseDatabaseFailure({required super.message, required super.title});
 }
+
+/// ردّ خطأ من الخادم (404، 500، انتهاء مهلة...). رسالته للسجل فقط — ما يراه
+/// المستخدم يعرضه اعتراض dio في إشعار منبثق.
+class ServerFailure extends Failure {
+  const ServerFailure({required super.message, required super.title});
+}
