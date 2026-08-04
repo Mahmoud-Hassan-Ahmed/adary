@@ -29,6 +29,15 @@ workflows:
             flutter clean
             flutter pub get
 
+        - name: Fetch rive_native iOS libraries
+          script: |
+            # rive_native (via awesome_dialog -> rive) downloads its prebuilt libs from an
+            # Xcode script phase that runs with the working directory set to ios/Pods, where
+            # `dart run` finds no pubspec.yaml and fails the archive. Running it here from the
+            # project root downloads the libs and writes the marker file the phase checks,
+            # so the phase skips itself during the build.
+            dart run rive_native:setup --verbose --platform ios
+
         - name: Initialize Codemagic keychain
           script: keychain initialize
 
