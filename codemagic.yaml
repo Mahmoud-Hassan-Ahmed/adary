@@ -92,6 +92,11 @@ workflows:
             NEXT_BUILD_NUMBER=$(( ${LATEST_BUILD_NUMBER:-0} + 1 ))
 
             echo "Latest build on TestFlight: ${LATEST_BUILD_NUMBER:-none}. Building $NEXT_BUILD_NUMBER."
+             echo "=============================="
+            echo "APP_APPLE_ID=$APP_APPLE_ID"
+            echo "LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER"
+            echo "NEXT_BUILD_NUMBER=$NEXT_BUILD_NUMBER"
+            echo "=============================="
             flutter build ipa \
               --build-number="$NEXT_BUILD_NUMBER" \
               --export-options-plist=/Users/builder/export_options.plist
