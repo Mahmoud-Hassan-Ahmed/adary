@@ -9,8 +9,8 @@ workflows:
         - teacher_credentials
       vars:
         BUNDLE_ID: "com.smartapleP.in"
-        # The public version comes from `version:` in pubspec.yaml (CFBundleShortVersionString).
-        # The build number is queried from TestFlight at build time, see the build step below.
+        BUILD_VERSION: "2.0.26"
+        BUILD_NUMBER: "2"
 
       ios_signing:
         distribution_type: app_store # or: ad_hoc | development | enterprise
@@ -28,15 +28,6 @@ workflows:
           script: |
             flutter clean
             flutter pub get
-
-        - name: Fetch rive_native iOS libraries
-          script: |
-            # rive_native (via awesome_dialog -> rive) downloads its prebuilt libs from an
-            # Xcode script phase that runs with the working directory set to ios/Pods, where
-            # `dart run` finds no pubspec.yaml and fails the archive. Running it here from the
-            # project root downloads the libs and writes the marker file the phase checks,
-            # so the phase skips itself during the build.
-            dart run rive_native:setup --verbose --platform ios
 
         - name: Initialize Codemagic keychain
           script: keychain initialize
@@ -71,35 +62,7 @@ workflows:
             cd ..
 
         - name: Build IPA for TestFlight
-          script: |
-            set -e
-            # App Store Connect rejects any upload whose CFBundleVersion is not strictly higher
-            # than the last one on TestFlight, so read the current value instead of hardcoding it.
-            APP_APPLE_ID=$(app-store-connect apps list \
-              --bundle-id-identifier "$BUNDLE_ID" \
-              --strict-match-identifier \
-              --json | jq -r '(.data // .) | .[0].id')
-
-            if [ -z "$APP_APPLE_ID" ] || [ "$APP_APPLE_ID" = "null" ]; then
-              echo "Could not resolve the App Store Connect app id for $BUNDLE_ID"
-              exit 1
-            fi
-
-            # --all-versions: highest build across every version train, not just the newest one,
-            # so the number keeps climbing even when the public version changes.
-            LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number \
-              "$APP_APPLE_ID" --platform IOS --all-versions || echo "")
-            NEXT_BUILD_NUMBER=$(( ${LATEST_BUILD_NUMBER:-0} + 1 ))
-
-            echo "Latest build on TestFlight: ${LATEST_BUILD_NUMBER:-none}. Building $NEXT_BUILD_NUMBER."
-             echo "=============================="
-            echo "APP_APPLE_ID=$APP_APPLE_ID"
-            echo "LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER"
-            echo "NEXT_BUILD_NUMBER=$NEXT_BUILD_NUMBER"
-            echo "=============================="
-            flutter build ipa \
-              --build-number="$NEXT_BUILD_NUMBER" \
-              --export-options-plist=/Users/builder/export_options.plist
+          script: flutter build ipa --export-options-plist=/Users/builder/export_options.plist
 
 
     artifacts:
