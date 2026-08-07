@@ -8,6 +8,7 @@ class LabelMainText extends StatelessWidget {
   final Color? color;
   final bool bold;
   final bool textunderline;
+  final int? maxLines;
 
   const LabelMainText({
     Key? key,
@@ -16,6 +17,7 @@ class LabelMainText extends StatelessWidget {
     this.bold = false,
     this.textunderline = false,
     this.color,
+    this.maxLines,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,8 @@ class LabelMainText extends StatelessWidget {
     return Text(
       text,
       textAlign: TextAlign.right,
+      maxLines: maxLines,
+      overflow: maxLines == null ? null : TextOverflow.ellipsis,
       style: TextStyle(
         fontFamily: 'BahijTheSansArabic',
         color: color ?? AppColors.APP_COLOR,

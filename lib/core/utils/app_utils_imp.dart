@@ -6,7 +6,7 @@ import 'package:adary/core/utils/check_internet.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/domain/entities/login_entity.dart';
 import 'package:adary/features/adary/domain/usecases/login_use_case.dart';
-import 'package:adary/features/adary/presentation/pages/main_screen.dart';
+import 'package:adary/features/adary/presentation/pages/start_page.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
@@ -35,7 +35,7 @@ class AppUtilsImp extends AppUtils {
           .then((value) => {
                 AppUtils.log("log ${AppUtils.permissions.length}"),
                 if (permissions != AppUtils.permissions.length)
-                  {AppUtils.goAndReplace(MainScreen())}
+                  {AppUtils.goAndReplace(const DashboardScreen())}
               });
     }
   }

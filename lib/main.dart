@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/text.dart';
 import 'package:adary/core/theme/theme_app.dart';
@@ -58,12 +60,26 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(430, 932),
       minTextAdapt: true,
+      splitScreenMode: true,
+      // ScreenUtilInit defaults this to FontSizeResolvers.width, which silently
+      // overrides minTextAdapt and makes every `.sp` scale linearly with the
+      // screen width — 2.4x on an iPad, 3x in landscape. Drive it from the
+      // smaller of the two axes and clamp it to a narrow band instead, so text
+      // keeps the same proportions on every device.
+      fontSizeResolver: (fontSize, instance) {
+        final scale = math
+            .min(instance.scaleWidth, instance.scaleHeight)
+            .clamp(0.90, 1.10);
+        return fontSize * scale;
+      },
       child: GetMaterialApp(
         builder: (context, child) {
           final easyLoadingChild = EasyLoading.init()(context, child);
+          // Hard lock: the device's font-size / display-size accessibility
+          // setting must never resize the app's text or shift its layout.
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(1.0),
+              textScaler: TextScaler.noScaling,
             ),
             child: easyLoadingChild,
           );

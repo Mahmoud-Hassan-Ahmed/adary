@@ -18,39 +18,52 @@ class BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            height: 4,
-            width: isSelected ? 40 : 0,
-            decoration: BoxDecoration(
-              color: AppColors.APP_COLOR,
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          if (iconPath != null)
-            IconButton(
-              icon: SvgPicture.asset(
-                iconPath!,
-                color: isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
-                width: 25,
-                height: 25,
+    return Expanded(
+      child: InkWell(
+        onTap: () => onTap(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          // min so the bar keeps its own height instead of relying on a fixed
+          // one that overflows as soon as the label or the font grows.
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: 4,
+                width: isSelected ? 40 : 0,
+                decoration: BoxDecoration(
+                  color: AppColors.APP_COLOR,
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              onPressed: () => onTap(),
-            ),
-          Text(
-            pageName,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.navLabel.copyWith(   // 12sp, medium
-              color: isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
-            ),
+              const SizedBox(height: 8),
+              if (iconPath != null)
+                SvgPicture.asset(
+                  iconPath!,
+                  colorFilter: ColorFilter.mode(
+                    isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
+                    BlendMode.srcIn,
+                  ),
+                  width: 25,
+                  height: 25,
+                ),
+              const SizedBox(height: 4),
+              Text(
+                pageName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.navLabel.copyWith(
+                  color:
+                      isSelected ? AppColors.FONTCOLOR : AppColors.SECONDERYCOLOR,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      onPressed: () => onTap(),
     );
   }
 }
