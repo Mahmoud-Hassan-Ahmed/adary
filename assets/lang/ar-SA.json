@@ -1130,5 +1130,9 @@
   "filter_by_teacher": "فلترة بالمعلم",
   "no_duties": "لا توجد مناوبات أو إشراف في الجدول المعتمد",
   "duty_load_failed": "تعذّر تحميل جدول المناوبة والإشراف",
-  "duties_count": "{} تكليف"
+  "duties_count": "{} تكليف",
+  "image_changed_success": "تم تغيير الصورة بنجاح",
+  "image_upload_no_logo": "تم رفع الصورة، لكن لم يصل رابطها المحدَّث",
+  "image_upload_failed": "تعذّر رفع الصورة",
+  "user_not_found": "لم يتم العثور على المستخدم"
 }

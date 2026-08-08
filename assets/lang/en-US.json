@@ -1090,7 +1090,11 @@
   "filter_by_teacher": "Filter by teacher",
   "no_duties": "No duty or supervision assignments in the approved roster",
   "duty_load_failed": "Couldn't load the duty & supervision roster",
-  "duties_count": "{} assignments"
+  "duties_count": "{} assignments",
+  "image_changed_success": "Image changed successfully",
+  "image_upload_no_logo": "Image uploaded, but the updated logo link wasn't returned",
+  "image_upload_failed": "Couldn't upload the image",
+  "user_not_found": "User not found"
 
 
 

@@ -131,7 +131,7 @@ class _ProfileState extends State<Profile> {
     try {
       final user = AppUtils.appUser;
       if (user == null) {
-        AppUtils.showCustomSnackbar('User not found', SnackType.FAILURE);
+        AppUtils.showCustomSnackbar('user_not_found'.tr(), SnackType.FAILURE);
         return;
       }
 
@@ -186,17 +186,16 @@ class _ProfileState extends State<Profile> {
             _selectedImage = null;
           });
           AppUtils.showCustomSnackbar(
-              'Image changed successfully', SnackType.SUCESS);
+              'image_changed_success'.tr(), SnackType.SUCESS);
         } else {
           AppUtils.showCustomSnackbar(
-              'Image uploaded, but response did not return the updated logo.',
-              SnackType.FAILURE);
+              'image_upload_no_logo'.tr(), SnackType.FAILURE);
         }
       } else {
         AppUtils.showCustomSnackbar(responseBody, SnackType.FAILURE);
       }
     } catch (e) {
-      AppUtils.showCustomSnackbar('Failed to upload image', SnackType.FAILURE);
+      AppUtils.showCustomSnackbar('image_upload_failed'.tr(), SnackType.FAILURE);
     } finally {
       setState(() {
         _isUploading = false;
