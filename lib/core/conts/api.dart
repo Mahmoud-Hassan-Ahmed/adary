@@ -44,6 +44,9 @@ class Api {
   static String requests = '/daily-supervision/secure-class/requests/';
   static String changeStatus = '/daily-supervision/secure-class/requests/';
 
+  /// تسجيل جهاز المدير لدى الخادم ليصله إشعار تأمين الحصة (dashboard_mobile/api.py).
+  static String fcmTokenUpdate = 'dashboard-mobile/fcm-token-update/';
+
   /// المناوبة والإشراف — قراءة فقط، حلّت محل المهام.
   static String dutySchedule = 'pro/pro_duty_roster/api/teachers-schedule/';
 }

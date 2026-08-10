@@ -70,7 +70,7 @@ class MainScreen extends StatelessWidget {
       if (AppUtils.checkPermission(['/pro/pro_duty_roster/']))
         HomeTileData(
           title: "duty_supervision",
-          iconPath: 'assets/icons/instructor.svg',
+          iconPath: 'assets/icons/duty_supervision.svg',
           onTap: () {
             if (_smartTableActive) {
               AppUtils.go(const DutyRosterPage());

@@ -49,8 +49,14 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
-		<key>aps-environment</key>
-		<string>production</string>
+		<!-- aps-environment انتقل إلى Runner.entitlements: النظام لا يقرؤه من
+		     Info.plist، فوجوده هنا كان بلا أثر. -->
+		<!-- يسمح بتسليم الإشعار والتطبيق في الخلفية -->
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
 	</dict>

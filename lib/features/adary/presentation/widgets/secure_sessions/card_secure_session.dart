@@ -110,11 +110,13 @@ class LeaveRequestCard extends StatelessWidget {
                 "assets/icons/book.svg",
               ),
               const SizedBox(width: 6),
-              Text(
-                leaveRequestModel.applicant.name,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 12,
+              Expanded(
+                child: Text(
+                  leaveRequestModel.lesson.title,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],
@@ -187,14 +189,16 @@ class LeaveRequestCard extends StatelessWidget {
               children: [
                 const TextSpan(
                   text: "سبب التأمين : ",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     color: Colors.cyan,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
-                  text: leaveRequestModel.lesson,
+                  text: leaveRequestModel.note.isNotEmpty
+                      ? leaveRequestModel.note
+                      : "—",
                   style: const TextStyle(
                     color: Colors.black87,
                     fontSize: 13,

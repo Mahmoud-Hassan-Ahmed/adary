@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:adary/core/services/push_notifications_service.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/core/utils/check_internet.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
@@ -49,6 +51,11 @@ class AppUtilsImp extends AppUtils {
       entity.permissions,
     );
     AppUtils.permissions = entity.permissions;
+
+    // بعد حفظ بيانات الدخول مباشرة: الخادم ينسب رمز الجهاز إلى المدرسة عبر
+    // ترويسة `username`/`app-key`، فلا يصح تسجيله قبلها. ولا يُنتظر تمامه
+    // كي لا يتأخر فتح الشاشة على نداء شبكي مساعد.
+    unawaited(PushNotificationsService.instance.syncToken());
   }
 
   @override

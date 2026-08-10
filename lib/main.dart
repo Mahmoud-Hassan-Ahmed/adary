@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/text.dart';
+import 'package:adary/core/services/push_notifications_service.dart';
 import 'package:adary/core/theme/theme_app.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/usecases/get_hijri_date.dart';
@@ -33,6 +34,7 @@ void main() async {
 
   await init();
   await di.init();
+  await PushNotificationsService.instance.init();
   final locale = AppUtils.instance.getLocale();
 
   AppUtils.sl<GetHijriDate>().call();

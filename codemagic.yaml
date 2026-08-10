@@ -54,6 +54,32 @@ workflows:
             xcode-project update-build-settings --product-bundle-identifier "$BUNDLE_ID"
             cd ..
 
+        # المستودع عام، فيمكن حقن ملفات Firebase من متغيّرات Codemagic السرّية
+        # بدل رفعها. ولو لم تُضبط المتغيّرات يُستعمل الملف المرفوع في المستودع،
+        # فيعمل المسارَان معًا. لتوليد القيمة:  base64 -i GoogleService-Info.plist
+        - name: Restore Firebase config files
+          script: |
+            if [ -n "$GOOGLE_SERVICES_INFO_PLIST" ]; then
+              echo "$GOOGLE_SERVICES_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist
+              echo "GoogleService-Info.plist: من متغيّر البيئة"
+            else
+              echo "GoogleService-Info.plist: من المستودع"
+            fi
+            if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+              echo "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json
+              echo "google-services.json: من متغيّر البيئة"
+            fi
+
+        # الخطوتان اللتان تُعملان عادة بالسحب داخل Xcode: إدراج
+        # GoogleService-Info.plist في هدف Runner، وربط Runner.entitlements
+        # ليحمل التطبيق حق aps-environment. تفاصيلها في السكربت نفسه.
+        - name: Wire Firebase files into Xcode project
+          script: |
+            ruby -e "require 'xcodeproj'" 2>/dev/null || sudo gem install xcodeproj --no-document
+            cd ios
+            ruby scripts/configure_firebase.rb
+            cd ..
+
         - name: Update CocoaPods Repo
           script: |
             cd ios
