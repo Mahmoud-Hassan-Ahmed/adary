@@ -530,7 +530,16 @@ class DbImp implements Db {
     const url = "https://api.aladhan.com/v1/gToHCalendar/";
     for (var i = 0; i < 2; i++) {
       for (var month = 1; month <= 12; month++) {
-        final response = await http.get(Uri.parse('$url$month/${year[i]}'));
+        final http.Response response;
+        try {
+          response = await http.get(Uri.parse('$url$month/${year[i]}'));
+        } catch (e) {
+          // انقطاع الشبكة يُفشل الأربعة والعشرين نداءً جميعًا، فالإصرار عليها
+          // يعني انتظار أربع وعشرين مهلة بلا فائدة. يُحفظ ما حُمّل ويُخرج.
+          AppUtils.log('تعذّر تحميل التقويم الهجري: $e');
+          AppUtils.instance.saveDatesMapToStorage();
+          return;
+        }
         // AppUtils.log(response.statusCode.toString());
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
