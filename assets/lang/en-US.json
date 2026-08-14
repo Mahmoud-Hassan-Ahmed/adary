@@ -1091,10 +1091,31 @@
   "no_duties": "No duty or supervision assignments in the approved roster",
   "duty_load_failed": "Couldn't load the duty & supervision roster",
   "duties_count": "{} assignments",
+  "wishes": "Wishes",
+  "wishes_of": "Wishes of",
+  "one_wish": "One wish",
+  "two_wishes": "Two wishes",
+  "wishes_plural": "wishes",
+  "one_wish_unit": "wish",
+  "no_data_to_show": "No data to show",
+  "wishes_load_failed": "Couldn't load the wishes",
   "image_changed_success": "Image changed successfully",
   "image_upload_no_logo": "Image uploaded, but the updated logo link wasn't returned",
   "image_upload_failed": "Couldn't upload the image",
-  "user_not_found": "User not found"
+  "user_not_found": "User not found",
+  "manager_opinion": "School manager opinion",
+  "teacher_reason": "Teacher reason",
+  "teacher_reason_empty": "The teacher has not sent his statement yet",
+  "manager_decision": "School manager decision",
+  "take_decision": "Take a decision",
+  "save_data": "Save data",
+  "choose_decision": "Please choose the school manager decision",
+  "choose_notify_channel": "Please choose at least one notification channel",
+  "decision_saved": "The decision has been saved successfully",
+  "notify_teacher": "Send a notification to the teacher",
+  "notify_by_app": "Notification via the app",
+  "notify_by_whatsapp": "Notification via WhatsApp",
+  "notify_by_sms": "Notification via SMS"
 
 
 

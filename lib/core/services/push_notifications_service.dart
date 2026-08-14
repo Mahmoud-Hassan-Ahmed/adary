@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/presentation/pages/delayed_alert.dart';
+import 'package:adary/features/adary/presentation/pages/model20.dart';
 import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
+import 'package:adary/features/adary/presentation/pages/wishes_page.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,9 +15,10 @@ import 'package:logger/logger.dart' show Level;
 
 /// إشعارات تطبيق المدير.
 ///
-/// الخادم يرسل الإشعار فعلًا عند إرسال المعلم طلب تأمين حصة
-/// (`teacher_mobile/v2/apis/secure_class_notify.py::notify_managers_new_request`)،
-/// وهو يستهدف الأجهزة عبر `fcm_token` المحفوظ في `DashboardMobile` و
+/// الخادم يرسل الإشعار عند طلب تأمين حصة، وعند تسجيل المعلم رغبة أو تعديلها
+/// أو حذفها، وعند إرساله إفادته على نموذج إداري — وكلها تمرّ بقناة واحدة
+/// (`teacher_mobile/v2/apis/manager_notify.py::notify_managers`)،
+/// وهي تستهدف الأجهزة عبر `fcm_token` المحفوظ في `DashboardMobile` و
 /// `DashboardMobileUser`. فما ينقص هنا هو طرف الجهاز: الحصول على الرمز،
 /// وإرساله إلى `dashboard-mobile/fcm-token-update/`، وعرض الإشعار.
 ///
@@ -144,11 +148,25 @@ class PushNotificationsService {
     );
   }
 
-  /// `action_id` يصل من الخادم بالصيغة `secure_class_<id>`.
+  /// `action_id` يصل من الخادم بالصيغة `<موضوع>_<معرّف>`، ولكلٍّ شاشته:
+  ///
+  ///   `secure_class_<id>`            → تأمين الحصص
+  ///   `wishes_teacher_<teacher_id>`  → قائمة الرغبات
+  ///   `procedure_model18_<id>`       → إشعار التأخر/الانصراف
+  ///   `procedure_model20_<id>`       → محاسبة الغياب
+  ///
+  /// الشاشات تُفتح على قوائمها لا على السجل بعينه: المدير يصل إليه منها،
+  /// وفتحه مباشرة يحتاج جلبه أولًا وقد يكون حُذف قبل فتح الإشعار.
   void _openTarget(String? actionId) {
     if (actionId == null) return;
     if (actionId.startsWith('secure_class_')) {
       AppUtils.go(const SecureSessions());
+    } else if (actionId.startsWith('wishes_teacher_')) {
+      AppUtils.go(const WishesPage());
+    } else if (actionId.startsWith('procedure_model18_')) {
+      AppUtils.go(const DelayedAlert());
+    } else if (actionId.startsWith('procedure_model20_')) {
+      AppUtils.go(const Model20Page());
     }
   }
 

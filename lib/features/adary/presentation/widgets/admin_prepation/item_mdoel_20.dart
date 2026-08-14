@@ -10,8 +10,12 @@ import 'package:adary/features/adary/data/models/model_20.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
+import 'package:adary/features/adary/domain/usecases/send_model20_decision_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/model20/model20_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/manager_decision_page.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_model20.dart';
+import 'package:adary/features/adary/presentation/widgets/admin_prepation/procedure_status_chip.dart';
+import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +38,7 @@ class ItemModel20 extends StatelessWidget {
           borderRadius: BorderRadius.circular(25)),
       child: Column(
         children: [
+          ProcedureStatusChip(cycle: item.cycle),
           ExpansionWidget(
             title: [
               SvgPicture.asset("assets/icons/person.svg"),
@@ -63,8 +68,10 @@ class ItemModel20 extends StatelessWidget {
                 height: 10,
               ),
               ContainerBtns(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                content: Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  spacing: 16,
+                  runSpacing: 12,
                   children: [
                     if (AppUtils.permissions.isNotEmpty &&
                             AppUtils.permissions.any((p) =>
@@ -146,6 +153,28 @@ class ItemModel20 extends StatelessWidget {
                                 );
                               },
                             );
+                          }),
+                    if (AppUtils.permissions.isNotEmpty &&
+                            AppUtils.permissions.any((p) =>
+                                p.contains('api/notes/model20/update/')) ||
+                        AppUtils.permissions.isEmpty)
+                      BtnIcon(
+                          label: 'take_decision'.tr(),
+                          icon: AppIcon.takeDecision,
+                          onTap: () async {
+                            final saved = await Navigator.push<bool>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ManagerDecisionPage(
+                                  procedureId: item.id,
+                                  cycle: item.cycle,
+                                  onSubmit:
+                                      sl<SendModel20DecisionUseCase>().call,
+                                ),
+                              ),
+                            );
+                            // القرار يغيّر حالة البطاقة، فتُعاد القائمة لتعكسه.
+                            if (saved == true) pagingController.refresh();
                           })
                   ],
                 ),

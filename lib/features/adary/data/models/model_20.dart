@@ -1,3 +1,4 @@
+import 'package:adary/features/adary/data/models/procedure_cycle.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 
 class Model20Model {
@@ -9,6 +10,9 @@ class Model20Model {
   final String toDay;
   final String toDayDate;
 
+  /// إفادة المعلّم ورأي المدير وقنوات إشعاره به.
+  final ProcedureCycle cycle;
+
   // Constructor
   Model20Model({
     required this.id,
@@ -18,6 +22,7 @@ class Model20Model {
     required this.atDayDate,
     required this.toDay,
     required this.toDayDate,
+    this.cycle = const ProcedureCycle(),
   });
 
   // Factory constructor to create a Model20 from JSON
@@ -32,6 +37,7 @@ class Model20Model {
       atDayDate: json['at_day_date'],
       toDay: json['to_day'],
       toDayDate: json['to_day_date'],
+      cycle: ProcedureCycle.fromJson(json),
     );
   }
 }

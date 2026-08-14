@@ -26,7 +26,9 @@ import 'package:adary/features/adary/data/models/visits_model.dart';
 import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
+import 'package:adary/features/adary/data/models/wishes_model.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
+import 'package:adary/features/adary/domain/entities/manager_decision_entity.dart';
 import 'package:adary/features/adary/domain/entities/change_status_entity.dart';
 import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
@@ -45,6 +47,7 @@ import 'package:adary/features/adary/domain/entities/pagination_entity.dart';
 import 'package:adary/features/adary/domain/entities/student_entity.dart';
 import 'package:adary/features/adary/domain/entities/teachers_entity.dart';
 import 'package:adary/features/adary/domain/entities/visits_entity.dart';
+import 'package:adary/features/adary/domain/entities/wishes_entity.dart';
 
 abstract class Db {
   Future<List<NoteModel>> getNotes();
@@ -72,6 +75,10 @@ abstract class Db {
   Future<void> updateModel20(Model20 enity);
   Future<void> doenlaodFileModel20(FileDownloadEneity entity);
   Future<void> crateModel20(BaseEnity entity);
+
+  /// اعتماد رأي مدير المدرسة على الإجراء الإداري وإشعار المعلّم بالقنوات المختارة.
+  Future<void> sendModel18Decision(ManagerDecisionEntity entity);
+  Future<void> sendModel20Decision(ManagerDecisionEntity entity);
   Future<List<Classroom>> getClassRooms();
   Future<PageinationModel<StudentModel>> getStudents(PaginationEntity entity);
   Future<void> updatestudent(StudentEntity student);
@@ -154,4 +161,7 @@ abstract class Db {
       PaginationEntity status);
   Future<void> chanageStatus(ChangeStatusEntity entity);
   Future<DutyScheduleResponse> getDutySchedule(DutyFilterEntity entity);
+  Future<PageinationModel<WishTeacherModel>> getWishTeachers(
+      WishTeachersEntity entity);
+  Future<TeacherWishesResponse> getTeacherWishes(TeacherWishesEntity entity);
 }

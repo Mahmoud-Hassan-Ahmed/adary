@@ -9,7 +9,11 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/domain/entities/file_download_entity.dart';
+import 'package:adary/features/adary/domain/usecases/send_model18_decision_use_case.dart';
 import 'package:adary/features/adary/presentation/bloc/delay/delay_bloc.dart';
+import 'package:adary/features/adary/presentation/pages/manager_decision_page.dart';
+import 'package:adary/features/adary/presentation/widgets/admin_prepation/procedure_status_chip.dart';
+import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +39,7 @@ class ItemDelayAlert extends StatelessWidget {
             borderRadius: BorderRadius.circular(25)),
         child: Column(
           children: [
+            ProcedureStatusChip(cycle: item.cycle),
             ExpansionWidget(
               title: [
                 Row(
@@ -83,8 +88,10 @@ class ItemDelayAlert extends StatelessWidget {
                   height: 10,
                 ),
                 ContainerBtns(
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  content: Wrap(
+                    alignment: WrapAlignment.spaceAround,
+                    spacing: 16,
+                    runSpacing: 12,
                     children: [
                       if (AppUtils.permissions.isNotEmpty &&
                               AppUtils.permissions.any((p) =>
@@ -166,6 +173,28 @@ class ItemDelayAlert extends StatelessWidget {
                                   );
                                 },
                               );
+                            }),
+                      if (AppUtils.permissions.isNotEmpty &&
+                              AppUtils.permissions.any((p) =>
+                                  p.contains('api/notes/model18/update/')) ||
+                          AppUtils.permissions.isEmpty)
+                        BtnIcon(
+                            label: 'take_decision'.tr(),
+                            icon: AppIcon.takeDecision,
+                            onTap: () async {
+                              final saved = await Navigator.push<bool>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ManagerDecisionPage(
+                                    procedureId: item.id,
+                                    cycle: item.cycle,
+                                    onSubmit:
+                                        sl<SendModel18DecisionUseCase>().call,
+                                  ),
+                                ),
+                              );
+                              // القرار يغيّر حالة البطاقة، فتُعاد القائمة لتعكسه.
+                              if (saved == true) pagingController.refresh();
                             })
                     ],
                   ),

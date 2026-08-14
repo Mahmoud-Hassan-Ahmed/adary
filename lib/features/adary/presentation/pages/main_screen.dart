@@ -4,6 +4,7 @@ import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
 import 'package:adary/features/adary/presentation/pages/duty_roster_page.dart';
 import 'package:adary/features/adary/presentation/pages/examination.dart';
 import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
+import 'package:adary/features/adary/presentation/pages/wishes_page.dart';
 import 'package:adary/features/adary/presentation/widgets/dashboard/home_grid.dart';
 import 'package:adary/features/table/view/screen/dashboard/dashboardScreen.dart';
 import 'package:adary/features/table/view/screen/waiting/waiting.dart';
@@ -99,6 +100,19 @@ class MainScreen extends StatelessWidget {
             AppUtils.go(const SecureSessions());
           } else {
             _showNotSubsription(context);
+          }
+        },
+      ),
+      // الرغبات — يسجّلها المعلم في تطبيقه، والمدير يقرؤها هنا. مرتبطة
+      // بالجدول الذكي لأن رغباته فصولٌ ومواد من جدول المدرسة نفسه.
+      HomeTileData(
+        title: "wishes",
+        iconPath: "assets/icons/wishes.svg",
+        onTap: () {
+          if (_smartTableActive) {
+            AppUtils.go(const WishesPage());
+          } else {
+            _showNotSubsription(context, des: 'table_sub');
           }
         },
       ),

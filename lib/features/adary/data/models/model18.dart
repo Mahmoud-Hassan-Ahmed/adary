@@ -1,3 +1,4 @@
+import 'package:adary/features/adary/data/models/procedure_cycle.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 
 class Model18Model {
@@ -12,6 +13,9 @@ class Model18Model {
   final String? fromLateness;
   final String? toLateness;
 
+  /// إفادة المعلّم ورأي المدير وقنوات إشعاره به.
+  final ProcedureCycle cycle;
+
   // Constructor
   Model18Model({
     this.schoolId,
@@ -24,6 +28,7 @@ class Model18Model {
     this.endLateness,
     this.fromLateness,
     this.toLateness,
+    this.cycle = const ProcedureCycle(),
   });
 
   factory Model18Model.fromJson(Map<String, dynamic> json) {
@@ -38,6 +43,7 @@ class Model18Model {
       endLateness: json['end_lateness'] as String?,
       fromLateness: json['from_lateness'] as String?,
       toLateness: json['to_lateness'] as String?,
+      cycle: ProcedureCycle.fromJson(json),
     );
   }
 }

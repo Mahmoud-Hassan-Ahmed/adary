@@ -1,5 +1,5 @@
 class Api {
-  static String domain = 'https://www.smartble.net/';
+  static String domain = 'https://test.smartble.net/';
   static String baseUrl = '$domain';
   static String notes = 'api/notes/note/';
   static String teachers = 'api/notes/teachers/';
@@ -49,4 +49,9 @@ class Api {
 
   /// المناوبة والإشراف — قراءة فقط، حلّت محل المهام.
   static String dutySchedule = 'pro/pro_duty_roster/api/teachers-schedule/';
+
+  /// الرغبات — قراءة المدير لما سجّله معلّموه في تطبيق المعلم.
+  /// `wishTeachers` قائمة المعلمين وعدد رغبات كلٍّ، ويُلحق بها معرّف المعلم
+  /// للحصول على بطاقاته.
+  static String wishTeachers = 'daily-supervision/wishes/teachers/';
 }

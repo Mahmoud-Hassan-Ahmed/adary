@@ -74,6 +74,8 @@ import 'package:adary/features/adary/domain/usecases/get_student_calss_use_case.
 import 'package:adary/features/adary/domain/usecases/get_students_behavoir.dart';
 import 'package:adary/features/adary/domain/usecases/get_students_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_duty_schedule_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_teacher_wishes_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/get_wish_teachers_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_task_teacher_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_tasks_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_teachers_circular_use_case.dart';
@@ -90,6 +92,8 @@ import 'package:adary/features/adary/domain/usecases/rate_file_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/register_students_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/remove_task_teacher_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/remove_task_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/send_model18_decision_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/send_model20_decision_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/updat_model18_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/updat_model20_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/update_circular_use_case.dart';
@@ -109,6 +113,7 @@ import 'package:adary/features/adary/presentation/bloc/class_visit/class_visit_b
 import 'package:adary/features/adary/presentation/bloc/delay/delay_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/delay_task/delay_task_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/duty/duty_bloc.dart';
+import 'package:adary/features/adary/presentation/bloc/wishes/wishes_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/evaluations/evaluations_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/evidence/evidence_bloc.dart';
 import 'package:adary/features/adary/presentation/bloc/exam/exam_bloc.dart';
@@ -302,6 +307,10 @@ Future<void> init() async {
   sl.registerFactory(() => SecureSessionBloc(
         getRequestsUseCase: sl(),
         changeStatusUseCase: sl(),
+      ));
+  sl.registerFactory(() => WishesBloc(
+        getWishTeachersUseCase: sl(),
+        getTeacherWishesUseCase: sl(),
       ));
   sl.registerFactory(
     () => LoginBloc(loginUseCase: sl()),
@@ -541,6 +550,18 @@ Future<void> init() async {
 
   sl.registerLazySingleton(
     () => CreateModel18UseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => SendModel18DecisionUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => SendModel20DecisionUseCase(
       repo: sl(),
       db: sl(),
     ),
@@ -878,6 +899,18 @@ Future<void> init() async {
   );
   sl.registerLazySingleton(
     () => GetDutyScheduleUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetWishTeachersUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => GetTeacherWishesUseCase(
       repo: sl(),
       db: sl(),
     ),

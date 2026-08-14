@@ -32,11 +32,13 @@ import 'package:adary/features/adary/data/models/visits_model.dart';
 import 'package:adary/features/adary/data/models/week_group.dart';
 import 'package:adary/features/adary/data/models/week_plan.dart';
 import 'package:adary/features/adary/data/models/weekly_pan.dart';
+import 'package:adary/features/adary/data/models/wishes_model.dart';
 import 'package:adary/features/adary/domain/entities/base_enity.dart';
 import 'package:adary/features/adary/domain/entities/change_status_entity.dart';
 import 'package:adary/features/adary/domain/entities/circular_entity.dart';
 import 'package:adary/features/adary/domain/entities/class_entity.dart';
 import 'package:adary/features/adary/domain/entities/delay_entity.dart';
+import 'package:adary/features/adary/domain/entities/manager_decision_entity.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/domain/entities/duty_filter_entity.dart';
 import 'package:adary/features/adary/domain/entities/evidence_entity.dart';
@@ -54,6 +56,7 @@ import 'package:adary/features/adary/domain/entities/teacher_circular_entity.dar
 import 'package:adary/features/adary/domain/entities/teacher_task.dart';
 import 'package:adary/features/adary/domain/entities/teachers_entity.dart';
 import 'package:adary/features/adary/domain/entities/visits_entity.dart';
+import 'package:adary/features/adary/domain/entities/wishes_entity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
@@ -215,6 +218,18 @@ class DbImp implements Db {
   @override
   Future<void> updateModel20(Model20 enity) async {
     await dio.patch('${Api.model20}${enity.id}', data: enity.toJson());
+  }
+
+  @override
+  Future<void> sendModel18Decision(ManagerDecisionEntity entity) async {
+    await dio.post('${Api.model18}${entity.id}/decision/',
+        data: entity.toJson());
+  }
+
+  @override
+  Future<void> sendModel20Decision(ManagerDecisionEntity entity) async {
+    await dio.post('${Api.model20}${entity.id}/decision/',
+        data: entity.toJson());
   }
 
   @override
@@ -771,5 +786,20 @@ class DbImp implements Db {
         queryParameters:
             entity.teacherId == null ? null : {"teacher_id": entity.teacherId});
     return DutyScheduleResponse.fromJson(response.data);
+  }
+
+  @override
+  Future<PageinationModel<WishTeacherModel>> getWishTeachers(
+      WishTeachersEntity entity) async {
+    final response =
+        await dio.get(Api.wishTeachers, queryParameters: entity.toJson());
+    return PageinationModel.fromJson(response.data, WishTeacherModel.fromJson);
+  }
+
+  @override
+  Future<TeacherWishesResponse> getTeacherWishes(
+      TeacherWishesEntity entity) async {
+    final response = await dio.get('${Api.wishTeachers}${entity.teacherId}/');
+    return TeacherWishesResponse.fromJson(response.data);
   }
 }
