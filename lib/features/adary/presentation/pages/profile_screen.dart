@@ -11,8 +11,11 @@ import 'package:adary/core/share/widgets/my_app_bar.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
 import 'package:adary/features/adary/presentation/pages/login_screen.dart';
+import 'package:adary/features/adary/presentation/widgets/profiles/contact_us.dart';
+import 'package:adary/features/adary/presentation/widgets/profiles/manager_signature.dart';
 import 'package:adary/features/adary/presentation/widgets/profiles/subscription_manager.dart';
-import 'package:adary/features/table/utils/app_colors.dart';
+import 'package:adary/features/adary/presentation/widgets/profiles/terms_conditions.dart';
+import 'package:adary/core/conts/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,39 +41,48 @@ class _ProfileState extends State<Profile> {
     _logoUrl = AppUtils.appUser?.logo;
   }
 
+  /// صف واحد في قائمة حسابي: أيقونة بلون التطبيق، ثم العنوان، ثم سهم في
+  /// نهاية السطر — بنفس تنسيق تطبيق المعلم.
   Widget _customBox(
       {bool hasArrow = true,
       required String text,
-      double fontSize = 17,
-      FontWeight fwight = FontWeight.normal,
-      Color fColor = const Color.fromARGB(255, 70, 69, 69),
+      double fontSize = 16,
+      FontWeight fwight = FontWeight.w600,
+      Color fColor = const Color(0xFF2E2E2E),
       String? icon}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              if (icon != null)
-                SvgPicture.asset(
-                  icon,
-                  width: 25,
-                  height: 25,
+          Expanded(
+            child: Row(
+              children: [
+                if (icon != null)
+                  SvgPicture.asset(
+                    icon,
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(fColor == Colors.red
+                        ? Colors.red
+                        : AppColors.APP_COLOR, BlendMode.srcIn),
+                  ),
+                const SizedBox(
+                  width: 16,
                 ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                text.tr(),
-                style: AppTextStyles.menuItem.copyWith(
-                    fontSize: fontSize, color: fColor, fontWeight: fwight),
-              ),
-            ],
+                Expanded(
+                  child: Text(
+                    text.tr(),
+                    style: AppTextStyles.menuItem.copyWith(
+                        fontSize: fontSize, color: fColor, fontWeight: fwight),
+                  ),
+                ),
+              ],
+            ),
           ),
           hasArrow
               ? SizedBox(
-                  height: 21, child: SvgPicture.asset(Images.FORWARD_ARROW))
+                  height: 18, child: SvgPicture.asset(Images.FORWARD_ARROW))
               : const SizedBox()
         ],
       ),
@@ -242,7 +254,7 @@ class _ProfileState extends State<Profile> {
                         BtnApp(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 10),
-                          label: _isUploading ? 'Uploading...' : 'تغير الصورة',
+                          label: _isUploading ? '...' : 'تعديل الصورة',
                           onTap: _isUploading ? () {} : _pickAndUploadImage,
                           radius: 15,
                         ),
@@ -340,26 +352,31 @@ class _ProfileState extends State<Profile> {
                   child: _customBox(
                       text: "language",
                       icon: "assets/icons/material-symbols_language.svg")),
-              const SizedBox(
-                height: 10,
-              ),
+              InkWell(
+                  onTap: () => AppUtils.go(const ManagerSignature()),
+                  child: _customBox(
+                      text: "manager_signature",
+                      icon: "assets/icons/signature.svg")),
               InkWell(
                   onTap: () => AppUtils.go(const SubscriptionManager()),
                   child: _customBox(
                       text: "manage_subscribtion",
                       icon: "assets/icons/ep_list.svg")),
-
-              const SizedBox(
-                height: 10,
-              ),
+              InkWell(
+                  onTap: () => AppUtils.go(const TermsConditions()),
+                  child: _customBox(
+                      text: "terms_conditions_title",
+                      icon: "assets/icons/octicon_checklist-16.svg")),
+              InkWell(
+                  onTap: () => AppUtils.go(const ContactUs()),
+                  child: _customBox(
+                      text: "contact_us",
+                      icon: "assets/icons/call_us_icon.svg")),
               InkWell(
                   onTap: () {},
                   child: _customBox(
                       text: "delete_account",
                       icon: "assets/icons/icomoon-free_bin.svg")),
-              const SizedBox(
-                height: 10,
-              ),
               InkWell(
                   onTap: () {
                     AppUtils.instance.logout();

@@ -11,7 +11,12 @@ class CircularEntity extends BaseEnity {
   DateTime date;
   String dateHijri;
   String issuer;
+
+  /// إشعار المعلمين عن طريق التطبيق
   bool sendNotif;
+
+  /// إشعار المعلمين عن طريق الواتس اب
+  bool sendWhatsapp;
   bool sendSms;
   bool selectAll;
   final File? file;
@@ -26,6 +31,7 @@ class CircularEntity extends BaseEnity {
       required this.issuer,
       required this.sendSms,
       required this.sendNotif,
+      this.sendWhatsapp = false,
       required this.selectAll,
       required this.teachers,
       required this.file});
@@ -39,6 +45,7 @@ class CircularEntity extends BaseEnity {
       'issuer': issuer,
       if (file != null) 'file': await MultipartFile.fromFile(file!.path),
       'send_notif': sendNotif,
+      'whatsapp_notif': sendWhatsapp,
       'select_all': selectAll,
       'send_sms': sendSms,
     });

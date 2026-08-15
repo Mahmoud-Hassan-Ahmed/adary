@@ -156,6 +156,9 @@ class AddDelayedAlert extends StatelessWidget {
                         selectDate: dateHijri,
                         onChange: (value) {
                           gregorianDate = value.gregorianDate;
+                          // اختيار التاريخ يحدد اليوم تلقائيا فلا يضطر المدير
+                          // لاختيار اليوم ثم التاريخ يدويا.
+                          selectDay = dayFromDate(value.gregorianDate);
                           Navigator.pop(context);
                           BaseBloc.get<DelayBloc>(context).emitState(
                               SelectDateState(value: value.hijriDate));

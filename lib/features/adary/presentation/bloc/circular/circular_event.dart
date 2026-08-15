@@ -27,9 +27,17 @@ final class SelectDateEvent extends CircularEvent {
   const SelectDateEvent({required this.enity});
 }
 
+/// إشعار المعلمين عن طريق التطبيق (send_notif)
 final class ChnageNotifyEvent extends CircularEvent {}
 
+/// جميع المعلمين (select_all)
 final class ChnageNotifyEvent2 extends CircularEvent {}
+
+/// إرسال رسالة نصية SMS (send_sms)
+final class ChnageNotifyEvent3 extends CircularEvent {}
+
+/// إشعار المعلمين عن طريق الواتس اب (whatsapp_notif)
+final class ChnageNotifyEvent4 extends CircularEvent {}
 
 final class UpdateCircularEvent extends CircularEvent {
   final BaseEnity entity;

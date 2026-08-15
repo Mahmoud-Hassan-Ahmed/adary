@@ -45,7 +45,11 @@ class CircularBloc extends BaseBloc<CircularEvent, CircularState> {
         emit(SelectDateState(enity: event.enity));
       } else if (event is ChnageNotifyEvent) {
         emit(ChnageNotifyState());
-      } else if (event is ChnageNotifyEvent) {
+      } else if (event is ChnageNotifyEvent2) {
+        emit(ChnageNotifyState2());
+      } else if (event is ChnageNotifyEvent3) {
+        emit(ChnageNotifyState3());
+      } else if (event is ChnageNotifyEvent4) {
         emit(ChnageNotifyState4());
       } else if (event is UpdateCircularEvent) {
         result = await updateCircularUseCase(event.entity);

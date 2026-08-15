@@ -5,7 +5,11 @@ class AdministrativeCircular {
   final DateTime createdAt;
   final String dateHijri;
   final String issuer;
+  /// إشعار المعلمين عن طريق التطبيق
   final bool sendNotification;
+
+  /// إشعار المعلمين عن طريق الواتس اب
+  final bool sendWhatsapp;
   final bool sendSms;
   final bool selectAll;
   final String fileUrl;
@@ -18,6 +22,7 @@ class AdministrativeCircular {
     required this.dateHijri,
     required this.issuer,
     required this.sendNotification,
+    this.sendWhatsapp = false,
     required this.sendSms,
     required this.selectAll,
     required this.fileUrl,
@@ -32,6 +37,7 @@ class AdministrativeCircular {
       dateHijri: json['date_hijri'] ?? '',
       issuer: json['issuer'] ?? '',
       sendNotification: json['send_notif'] ?? false,
+      sendWhatsapp: json['whatsapp_notif'] ?? false,
       selectAll: json['select_all'] ?? false,
       fileUrl: json['file'] ?? '',
       sendSms: json['send_sms'] ?? false,

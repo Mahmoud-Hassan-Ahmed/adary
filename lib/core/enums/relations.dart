@@ -37,6 +37,22 @@ List<SelectModel> days = [
   Relations(id: 6, name: 'الجمعة', value: 'friday'),
 ];
 
+/// يرجّع اليوم من `days` المقابل لتاريخ ميلادي.
+/// `DateTime.weekday` يبدأ من الإثنين = 1 وينتهي بالأحد = 7.
+SelectModel dayFromDate(DateTime date) {
+  const weekdayToValue = {
+    DateTime.saturday: 'saturday',
+    DateTime.sunday: 'sunday',
+    DateTime.monday: 'monday',
+    DateTime.tuesday: 'tuesday',
+    DateTime.wednesday: 'wednesday',
+    DateTime.thursday: 'thursday',
+    DateTime.friday: 'friday',
+  };
+  return days.firstWhere(
+      (d) => (d as Relations).value == weekdayToValue[date.weekday]);
+}
+
 List<SelectModel> typeDelays = [
   Relations(id: 0, name: 'الحضور متأخرا', value: '1'),
   Relations(id: 1, name: 'عدم التواجد أثناء العمل', value: '2'),

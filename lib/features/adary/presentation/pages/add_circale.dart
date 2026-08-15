@@ -43,9 +43,17 @@ class _AddCircaleState extends State<AddCircale> {
   List<SelectModel> selected = [];
   DateTime? gregorianDate;
   String? dateHijri;
+
+  /// أشعار المعلمين عن طريق التطبيق -> send_notif
   bool valueSelect = false;
+
+  /// إرسال رسالة نصية -> send_sms
   bool sendSms = false;
+
+  /// أشعار المعلمين عن طريق الواتس اب -> whatsapp_notif
   bool sendwhats = false;
+
+  /// جميع المعلمين -> select_all
   bool valueSelect2 = true;
   File? file;
   final formState = GlobalKey<FormState>();
@@ -60,6 +68,7 @@ class _AddCircaleState extends State<AddCircale> {
       valueSelect = widget.administrativeCircular!.sendNotification;
       valueSelect2 = widget.administrativeCircular!.selectAll;
       sendSms = widget.administrativeCircular!.sendSms;
+      sendwhats = widget.administrativeCircular!.sendWhatsapp;
     }
     super.initState();
   }
@@ -156,6 +165,7 @@ class _AddCircaleState extends State<AddCircale> {
                                       file: file,
                                       sendSms: sendSms,
                                       sendNotif: valueSelect,
+                                      sendWhatsapp: sendwhats,
                                       selectAll: valueSelect2,
                                       teachers: selected)));
                         } else {
@@ -174,6 +184,7 @@ class _AddCircaleState extends State<AddCircale> {
                                       file: file!,
                                       sendSms: sendSms,
                                       sendNotif: valueSelect,
+                                      sendWhatsapp: sendwhats,
                                       selectAll: valueSelect2,
                                       teachers: selected)));
                         }
@@ -223,54 +234,39 @@ class _AddCircaleState extends State<AddCircale> {
                     const SizedBox(
                       height: 10,
                     ),
-                    InkWell(
-                      onTap: () {
-                        BaseBloc.get<CircularBloc>(context)
-                            .add(ChnageNotifyEvent());
-                      },
-                      child: RadioBtn(
-                          group: valueSelect2 ? 2 : 0,
-                          label: e.tr('all_teachers'),
-                          value: 2,
-                          valueChanged: (v) {
-                            BaseBloc.get<CircularBloc>(context)
-                                .emitState(ChnageNotifyState2());
-                          }),
-                    ),
+                    // جميع المعلمين -> select_all
+                    RadioBtn(
+                        group: valueSelect2 ? 2 : -1,
+                        label: e.tr('all_teachers'),
+                        value: 2,
+                        valueChanged: (v) {
+                          BaseBloc.get<CircularBloc>(context)
+                              .add(ChnageNotifyEvent2());
+                        }),
                     const SizedBox(
                       height: 10,
                     ),
-                    InkWell(
-                      onTap: () {
-                        BaseBloc.get<CircularBloc>(context)
-                            .add(ChnageNotifyEvent());
-                      },
-                      child: RadioBtn(
-                          group: valueSelect ? 1 : 0,
-                          label: e.tr('أشعار المعلميين عن طريق الواتس اب '),
-                          value: 1,
-                          valueChanged: (v) {
-                            BaseBloc.get<CircularBloc>(context)
-                                .add(ChnageNotifyEvent());
-                          }),
-                    ),
+                    // أشعار المعلمين عن طريق الواتس اب -> whatsapp_notif
+                    RadioBtn(
+                        group: sendwhats ? 4 : -1,
+                        label: e.tr('أشعار المعلميين عن طريق الواتس اب '),
+                        value: 4,
+                        valueChanged: (v) {
+                          BaseBloc.get<CircularBloc>(context)
+                              .add(ChnageNotifyEvent4());
+                        }),
                     const SizedBox(
                       height: 10,
                     ),
-                    InkWell(
-                      onTap: () {
-                        BaseBloc.get<CircularBloc>(context)
-                            .add(ChnageNotifyEvent2());
-                      },
-                      child: RadioBtn(
-                          group: sendwhats ? 4 : 5,
-                          label: e.tr('أشعار المعلميين عن طريق التطبيق '),
-                          value: 4,
-                          valueChanged: (v) {
-                            BaseBloc.get<CircularBloc>(context)
-                                .add(ChnageNotifyEvent2());
-                          }),
-                    ),
+                    // أشعار المعلمين عن طريق التطبيق -> send_notif
+                    RadioBtn(
+                        group: valueSelect ? 1 : -1,
+                        label: e.tr('أشعار المعلميين عن طريق التطبيق '),
+                        value: 1,
+                        valueChanged: (v) {
+                          BaseBloc.get<CircularBloc>(context)
+                              .add(ChnageNotifyEvent());
+                        }),
                     if (AppUtils.appUser?.smsService != null &&
                         AppUtils.appUser!.smsService!.isActive)
                       Column(
@@ -284,20 +280,14 @@ class _AddCircaleState extends State<AddCircale> {
                             // ),
                             Row(
                               children: [
-                                InkWell(
-                                  onTap: () {
-                                    BaseBloc.get<CircularBloc>(context)
-                                        .emit(ChnageNotifyState3());
-                                  },
-                                  child: RadioBtn(
-                                      group: sendSms ? 1 : 0,
-                                      label: e.tr('yes'),
-                                      value: 1,
-                                      valueChanged: (v) {
-                                        BaseBloc.get<CircularBloc>(context)
-                                            .emit(ChnageNotifyState3());
-                                      }),
-                                ),
+                                RadioBtn(
+                                    group: sendSms ? 1 : -1,
+                                    label: e.tr('yes'),
+                                    value: 1,
+                                    valueChanged: (v) {
+                                      BaseBloc.get<CircularBloc>(context)
+                                          .add(ChnageNotifyEvent3());
+                                    }),
                               ],
                             ),
                           ]),

@@ -1,5 +1,5 @@
 class Api {
-  static String domain = 'https://test.smartble.net/';
+  static String domain = 'https://www.smartble.net/';
   static String baseUrl = '$domain';
   static String notes = 'api/notes/note/';
   static String teachers = 'api/notes/teachers/';
@@ -12,6 +12,11 @@ class Api {
   static String studentsPage = 'api/notes/students_pgae/';
   static String studentList = 'api/notes/studentList/';
   static String circulars = 'api/notes/circulars/';
+  static String managerSignature = 'dashboard-mobile/manager-signature/';
+  static String updateManagerSignature =
+      'dashboard-mobile/manager-signature/update/';
+  static String deleteManagerSignature =
+      'dashboard-mobile/manager-signature/delete/';
   static String model18 = 'api/notes/model18/';
   static String weekly = 'api/weekly-plan/week-info/';
   static String model19 = 'api/notes/model19/';
