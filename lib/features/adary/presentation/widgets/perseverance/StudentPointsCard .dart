@@ -1,173 +1,123 @@
 import 'package:adary/features/adary/data/models/student_per.dart';
+import 'package:adary/features/adary/presentation/widgets/perseverance/student_actions_menu.dart';
 import 'package:flutter/material.dart';
 
+/// بطاقة الطالب في «سلوك الطلاب»: الصورة والاسم وملاحظته ملوّنة تحته، ثم
+/// أيقونة الحالة، وقائمة النقاط الثلاث على اليسار — كما في التصميم.
 class StudentPointsCard extends StatelessWidget {
+  const StudentPointsCard({
+    super.key,
+    required this.studentBehavior,
+    required this.className,
+    this.classId,
+    this.dateHijri,
+  });
+
   final StudentBehavior studentBehavior;
   final String className;
-  const StudentPointsCard(
-      {super.key, required this.studentBehavior, required this.className});
+  final int? classId;
+  final String? dateHijri;
+
+  /// عنوان أبرز ملاحظة على الطالب، وهو النص الملوّن تحت الاسم.
+  String get _noteLabel => studentBehavior.notes.isEmpty
+      ? ''
+      : studentBehavior.notes.map((n) => n.title ?? '').join('، ');
+
+  Color get _noteColor => studentBehavior.notes.isEmpty
+      ? Colors.grey
+      : studentBehavior.notes.first.color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Stack(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          )
+        ],
+      ),
+      child: Row(
         children: [
-          /// Main Card
+          StudentActionsMenu(
+            studentId: studentBehavior.student.id,
+            studentName: studentBehavior.student.name,
+            className: className,
+            statusLabel: _noteLabel,
+            statusColor: _noteColor,
+            studentClassId: classId ?? studentBehavior.student_class,
+            source: 'behavior',
+            reason: _noteLabel.isEmpty ? null : _noteLabel,
+            date: studentBehavior.gregorian_date,
+            dateHijri: dateHijri ?? studentBehavior.date_hijri,
+            session: studentBehavior.period,
+            behaviorRecordId: studentBehavior.id,
+          ),
+          const SizedBox(width: 4),
+
+          /// أيقونة الحالة
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: const [
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
                 BoxShadow(
-                  color: Colors.black12,
+                  color: Colors.black.withOpacity(0.08),
                   blurRadius: 6,
-                  offset: Offset(0, 2),
-                )
+                  spreadRadius: 1,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
+            child: Icon(
+              studentBehavior.total_points < 0
+                  ? Icons.sentiment_dissatisfied
+                  : Icons.sentiment_satisfied,
+              color: _noteColor,
+              size: 26,
+            ),
+          ),
+          const Spacer(),
+
+          Flexible(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                /// Top Row (name + avatar)
-                Row(
-                  children: [
-                    /// Avatar
-                    const CircleAvatar(
-                      radius: 24,
-                      backgroundImage: AssetImage("assets/images/student.jpg"),
-                    ),
-
-                    const SizedBox(
-                      width: 10,
-                    ),
-
-                    /// Name + info
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          studentBehavior.student.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(className.toString(),
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.blue)),
-                            const SizedBox(width: 12),
-                            const Icon(
-                              Icons.circle,
-                              size: 5,
-                              color: Colors.blue,
-                            ),
-                            Text(studentBehavior.date_hijri,
-                                style: const TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                /// Add Note Button
-                Wrap(
-                    children: studentBehavior.notes
-                        .map(
-                          (e) => Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 2),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black
-                                      .withOpacity(0.1), // shadow color
-                                  blurRadius: 6, // softness
-                                  spreadRadius: 1, // size
-                                  offset: const Offset(0, 2), // position (x, y)
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.sentiment_satisfied, color: e.color),
-                                const SizedBox(width: 6),
-                                Text(e.title ?? ''),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList()),
-
-                const SizedBox(height: 8),
-
-                /// Notes Text
-                if (studentBehavior.additional_notes.isNotEmpty)
-                  Text(
-                    studentBehavior.additional_notes,
-                    style: const TextStyle(fontSize: 13),
+                Text(
+                  studentBehavior.student.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
-                if (studentBehavior.additional_notes.isNotEmpty)
-                  const SizedBox(height: 10),
-
-                /// Bottom Row
-                Row(
-                  children: [
-                    /// Delete
-                    /// Total
-                    Text(
-                      "الإجمالي : ${studentBehavior.total_points} نقطة",
-                      style: TextStyle(
-                        color: studentBehavior.color,
-                        fontWeight: FontWeight.bold,
-                      ),
+                ),
+                if (_noteLabel.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    _noteLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: _noteColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
-                    const Spacer(),
-
-                    // Icon(Icons.delete, color: Colors.red[400]),
-
-                    // const SizedBox(width: 12),
-
-                    // /// Edit
-                    // const Icon(Icons.edit, color: Colors.cyan),
-                  ],
-                )
+                  ),
+                ],
               ],
             ),
           ),
-
-          /// Corner Badge
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: studentBehavior.color,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(14),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "${studentBehavior.total_points}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+          const SizedBox(width: 10),
+          const CircleAvatar(
+            radius: 24,
+            backgroundImage: AssetImage("assets/images/student.jpg"),
           ),
         ],
       ),

@@ -1,5 +1,5 @@
+import 'package:adary/features/adary/presentation/pages/behavioral_notes_list.dart';
 import 'package:adary/core/bloc/base_bloc.dart';
-import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/share/widgets/btn_app.dart';
 import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/domain/entities/filter_per.dart';
@@ -10,16 +10,16 @@ import 'package:adary/features/adary/domain/usecases/get_students_behavoir.dart'
 import 'package:adary/features/adary/presentation/bloc/behavoir_notes/behavoir_notes_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/done_added_page.dart';
 import 'package:adary/features/adary/presentation/widgets/perseverance/StudentPointsCard%20.dart';
-import 'package:adary/features/adary/presentation/widgets/perseverance/student_note_card.dart';
+import 'package:adary/features/adary/presentation/widgets/perseverance/conduct_header.dart';
+import 'package:adary/features/adary/presentation/widgets/perseverance/conduct_widgets.dart';
 import 'package:adary/injections/injection_main.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../../core/utils/app_utils.dart';
 
+/// تبويب «السلوك»: عرض سلوك الطلاب، أو تسجيل ملاحظة واحدة على من يُحدَّد منهم.
 class Behavior extends StatefulWidget {
   const Behavior(
       {super.key,
@@ -30,6 +30,7 @@ class Behavior extends StatefulWidget {
       this.className,
       this.session,
       this.dateTime});
+
   final bool isView;
   final int? classId;
   final String? date;
@@ -47,11 +48,22 @@ class _BehaviorState extends State<Behavior> {
       PagingController(firstPageKey: 1);
   final PagingController<int, StudentInfo> _pagingController1 =
       PagingController(firstPageKey: 1);
+
   late FilterPer entity;
   late FilterPer entity1;
+
   final getstudents = sl<GetStudentsBehavoir>();
   final geStudentsByClass = sl<GetStudentCalssUseCase>();
-  final List<BehavoirRecordEntity> entites = [];
+
+  List<BehaviorNote> notes = [];
+
+  /// الملاحظة المختارة من المنسدلة، تُطبَّق على كل طالب مُحدَّد.
+  BehaviorNote? selectedNote;
+
+  /// معرّفات الطلاب المحدَّدين — مجموعة بدل قائمة كي لا تتكرّر مع كل إعادة بناء.
+  final Set<int> selectedStudents = {};
+  bool saving = false;
+
   @override
   void initState() {
     entity = FilterPer(
@@ -62,13 +74,16 @@ class _BehaviorState extends State<Behavior> {
         school: AppUtils.appUser?.id.toString(),
         session: widget.session);
     entity1 = FilterPer(page: 1, className: widget.classId);
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
-    _pagingController1.addPageRequestListener((pageKey) {
-      _fetchPage1(pageKey);
-    });
+    _pagingController.addPageRequestListener(_fetchPage);
+    _pagingController1.addPageRequestListener(_fetchPage1);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    _pagingController1.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchPage(int pageKey) async {
@@ -100,12 +115,17 @@ class _BehaviorState extends State<Behavior> {
         }
       });
     } catch (error) {
-      _pagingController.error = error;
+      _pagingController1.error = error;
       AppUtils.log(error.toString());
     }
   }
 
-  List<BehaviorNote> notes = [];
+  List<StudentInfo> get _loadedStudents => _pagingController1.itemList ?? [];
+
+  bool get _allSelected =>
+      _loadedStudents.isNotEmpty &&
+      selectedStudents.length == _loadedStudents.length;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -117,146 +137,140 @@ class _BehaviorState extends State<Behavior> {
           } else if (state is DoneGetNotes) {
             notes = state.notes;
           }
+
           return Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    /// Top Info Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text('${'date'.tr()}: '),
-                            Text(
-                              DateFormat('dd/MM/yyyy')
-                                  .format(widget.dateTime ?? DateTime.now()),
-                              style:
-                                  const TextStyle(color: AppColors.APP_COLOR),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('${'session'.tr()}: '),
-                            Text(
-                              widget.sessionName ?? '',
-                              style: TextStyle(color: AppColors.APP_COLOR),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('${'class'.tr()}: '),
-                            Text(
-                              widget.className ?? '',
-                              style: TextStyle(color: AppColors.APP_COLOR),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              ConductFilterHeader(
+                dateHijri: widget.date ?? '',
+                sessionName: widget.sessionName ?? '',
+                className: widget.className ?? '',
+                selectAll: widget.isView ? null : _allSelected,
+                onSelectAll: (value) => setState(() {
+                  selectedStudents
+                    ..clear()
+                    ..addAll(
+                      value ? _loadedStudents.map((s) => s.id) : const <int>[],
+                    );
+                }),
               ),
-              const SizedBox(height: 10),
               Expanded(
-                child: widget.isView
-                    ? PagedListView<int, StudentBehavior>(
-                        padding: EdgeInsets.zero,
-                        physics: const BouncingScrollPhysics(),
-                        pagingController: _pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<
-                                StudentBehavior>(
-                            noItemsFoundIndicatorBuilder: (context) => Center(
-                                  child: Image.asset('assets/images/add.png'),
-                                ),
-                            itemBuilder: (context, item, index) {
-                              return StudentPointsCard(
-                                studentBehavior: item,
-                                className: widget.className ?? '',
-                              );
-                            }))
-                    : Column(
-                        children: [
-                          Expanded(
-                            child: PagedListView<int, StudentInfo>(
-                                padding: EdgeInsets.zero,
-                                physics: const BouncingScrollPhysics(),
-                                pagingController: _pagingController1,
-                                builderDelegate: PagedChildBuilderDelegate<
-                                        StudentInfo>(
-                                    noItemsFoundIndicatorBuilder: (context) =>
-                                        Center(
-                                          child: Image.asset(
-                                              'assets/images/add.png'),
-                                        ),
-                                    itemBuilder: (context, item, index) {
-                                      final register = BehavoirRecordEntity(
-                                        studentId: item.id,
-                                        gregorian_date:
-                                            widget.dateTime ?? DateTime.now(),
-                                        date_hijri: widget.date ?? '1/1/1111',
-                                        student_class: widget.classId ?? 9,
-                                        period: widget.session ?? 9,
-                                      );
-                                      entites.add(register);
-                                      return StudentNoteCard(
-                                        studentInfo: item,
-                                        notes: notes,
-                                        onchange: (value) {
-                                          register.additional_notes =
-                                              value.$2 ?? '';
-                                          register.notes_ids = [value.$1 ?? 0];
-                                          register.submit = value.$3 ?? F;
-                                        },
-                                      );
-                                    })),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: BtnApp(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 10),
-                                label: 'save_record'.tr(),
-                                onTap: () async {
-                                  await sl<AddBehavoirUseCase>().call(entites);
-                                  AppUtils.go(DoneAddedPage(
-                                      label: 'behavior_recorded'.tr(),
-                                      title: 'record_behavior'.tr()));
-                                }),
-                          )
-                        ],
-                      ),
-              )
-
-              // ListView(
-              //   children: [
-              //     if (widget.isView)
-              //       const StudentPointsCard(
-              //         points: 10,
-              //         color: Colors.deepOrange,
-              //         name: "محمد احمد علي",
-              //       ),
-              //     if (!widget.isView) const StudentNoteCard(),
-              //     if (widget.isView)
-              //       const StudentPointsCard(
-              //         points: 10,
-              //         color: Colors.green,
-              //         name: "محمد احمد علي",
-              //       ),
-              //   ],
-              // ),
+                child: widget.isView ? _buildList() : _buildRegister(),
+              ),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildList() {
+    return PagedListView<int, StudentBehavior>(
+      padding: const EdgeInsets.only(top: 8),
+      physics: const BouncingScrollPhysics(),
+      pagingController: _pagingController,
+      builderDelegate: PagedChildBuilderDelegate<StudentBehavior>(
+        noItemsFoundIndicatorBuilder: (context) => ConductEmpty(
+          text: widget.classId == null
+              ? 'فلتر بالفصل والحصة لعرض البيانات'
+              : 'لا يوجد بيانات للعرض',
+        ),
+        itemBuilder: (context, item, index) => StudentPointsCard(
+          studentBehavior: item,
+          className: widget.className ?? '',
+          classId: widget.classId,
+          dateHijri: widget.date,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegister() {
+    return Column(
+      children: [
+        NoteSelector(
+          notes: notes,
+          selected: selectedNote,
+          onChanged: (note) => setState(() => selectedNote = note),
+          onManage: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const BehavioralNotesList()),
+          ).then((_) {
+            if (mounted) setState(() {});
+          }),
+        ),
+        Expanded(
+          child: PagedListView<int, StudentInfo>(
+            padding: EdgeInsets.zero,
+            physics: const BouncingScrollPhysics(),
+            pagingController: _pagingController1,
+            builderDelegate: PagedChildBuilderDelegate<StudentInfo>(
+              noItemsFoundIndicatorBuilder: (context) => ConductEmpty(
+                text: widget.classId == null
+                    ? 'فلتر بالفصل والحصة لعرض البيانات'
+                    : 'لا يوجد بيانات للعرض',
+              ),
+              itemBuilder: (context, item, index) => StudentSelectCard(
+                name: item.name,
+                selected: selectedStudents.contains(item.id),
+                onChanged: (value) => setState(() {
+                  value
+                      ? selectedStudents.add(item.id)
+                      : selectedStudents.remove(item.id);
+                }),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: BtnApp(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            label: saving ? 'جارٍ الحفظ...' : 'حفظ البيانات',
+            onTap: saving ? () {} : _save,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _save() async {
+    if (selectedNote == null || selectedStudents.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('اختر ملاحظة وحدّد طالبًا واحدًا على الأقل')),
+      );
+      return;
+    }
+
+    setState(() => saving = true);
+
+    // سجل لكل طالب مُحدَّد، بالملاحظة نفسها.
+    final records = selectedStudents
+        .map(
+          (studentId) => BehavoirRecordEntity(
+            studentId: studentId,
+            gregorian_date: widget.dateTime ?? DateTime.now(),
+            date_hijri: widget.date ?? '1/1/1111',
+            student_class: widget.classId ?? 9,
+            period: widget.session ?? 9,
+          )
+            ..notes_ids = [selectedNote!.id]
+            ..submit = true,
+        )
+        .toList();
+
+    final result = await sl<AddBehavoirUseCase>().call(records);
+    if (!mounted) return;
+    setState(() => saving = false);
+
+    result.fold(
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(failure.message)),
+      ),
+      (_) => AppUtils.go(
+        const DoneAddedPage(
+          label: 'تم تسجيل السلوك بنجاح',
+          title: 'تسجيل السلوك',
+        ),
       ),
     );
   }

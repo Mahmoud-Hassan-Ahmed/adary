@@ -59,4 +59,11 @@ class Api {
   /// `wishTeachers` قائمة المعلمين وعدد رغبات كلٍّ، ويُلحق بها معرّف المعلم
   /// للحصول على بطاقاته.
   static String wishTeachers = 'daily-supervision/wishes/teachers/';
+
+  /// المواظبة والسلوك — الإجراءات المتخذة بحق الطالب وسجلّاه (قسم 7).
+  static String studentProcedures = 'api/notes/student-procedures/';
+  static String studentAttendanceRecord(int studentId) =>
+      'api/notes/students/$studentId/attendance-record/';
+  static String studentBehaviorRecord(int studentId) =>
+      'api/notes/students/$studentId/behavior-record/';
 }

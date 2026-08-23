@@ -61,17 +61,25 @@ class _AddNoteBehavoirState extends State<AddNoteBehavoir> {
                 child: BtnApp(
                     label: 'حفظ',
                     onTap: () {
-                      if (formState.currentState!.validate()) {
-                        BaseBloc.get<BehavoirNotesBloc>(context).add(
-                            AddNoteEvent(
-                                baseEnity: NoteBehavoirEntity(
-                                    title: name.text,
-                                    icon: (selectIcon as IconModel).value,
-                                    note_type: selectType!.id == 1
-                                        ? 'positive'
-                                        : 'negative',
-                                    points: int.parse(points.text))));
+                      if (!formState.currentState!.validate()) return;
+                      if (selectType == null || selectIcon is! IconModel) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('اختر نوع الملاحظة وأيقونتها'),
+                          ),
+                        );
+                        return;
                       }
+                      BaseBloc.get<BehavoirNotesBloc>(context).add(
+                          AddNoteEvent(
+                              baseEnity: NoteBehavoirEntity(
+                                  title: name.text,
+                                  icon: (selectIcon as IconModel).value,
+                                  note_type: selectType!.id == 1
+                                      ? 'positive'
+                                      : 'negative',
+                                  points:
+                                      int.tryParse(points.text.trim()) ?? 0)));
                     }),
               ),
               body: Padding(

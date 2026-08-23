@@ -1,3 +1,5 @@
+import 'package:adary/features/adary/domain/usecases/add_note_behavoir_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/student_conduct_use_cases.dart';
 import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/core/utils/app_utils_imp.dart';
@@ -293,7 +295,8 @@ Future<void> init() async {
     () => BehavoirNotesBloc(
         getListBehavoirNotes: sl(),
         getAttendenceStatisticsUseCase: sl(),
-        getBehavoirStaticUseCase: sl()),
+        getBehavoirStaticUseCase: sl(),
+        addNoteBehavoirUseCase: sl()),
   );
   sl.registerFactory(
     () => WeekPlanBloc(
@@ -637,6 +640,22 @@ Future<void> init() async {
       repo: sl(),
       db: sl(),
     ),
+  );
+  sl.registerLazySingleton(
+    () => AddNoteBehavoirUseCase(repo: sl(), db: sl()),
+  );
+  // المواظبة والسلوك — قسم 7
+  sl.registerLazySingleton(
+    () => GetStudentAttendanceRecordUseCase(repo: sl(), db: sl()),
+  );
+  sl.registerLazySingleton(
+    () => GetStudentBehaviorRecordUseCase(repo: sl(), db: sl()),
+  );
+  sl.registerLazySingleton(
+    () => GetStudentProceduresUseCase(repo: sl(), db: sl()),
+  );
+  sl.registerLazySingleton(
+    () => AddStudentProceduresUseCase(repo: sl(), db: sl()),
   );
   sl.registerLazySingleton(
     () => AddClassUseCase(

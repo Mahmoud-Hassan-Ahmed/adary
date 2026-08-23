@@ -100,22 +100,32 @@ class StudentPer {
   }
 
   String get statusName {
-    if (attendance == 's') {
-      return 'Present';
-    } else if (attendance == 'a') {
-      return 'Absent';
-    } else {
-      return 'Late';
+    switch (attendance) {
+      case 's':
+        return 'حاضر';
+      case 'a':
+        return 'غائب';
+      case 'l':
+        return 'متأخر';
+      case 'p':
+        return 'مستأذن';
+      default:
+        return '';
     }
   }
 
   Color get color {
-    if (attendance == 's') {
-      return Colors.green;
-    } else if (attendance == 'a') {
-      return Colors.red;
-    } else {
-      return Colors.orange;
+    switch (attendance) {
+      case 's':
+        return const Color(0xFF43A047);
+      case 'a':
+        return const Color(0xFFE53935);
+      case 'l':
+        return const Color(0xFFF5B301);
+      case 'p':
+        return const Color(0xFF1B2A6B);
+      default:
+        return Colors.grey;
     }
   }
 }

@@ -11,7 +11,6 @@ import 'package:adary/features/adary/presentation/widgets/perseverance/note_item
 import 'package:adary/injections/injection_main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 class BehavioralNotesList extends StatelessWidget {
   const BehavioralNotesList({super.key});
@@ -33,18 +32,25 @@ class BehavioralNotesList extends StatelessWidget {
               child: Scaffold(
                 backgroundColor: Colors.grey.shade200,
                 appBar: MyAppBar(title: 'قائمة ملاحظات السلوك', actions: [
-                  IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return const AddNoteBehavoir();
-                        },
-                      );
-                    },
-                    icon: SvgPicture.asset(
-                      'assets/icons/icon-add.svg',
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) => const AddNoteBehavoir(),
+                        ).then((_) {
+                          // إعادة الجلب كي تظهر الملاحظة الجديدة فور الحفظ.
+                          BaseBloc.get<BehavoirNotesBloc>(context)
+                              .add(GetAllNotes());
+                        });
+                      },
+                      child: const CircleAvatar(
+                        radius: 18,
+                        backgroundColor: AppColors.APP_COLOR,
+                        child: Icon(Icons.add, color: Colors.white, size: 24),
+                      ),
                     ),
                   ),
                 ]),
@@ -73,8 +79,8 @@ class BehavioralNotesList extends StatelessWidget {
                             MaterialStateProperty.all(Colors.transparent),
                         tabs: const [
                           Tab(text: 'الكل'),
-                          Tab(text: 'إيجابي   '),
-                          Tab(text: 'سلبي'),
+                          Tab(text: 'إيجابي'),
+                          Tab(text: 'بحاجة إلي تحسين'),
                         ],
                       ),
                     ),

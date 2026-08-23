@@ -44,6 +44,37 @@ class _FilterWidget2State extends State<FilterWidget2> {
   ];
   List<SelectModel> clsses = [];
 
+  /// يتطلّب اكتمال الاختيارات قبل بناء الطلب، فقيمها تُحوَّل إلى IconModel.
+  Future<void> _download() async {
+    if (valueTypeReport is! IconModel ||
+        valuePeroid is! IconModel ||
+        valueExport is! IconModel) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('اختر نوع التقرير والفترة والصيغة'),
+        ),
+      );
+      return;
+    }
+
+    final tempDir = await getTemporaryDirectory();
+    final format = (valueExport as IconModel).value;
+    final filePath = '${tempDir.path}/report.${format == 'excel' ? 'xlsx' : 'pdf'}';
+
+    if (!mounted) return;
+    BaseBloc.get<PerseveranceBloc>(context).add(
+      DownloadReportEvent(
+        entity: FilterReportEntity(
+          reportClass: valueClass?.id ?? 0,
+          reportFormat: format,
+          reportPeriod: (valuePeroid as IconModel).value,
+          Path: filePath,
+          reportType: (valueTypeReport as IconModel).value,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -59,22 +90,25 @@ class _FilterWidget2State extends State<FilterWidget2> {
             appBar: MyAppBar(title: 'فلتر '),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(14),
-              child: BtnApp(
-                  label: 'تحميل ',
-                  onTap: () async {
-                    final tempDir = await getTemporaryDirectory();
-
-                    final filePath = '${tempDir.path}/report.pdf';
-                    BaseBloc.get<PerseveranceBloc>(context).add(
-                        DownloadReportEvent(
-                            entity: FilterReportEntity(
-                                reportClass: valueClass?.id ?? 0,
-                                reportFormat: (valueExport as IconModel).value,
-                                reportPeriod: (valuePeroid as IconModel).value,
-                                Path: filePath,
-                                reportType:
-                                    (valueTypeReport as IconModel).value)));
-                  }),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: BtnApp(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      label: 'تحميل',
+                      onTap: _download,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: BtnApp(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      label: 'استعراض',
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ),
+                ],
+              ),
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),

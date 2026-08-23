@@ -1,3 +1,5 @@
+import 'package:adary/features/adary/domain/entities/student_conduct_entity.dart';
+import 'package:adary/features/adary/data/models/student_conduct.dart';
 import 'dart:convert';
 
 import 'package:adary/core/conts/api.dart';
@@ -642,7 +644,7 @@ class DbImp implements Db {
 
   @override
   Future<void> addBehavoirNote(BaseEnity entity) async {
-    final response = await dio.post(Api.behavoir, data: entity.toJson());
+    await dio.post(Api.behavoir_note, data: entity.toJson());
   }
 
   @override
@@ -801,5 +803,38 @@ class DbImp implements Db {
       TeacherWishesEntity entity) async {
     final response = await dio.get('${Api.wishTeachers}${entity.teacherId}/');
     return TeacherWishesResponse.fromJson(response.data);
+  }
+
+  @override
+  Future<StudentAttendanceRecord> getStudentAttendanceRecord(
+      StudentRecordEntity entity) async {
+    final response = await dio.get(
+        Api.studentAttendanceRecord(entity.studentId),
+        queryParameters: {"period": entity.period});
+    return StudentAttendanceRecord.fromJson(response.data);
+  }
+
+  @override
+  Future<StudentBehaviorRecord> getStudentBehaviorRecord(
+      StudentRecordEntity entity) async {
+    final response = await dio.get(Api.studentBehaviorRecord(entity.studentId),
+        queryParameters: {"period": entity.period});
+    return StudentBehaviorRecord.fromJson(response.data);
+  }
+
+  @override
+  Future<PageinationModel<StudentProcedure>> getStudentProcedures(
+      ProceduresFilterEntity entity) async {
+    final response = await dio.get(Api.studentProcedures, queryParameters: {
+      "period": entity.period,
+      if (entity.studentId != null) "student": entity.studentId,
+      if (entity.source != null) "source": entity.source,
+    });
+    return PageinationModel.fromJson(response.data, StudentProcedure.fromJson);
+  }
+
+  @override
+  Future<void> addStudentProcedures(List<Map<String, dynamic>> payload) async {
+    await dio.post(Api.studentProcedures, data: payload);
   }
 }

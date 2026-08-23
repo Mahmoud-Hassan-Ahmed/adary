@@ -57,7 +57,7 @@ class _FilterWidgetState extends State<FilterWidget> {
               bottomNavigationBar: Padding(
                 padding: const EdgeInsets.all(14),
                 child: BtnApp(
-                    label: 'بحث ',
+                    label: 'بحث',
                     onTap: () {
                       if (formState.currentState!.validate()) {
                         widget.date((
@@ -79,9 +79,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Titile(
-                        label: e.tr('choose_date'),
-                      ),
+                      const Titile(label: 'التاريخ'),
                       DateWidget(
                         selectDate: dateHijri,
                         onChange: (value) {
@@ -92,7 +90,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                         },
                       ),
                       // SizedBox(height: 20),
-                      Titile(label: e.tr('name_class')),
+                      const Titile(label: 'أسم الفصل'),
                       SelectInput(
                         items: classes,
                         onChanged: (v) {
@@ -103,7 +101,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                         selectedValue: selectedClass,
                       ),
                       // SizedBox(height: 20),
-                      Titile(label: e.tr('session')),
+                      const Titile(label: 'الحصة'),
                       SelectInput(
                         items: sessionChoices,
                         onChanged: (v) {

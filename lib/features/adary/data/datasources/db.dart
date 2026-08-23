@@ -1,3 +1,5 @@
+import 'package:adary/features/adary/domain/entities/student_conduct_entity.dart';
+import 'package:adary/features/adary/data/models/student_conduct.dart';
 import 'package:adary/features/adary/data/models/attendance_statistics_model.dart';
 import 'package:adary/features/adary/data/models/behavior_statistics_model.dart';
 import 'package:adary/features/adary/data/models/circular_model.dart';
@@ -164,4 +166,13 @@ abstract class Db {
   Future<PageinationModel<WishTeacherModel>> getWishTeachers(
       WishTeachersEntity entity);
   Future<TeacherWishesResponse> getTeacherWishes(TeacherWishesEntity entity);
+
+  /// المواظبة والسلوك — سجلّا الطالب والإجراءات المتخذة بحقّه (قسم 7).
+  Future<StudentAttendanceRecord> getStudentAttendanceRecord(
+      StudentRecordEntity entity);
+  Future<StudentBehaviorRecord> getStudentBehaviorRecord(
+      StudentRecordEntity entity);
+  Future<PageinationModel<StudentProcedure>> getStudentProcedures(
+      ProceduresFilterEntity entity);
+  Future<void> addStudentProcedures(List<Map<String, dynamic>> payload);
 }
