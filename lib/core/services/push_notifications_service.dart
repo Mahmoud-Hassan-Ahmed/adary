@@ -57,6 +57,19 @@ class PushNotificationsService {
 
   String? get token => _token;
 
+  /// خلاصة آخر محاولة تسجيل، سطرًا سطرًا.
+  ///
+  /// «تظهر نافذة الإذن ثم لا يصل شيء» عرَضٌ تشترك فيه أسبابٌ متباينة: رمز
+  /// APNs لم يصدر، أو صدر ولم يقبله الخادم، أو قبله ولم يرسل. ولا يفرّق
+  /// بينها إلا معرفةُ آخر خطوة نجحت، فتُسجَّل هنا بدل أن تُبتلع.
+  final List<String> diagnostics = [];
+
+  void _note(String line, {bool bad = false}) {
+    diagnostics.add(line);
+    AppUtils.log('[إشعارات] $line',
+        levelLog: bad ? Level.error : Level.info);
+  }
+
   /// تُستدعى مرة واحدة عند إقلاع التطبيق. لا ترمي: تطبيق بلا إشعارات أهون من
   /// تطبيق لا يفتح لأن ملف إعدادات Firebase ناقص.
   Future<void> init() async {
@@ -65,8 +78,13 @@ class PushNotificationsService {
       // بمهلة: على جهاز بلا خدمات Google (Honor/Huawei) لا ترمي التهيئة بل
       // تتعلّق، وبلا مهلة يبقى المستدعي معلّقًا معها بلا نهاية.
       await Firebase.initializeApp().timeout(_channelTimeout);
-      await _initLocalNotifications().timeout(_channelTimeout);
+      // الإذن أولًا وعبر Firebase وحده. `flutter_local_notifications` يطلب
+      // إذنًا خاصًا به على iOS افتراضيًا، وهو إذن عرضٍ محلي لا يستدعي
+      // `registerForRemoteNotifications`. فإن سبق طلبُه طلبَ Firebase، وجد
+      // Firebase الإذن ممنوحًا فلم يسجّل الجهاز لدى APNs — فتظهر النافذة،
+      // ويضغط المستخدم «سماح»، ولا يصدر رمز APNs، ولا يصل إشعار واحد.
       await _requestPermission().timeout(_channelTimeout);
+      await _initLocalNotifications().timeout(_channelTimeout);
       await _initPushHandlers().timeout(_channelTimeout);
       _initialized = true;
       // لا يُنتظر: تسجيل الرمز طلبُ شبكةٍ خلفيٌّ، وانتظاره كان يطيل الإقلاع.
@@ -88,7 +106,12 @@ class PushNotificationsService {
   Future<void> _initLocalNotifications() async {
     const settings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
+      // بلا طلب إذن: Firebase طلبه قبل قليل، وهو وحده من يسجّل لدى APNs.
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      ),
     );
     await _localNotifications.initialize(
       settings,
@@ -136,6 +159,9 @@ class PushNotificationsService {
   void _showForegroundNotification(RemoteMessage message) {
     final notification = message.notification;
     if (notification == null) return;
+    // iOS يعرضه بنفسه بعد setForegroundNotificationPresentationOptions،
+    // فبناء إشعار محلي فوقه يُظهره مرتين.
+    if (Platform.isIOS) return;
 
     _localNotifications.show(
       notification.hashCode,
@@ -198,22 +224,35 @@ class PushNotificationsService {
   /// يرسل رمز الجهاز إلى الخادم. تُستدعى بعد تسجيل الدخول وعند كل إقلاع
   /// وعند تجديد الرمز — الرمز يتغيّر بإعادة تثبيت التطبيق أو مسح بياناته.
   Future<void> syncToken() async {
+    diagnostics.clear();
     final login = AppUtils.instance.getLogin();
-    if (login == null) return; // بلا حساب لا يُعرف لأي مدرسة يُنسب الجهاز
+    if (login == null) {
+      _note('لا يوجد حساب مسجَّل، فلا يُنسب الجهاز لمدرسة.', bad: true);
+      return;
+    }
 
     try {
-      if (Platform.isIOS && await _awaitApnsToken() == null) {
-        // بلا رمز APNs يرجع getToken بـ null، فلا فائدة من إكمال التسجيل.
-        AppUtils.log('لم يصل رمز APNs بعد؛ سيُعاد التسجيل لاحقًا.',
-            levelLog: Level.warning);
-        return;
+      if (Platform.isIOS) {
+        final apns = await _awaitApnsToken();
+        if (apns == null) {
+          // أشهر أسبابه: خاصية Push غير مفعّلة على الـ App ID، أو الـ
+          // provisioning profile لا يحمل الـ entitlement. ونافذة الإذن تظهر
+          // في الحالتين، فظهورها ليس دليلًا على نجاح التسجيل.
+          _note('رمز APNs لم يصدر — تسجيل الجهاز لدى أبل فشل.', bad: true);
+          return;
+        }
+        _note('رمز APNs صدر.');
       }
 
       _token ??= await FirebaseMessaging.instance
           .getToken()
           .timeout(_channelTimeout, onTimeout: () => null);
-      if (_token == null || _token!.isEmpty) return;
-      AppUtils.log('FCM token: $_token');
+      if (_token == null || _token!.isEmpty) {
+        // مع وجود رمز APNs، يعني هذا أن Firebase لم يُصدر رمزًا للجهاز.
+        _note('Firebase لم يُصدر رمز FCM.', bad: true);
+        return;
+      }
+      _note('رمز FCM: $_token');
 
       // Dio مستقل عن `dioConfig`: ذاك يُظهر EasyLoading ورسائل الخطأ لكل طلب
       // غير GET، ولا يصح أن يُغرق المستخدمَ تسجيلٌ صامت يجري في الخلفية.
@@ -228,13 +267,26 @@ class PushNotificationsService {
         },
       ));
 
-      await dio.post(Api.fcmTokenUpdate, data: {
+      // `package_name` ثابتٌ على معرّف أندرويد بينما معرّف حزمة iOS هو
+      // com.smartapleP.in. إن كان الخادم يميّز التطبيقات به فالجهاز يُسجَّل
+      // تحت هوية تطبيق آخر — وهذا أول ما يُراجَع في الخادم إن ظهر أدناه أن
+      // التسجيل «نجح» ومع ذلك لا يصل شيء.
+      _note('يُرسَل إلى ${Api.baseUrl}${Api.fcmTokenUpdate} '
+          'بـ package_name=$_packageName');
+
+      final response = await dio.post(Api.fcmTokenUpdate, data: {
         'fcm_token': _token,
         'package_name': _packageName,
         'lang_code': AppUtils.instance.getLocale().languageCode,
       });
+
+      // كان الرد يُهمَل تمامًا: خادمٌ يردّ 200 برسالة رفض كان يبدو نجاحًا.
+      final ok = response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300;
+      _note('ردّ الخادم ${response.statusCode}: ${response.data}', bad: !ok);
     } catch (e) {
-      AppUtils.log('تعذّر تسجيل رمز الإشعارات: $e', levelLog: Level.error);
+      _note('تعذّر تسجيل رمز الإشعارات: $e', bad: true);
     }
   }
 }

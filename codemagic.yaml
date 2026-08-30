@@ -29,31 +29,6 @@ workflows:
             flutter clean
             flutter pub get
 
-        - name: Initialize Codemagic keychain
-          script: keychain initialize
-
-        - name: Import signing certificate into keychain
-          script: keychain add-certificates
-
-        - name: Apply provisioning profiles to Xcode project
-          script: xcode-project use-profiles
-
-        - name: Install provisioning profiles manually
-          script: |
-            echo "Installing provisioning profiles"
-            mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-            for profile in $CM_PROVISIONING_PROFILE_PATH; do
-              cp "$profile" ~/Library/MobileDevice/Provisioning\ Profiles/
-            done
-
-        - name: Configure Xcode project
-          script: |
-            cd ios
-            xcode-project use-targets
-            xcode-project set-development-team "MV78XVH867"
-            xcode-project update-build-settings --product-bundle-identifier "$BUNDLE_ID"
-            cd ..
-
         # المستودع عام، فيمكن حقن ملفات Firebase من متغيّرات Codemagic السرّية
         # بدل رفعها. ولو لم تُضبط المتغيّرات يُستعمل الملف المرفوع في المستودع،
         # فيعمل المسارَان معًا. لتوليد القيمة:  base64 -i GoogleService-Info.plist
@@ -80,6 +55,31 @@ workflows:
             ruby scripts/configure_firebase.rb
             cd ..
 
+        - name: Initialize Codemagic keychain
+          script: keychain initialize
+
+        - name: Import signing certificate into keychain
+          script: keychain add-certificates
+
+        - name: Apply provisioning profiles to Xcode project
+          script: xcode-project use-profiles
+
+        - name: Install provisioning profiles manually
+          script: |
+            echo "Installing provisioning profiles"
+            mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+            for profile in $CM_PROVISIONING_PROFILE_PATH; do
+              cp "$profile" ~/Library/MobileDevice/Provisioning\ Profiles/
+            done
+
+        - name: Configure Xcode project
+          script: |
+            cd ios
+            xcode-project use-targets
+            xcode-project set-development-team "MV78XVH867"
+            xcode-project update-build-settings --product-bundle-identifier "$BUNDLE_ID"
+            cd ..
+
         - name: Update CocoaPods Repo
           script: |
             cd ios
@@ -89,6 +89,50 @@ workflows:
 
         - name: Build IPA for TestFlight
           script: flutter build ipa --export-options-plist=/Users/builder/export_options.plist
+
+        # الإشعارات تفشل صامتةً: التطبيق يعمل، وتظهر نافذة الإذن، ولا يصل شيء.
+        # فيُتحقَّق هنا من الحزمة المبنيّة نفسها بدل انتظار شكوى مستخدم، ويسقط
+        # البناء قبل الرفع إلى TestFlight إن نقص شرط من شروط APNs.
+        - name: Verify push notification setup
+          script: |
+            set -e
+            APP=$(find build/ios/archive -maxdepth 4 -name 'Runner.app' | head -1)
+            [ -n "$APP" ] || { echo "!! لم يُعثر على Runner.app"; exit 1; }
+            echo "الحزمة: $APP"
+
+            # ١) بلا هذا الملف داخل الحزمة يفشل Firebase.initializeApp وقت
+            #    التشغيل، فلا يصدر رمز جهاز أصلًا.
+            if [ -f "$APP/GoogleService-Info.plist" ]; then
+              echo "✓ GoogleService-Info.plist داخل الحزمة"
+            else
+              echo "!! GoogleService-Info.plist غير موجود داخل الحزمة"
+              exit 1
+            fi
+
+            # ٢) الحقّ لا يكفي وجوده في الملف: العبرة بما وُقّع فعلًا.
+            ENT=$(codesign -d --entitlements :- "$APP" 2>/dev/null || true)
+            if echo "$ENT" | grep -q 'aps-environment'; then
+              echo "✓ aps-environment موقّع في التطبيق:"
+              echo "$ENT" | grep -A1 'aps-environment'
+            else
+              echo "!! التطبيق موقّع بلا aps-environment — لن يسجَّل في APNs."
+              echo "   فعّل Push Notifications على معرّف $BUNDLE_ID في"
+              echo "   developer.apple.com ثم أعد توليد الـ provisioning profile."
+              exit 1
+            fi
+
+            # ٣) وحتى لو وُقّع، لا يعمل إن كان الـ profile لا يحمل الخاصية.
+            PROFILE="$APP/embedded.mobileprovision"
+            if [ -f "$PROFILE" ]; then
+              if security cms -D -i "$PROFILE" | grep -q 'aps-environment'; then
+                echo "✓ الـ provisioning profile يحمل خاصية Push"
+              else
+                echo "!! الـ provisioning profile بلا خاصية Push"
+                exit 1
+              fi
+            fi
+
+            echo "إعداد الإشعارات سليم في هذه النسخة."
 
 
     artifacts:

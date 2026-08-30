@@ -17,6 +17,7 @@ import 'package:adary/features/adary/presentation/widgets/profiles/subscription_
 import 'package:adary/features/adary/presentation/widgets/profiles/terms_conditions.dart';
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:adary/features/adary/presentation/widgets/notifications_diagnostics_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -369,6 +370,9 @@ class _ProfileState extends State<Profile> {
                       icon: "assets/icons/octicon_checklist-16.svg")),
               InkWell(
                   onTap: () => AppUtils.go(const ContactUs()),
+                  // ضغطة مطوّلة تفتح حالة الإشعارات: يحتاجها الدعم لتشخيص
+                  // «لا تصلني إشعارات» دون سجلّ Xcode، ولا تعترض المستخدم.
+                  onLongPress: () => showNotificationsDiagnostics(context),
                   child: _customBox(
                       text: "contact_us",
                       icon: "assets/icons/call_us_icon.svg")),
