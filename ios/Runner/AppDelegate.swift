@@ -24,9 +24,17 @@ import UIKit
         name: "adary/apns",
         binaryMessenger: controller.binaryMessenger
       ).setMethodCallHandler { [weak self] call, result in
-        if call.method == "lastFailure" {
+        switch call.method {
+        case "lastFailure":
           result(self?.apnsFailure)
-        } else {
+        case "buildInfo":
+          // نسخة الحزمة الجارية فعلًا على الجهاز. تُقارن بما بناه Codemagic:
+          // اختلافهما يعني أن التصليح لم يصل الجهاز، وهو أشيع من أن يُهمل.
+          let info = Bundle.main.infoDictionary
+          let name = info?["CFBundleShortVersionString"] as? String ?? "?"
+          let build = info?["CFBundleVersion"] as? String ?? "?"
+          result("\(name) (\(build))")
+        default:
           result(FlutterMethodNotImplemented)
         }
       }

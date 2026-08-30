@@ -208,6 +208,18 @@ class PushNotificationsService {
     }
   }
 
+  /// نسخة التطبيق الجارية — أول ما يُتحقّق منه حين «لا يعمل التصليح».
+  Future<void> _noteBuild() async {
+    if (!Platform.isIOS) return;
+    try {
+      final info = await _apnsChannel.invokeMethod<String>('buildInfo');
+      if (info != null) _note('نسخة التطبيق: $info');
+    } catch (e) {
+      // قناة غير موجودة: نسخةٌ أقدم من أن تحمل هذا الرمز أصلًا.
+      _note('نسخة التطبيق: غير معروفة (نسخة قديمة).');
+    }
+  }
+
   /// سبب الرفض كما ورد من أبل إلى `AppDelegate`، أو null إن لم يرد رفض.
   Future<String?> _apnsFailureReason() async {
     try {
@@ -237,7 +249,22 @@ class PushNotificationsService {
   /// يرسل رمز الجهاز إلى الخادم. تُستدعى بعد تسجيل الدخول وعند كل إقلاع
   /// وعند تجديد الرمز — الرمز يتغيّر بإعادة تثبيت التطبيق أو مسح بياناته.
   Future<void> syncToken() async {
+    // `init` و`login` كلاهما يستدعيها، وقد يتزامنان عند أول دخول فيتداخل
+    // سطراهما في التشخيص ويظهر كل سطر مرّتين.
+    if (_syncing) return;
+    _syncing = true;
+    try {
+      await _syncToken();
+    } finally {
+      _syncing = false;
+    }
+  }
+
+  bool _syncing = false;
+
+  Future<void> _syncToken() async {
     diagnostics.clear();
+    await _noteBuild();
     final login = AppUtils.instance.getLogin();
     if (login == null) {
       _note('لا يوجد حساب مسجَّل، فلا يُنسب الجهاز لمدرسة.', bad: true);

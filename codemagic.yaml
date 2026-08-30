@@ -137,8 +137,16 @@ workflows:
             pod install --repo-update
             cd ..
 
+        # رقم البناء من عدّاد Codemagic لا من pubspec. كان ثابتًا عند 2.0.21+18
+        # في كل بناء، و App Store Connect يرفض رقمًا مستعملًا من قبل: فيُرفض
+        # الرفع بصمت ويبقى المختبِر على النسخة القديمة — فيبدو أن كل تصليح
+        # لا يعمل، والحقيقة أنه لم يصل الجهاز أصلًا.
         - name: Build IPA for TestFlight
-          script: flutter build ipa --export-options-plist=/Users/builder/export_options.plist
+          script: |
+            set -e
+            BN="${PROJECT_BUILD_NUMBER:-$BUILD_NUMBER}"
+            echo "النسخة: $BUILD_VERSION ($BN)"
+            flutter build ipa               --build-name="$BUILD_VERSION"               --build-number="$BN"               --export-options-plist=/Users/builder/export_options.plist
 
         # الإشعارات تفشل صامتةً: التطبيق يعمل، وتظهر نافذة الإذن، ولا يصل شيء.
         # فيُتحقَّق هنا من الحزمة المبنيّة نفسها بدل انتظار شكوى مستخدم، ويسقط
@@ -155,6 +163,9 @@ workflows:
             APP=$(find /tmp/ipa_check/Payload -maxdepth 1 -name '*.app' | head -1)
             [ -n "$APP" ] || { echo "!! لم يُعثر على .app داخل الـ IPA"; exit 1; }
             echo "الحزمة المُصدَّرة: $APP"
+            echo "نسخة هذه الحزمة: $(defaults read "$APP/Info" CFBundleShortVersionString) ($(defaults read "$APP/Info" CFBundleVersion))"
+            echo "   قارنها بما تعرضه شاشة «حالة الإشعارات» داخل التطبيق:"
+            echo "   إن اختلفتا فالجهاز يشغّل نسخة أقدم ولم يصله التصليح."
 
             # ١) بلا هذا الملف داخل الحزمة يفشل Firebase.initializeApp وقت
             #    التشغيل، فلا يصدر رمز جهاز أصلًا.
