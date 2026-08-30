@@ -109,6 +109,27 @@ workflows:
             xcode-project update-build-settings --product-bundle-identifier "$BUNDLE_ID"
             cd ..
 
+        # `xcode-project use-targets` و`update-build-settings` أعلاه يعيدان كتابة
+        # إعدادات البناء للهدف، فيسقط معها CODE_SIGN_ENTITLEMENTS الذي ضبطته
+        # خطوة "Wire Firebase files" في أول المسار. والنتيجة بناءٌ يمرّ بكل
+        # الفحوص السابقة -- الـ profile يحمل خاصية Push فعلًا -- ثم يُوقَّع
+        # التطبيق بلا الحق، فيردّ أبل وقت التشغيل:
+        #   no valid 'aps-environment' entitlement string found for application
+        # فيُعاد الربط هنا بعد آخر ما يكتب في إعدادات البناء، ويُتحقَّق منه.
+        - name: Re-apply entitlements after build settings rewrite
+          script: |
+            set -e
+            cd ios
+            ruby scripts/configure_firebase.rb
+            echo "--- CODE_SIGN_ENTITLEMENTS الفعلي قبل البناء ---"
+            grep -n 'CODE_SIGN_ENTITLEMENTS' Runner.xcodeproj/project.pbxproj || true
+            if ! grep -q 'CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements'                  Runner.xcodeproj/project.pbxproj; then
+              echo "!! الهدف بلا ملف entitlements — سيُوقَّع التطبيق بلا Push."
+              exit 1
+            fi
+            echo "✓ الهدف مربوط بـ Runner.entitlements"
+            cd ..
+
         - name: Update CocoaPods Repo
           script: |
             cd ios
