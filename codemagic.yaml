@@ -13,7 +13,7 @@ workflows:
         BUILD_NUMBER: "2"
 
       ios_signing:
-        distribution_type: app_store # or: ad_hoc | development | enterprise
+        distribution_type: ad_hoc # or: app_store | development | enterprise
         bundle_identifier: com.smartapleP.in
         # certificates:
         #   - chat_app_distrubutes
