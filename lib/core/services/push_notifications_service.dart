@@ -218,9 +218,7 @@ class PushNotificationsService {
       // ما تحمله الحزمة المثبَّتة فعلًا، لا ما تحقّق منه البناء. مصدر الحقيقة
       // حين يتعارض الاثنان.
       final aps = await _apnsChannel.invokeMethod<String>('apsFromProfile');
-      _note(aps == null
-          ? 'profile الحزمة المثبَّتة: بلا aps-environment ✗'
-          : 'profile الحزمة المثبَّتة: aps-environment = $aps');
+      _note('profile الحزمة: ${aps ?? "غير معروف"}');
 
       final registered =
           await _apnsChannel.invokeMethod<bool>('isRegistered') ?? false;

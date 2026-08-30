@@ -59,23 +59,34 @@ import UIKit
   ///
   /// الملف موقَّع بصيغة CMS، والجزء المقروء منه نصُّ plist في وسطه — فيُقتطع
   /// بين وسمَي البداية والنهاية بدل فكّ التوقيع، إذ لا يعني هنا إلا محتواه.
-  private static func apsEnvironmentFromEmbeddedProfile() -> String? {
+  private static func apsEnvironmentFromEmbeddedProfile() -> String {
     guard let path = Bundle.main.path(
-            forResource: "embedded", ofType: "mobileprovision"),
-          let raw = try? Data(contentsOf: URL(fileURLWithPath: path)),
+            forResource: "embedded", ofType: "mobileprovision") else {
+      return "لا يوجد embedded.mobileprovision في الحزمة"
+    }
+    guard let raw = try? Data(contentsOf: URL(fileURLWithPath: path)),
           let text = String(data: raw, encoding: .isoLatin1),
           let start = text.range(of: "<?xml"),
-          let end = text.range(of: "</plist>")
-    else { return nil }
+          let end = text.range(of: "</plist>") else {
+      return "تعذّرت قراءة embedded.mobileprovision"
+    }
 
     let xml = String(text[start.lowerBound..<end.upperBound])
     guard let data = xml.data(using: .isoLatin1),
           let plist = try? PropertyListSerialization.propertyList(
-            from: data, options: [], format: nil) as? [String: Any],
-          let entitlements = plist["Entitlements"] as? [String: Any]
-    else { return nil }
+            from: data, options: [], format: nil) as? [String: Any] else {
+      return "تعذّر تحليل محتوى الـ profile"
+    }
 
-    return entitlements["aps-environment"] as? String
+    // الاسم يكشف أي profile وُقّع به فعلًا — وهو ما لا يظهر في أي مكان آخر.
+    let name = plist["Name"] as? String ?? "بلا اسم"
+    guard let ent = plist["Entitlements"] as? [String: Any] else {
+      return "«\(name)» بلا قسم Entitlements"
+    }
+    if let aps = ent["aps-environment"] as? String {
+      return "«\(name)» ← aps-environment = \(aps)"
+    }
+    return "«\(name)» بلا aps-environment"
   }
 
   override func application(

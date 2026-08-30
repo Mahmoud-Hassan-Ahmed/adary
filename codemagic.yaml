@@ -13,7 +13,7 @@ workflows:
         BUILD_NUMBER: "2"
 
       ios_signing:
-        distribution_type: ad_hoc # or: app_store | development | enterprise
+        distribution_type: app_store # or: ad_hoc | development | enterprise
         bundle_identifier: com.smartapleP.in
         # certificates:
         #   - chat_app_distrubutes
@@ -141,6 +141,21 @@ workflows:
             fi
             echo "✓ الهدف مربوط بـ Runner.entitlements"
             cd ..
+
+        # `xcode-project` يعيد كتابة إعدادات المشروع، وكان فيه قفلٌ شرطي
+        # PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] = ma — والصيغة الشرطية
+        # تتغلّب على ما يكتبه use-profiles، فيوقَّع التطبيق بـ profile قديم بلا
+        # Push مهما صحّ كل ما عداه. يُمنع رجوعُه.
+        - name: Guard against sdk-conditional signing overrides
+          script: |
+            if grep -n 'sdk=iphoneos\*\]" = ' ios/Runner.xcodeproj/project.pbxproj                  | grep -Ev 'CODE_SIGN_IDENTITY'; then
+              echo "!! يوجد قفل توقيع شرطي [sdk=iphoneos*] يتغلّب على use-profiles."
+              echo "   احذفه من ios/Runner.xcodeproj/project.pbxproj."
+              exit 1
+            fi
+            echo "✓ لا أقفال توقيع شرطية"
+            echo "--- الـ profile الذي سيُوقَّع به ---"
+            grep -n 'PROVISIONING_PROFILE_SPECIFIER\|DEVELOPMENT_TEAM\|CODE_SIGN_STYLE'               ios/Runner.xcodeproj/project.pbxproj
 
         - name: Update CocoaPods Repo
           script: |
