@@ -57,7 +57,22 @@ Future<void> showNotificationsDiagnostics(BuildContext context) {
                     ),
                   ),
                 ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () async {
+                  final reason = await service.retryRegistration();
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(reason == null
+                        ? 'أُعيد الطلب ولم ترفض أبل هذه المرة.'
+                        : 'رفض أبل: $reason'),
+                    duration: const Duration(seconds: 8),
+                  ));
+                },
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('إعادة طلب التسجيل الآن'),
+              ),
+              const SizedBox(height: 8),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.APP_COLOR,

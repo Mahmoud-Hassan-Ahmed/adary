@@ -27,6 +27,18 @@ import UIKit
         switch call.method {
         case "lastFailure":
           result(self?.apnsFailure)
+        case "apsFromProfile":
+          // الحقيقة من الحزمة المثبَّتة نفسها، لا من مخرجات البناء: يُقرأ
+          // embedded.mobileprovision الملتصق بالتطبيق الجاري. تعارضُه مع ما
+          // تحقّق منه Codemagic يعني أن المثبَّت ليس ما بُني.
+          result(Self.apsEnvironmentFromEmbeddedProfile())
+        case "isRegistered":
+          result(UIApplication.shared.isRegisteredForRemoteNotifications)
+        case "retryRegistration":
+          // تسجيلٌ جديد الآن، ليكون سبب الرفض طازجًا لا محفوظًا من إقلاعٍ سابق.
+          self?.apnsFailure = nil
+          UIApplication.shared.registerForRemoteNotifications()
+          result(nil)
         case "buildInfo":
           // نسخة الحزمة الجارية فعلًا على الجهاز. تُقارن بما بناه Codemagic:
           // اختلافهما يعني أن التصليح لم يصل الجهاز، وهو أشيع من أن يُهمل.
@@ -41,6 +53,29 @@ import UIKit
     }
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  /// قيمة `aps-environment` في الـ provisioning profile المرفق بالحزمة.
+  ///
+  /// الملف موقَّع بصيغة CMS، والجزء المقروء منه نصُّ plist في وسطه — فيُقتطع
+  /// بين وسمَي البداية والنهاية بدل فكّ التوقيع، إذ لا يعني هنا إلا محتواه.
+  private static func apsEnvironmentFromEmbeddedProfile() -> String? {
+    guard let path = Bundle.main.path(
+            forResource: "embedded", ofType: "mobileprovision"),
+          let raw = try? Data(contentsOf: URL(fileURLWithPath: path)),
+          let text = String(data: raw, encoding: .isoLatin1),
+          let start = text.range(of: "<?xml"),
+          let end = text.range(of: "</plist>")
+    else { return nil }
+
+    let xml = String(text[start.lowerBound..<end.upperBound])
+    guard let data = xml.data(using: .isoLatin1),
+          let plist = try? PropertyListSerialization.propertyList(
+            from: data, options: [], format: nil) as? [String: Any],
+          let entitlements = plist["Entitlements"] as? [String: Any]
+    else { return nil }
+
+    return entitlements["aps-environment"] as? String
   }
 
   override func application(

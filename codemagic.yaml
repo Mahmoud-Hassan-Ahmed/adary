@@ -79,20 +79,32 @@ workflows:
           script: |
             DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
             FOUND=0
+            WITHOUT=0
+            # تُسرد كلها لا أوّلُ صالحٍ فيها: بقاء profile قديم بلا Push إلى
+            # جانب الجديد يجعل البناء يلتقط أحدهما، فيمرّ الفحص ويخرج تطبيق
+            # بلا إشعارات. ووجود واحد ناقص وحده سببٌ للوقوف.
             for profile in "$DIR"/*.mobileprovision; do
               [ -f "$profile" ] || continue
               PLIST=$(security cms -D -i "$profile" 2>/dev/null || true)
               echo "$PLIST" | grep -q "$BUNDLE_ID" || continue
-              FOUND=1
+              FOUND=$((FOUND + 1))
+              NAME=$(echo "$PLIST" | plutil -extract Name raw - 2>/dev/null || echo '?')
               if echo "$PLIST" | grep -q 'aps-environment'; then
-                echo "✓ الـ profile يحمل خاصية Push لـ $BUNDLE_ID"
-                exit 0
+                echo "  ✓ $NAME — يحمل Push"
+              else
+                echo "  ✗ $NAME — بلا Push"
+                WITHOUT=$((WITHOUT + 1))
               fi
             done
+            echo "عدد الـ profiles المطابقة لـ $BUNDLE_ID: $FOUND (بلا Push: $WITHOUT)"
+            if [ "$FOUND" != "0" ] && [ "$WITHOUT" = "0" ]; then
+              echo "✓ كل الـ profiles المطابقة تحمل خاصية Push"
+              exit 0
+            fi
             if [ "$FOUND" = "0" ]; then
               echo "!! لم يُعثر على profile لـ $BUNDLE_ID"
             else
-              echo "!! الـ profile الخاص بـ $BUNDLE_ID لا يحمل خاصية Push."
+              echo "!! يوجد $WITHOUT profile بلا Push — احذفه، فقد يلتقطه البناء."
             fi
             echo ""
             echo "الحل — على developer.apple.com:"

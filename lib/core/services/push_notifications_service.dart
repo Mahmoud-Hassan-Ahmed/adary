@@ -214,9 +214,32 @@ class PushNotificationsService {
     try {
       final info = await _apnsChannel.invokeMethod<String>('buildInfo');
       if (info != null) _note('نسخة التطبيق: $info');
+
+      // ما تحمله الحزمة المثبَّتة فعلًا، لا ما تحقّق منه البناء. مصدر الحقيقة
+      // حين يتعارض الاثنان.
+      final aps = await _apnsChannel.invokeMethod<String>('apsFromProfile');
+      _note(aps == null
+          ? 'profile الحزمة المثبَّتة: بلا aps-environment ✗'
+          : 'profile الحزمة المثبَّتة: aps-environment = $aps');
+
+      final registered =
+          await _apnsChannel.invokeMethod<bool>('isRegistered') ?? false;
+      _note('مسجَّل لدى APNs: ${registered ? "نعم" : "لا"}');
     } catch (e) {
       // قناة غير موجودة: نسخةٌ أقدم من أن تحمل هذا الرمز أصلًا.
       _note('نسخة التطبيق: غير معروفة (نسخة قديمة).');
+    }
+  }
+
+  /// يطلب تسجيلًا جديدًا ويعيد سبب الرفض الطازج — يستدعيه زرّ إعادة المحاولة.
+  Future<String?> retryRegistration() async {
+    if (!Platform.isIOS) return null;
+    try {
+      await _apnsChannel.invokeMethod<void>('retryRegistration');
+      await Future.delayed(const Duration(seconds: 3));
+      return await _apnsFailureReason();
+    } catch (e) {
+      return '$e';
     }
   }
 
