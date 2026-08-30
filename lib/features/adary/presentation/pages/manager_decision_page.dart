@@ -26,11 +26,18 @@ class ManagerDecisionPage extends StatefulWidget {
     required this.procedureId,
     required this.cycle,
     required this.onSubmit,
+    this.showManagerNote = false,
+    this.initialManagerNote,
   });
 
   final int procedureId;
   final ProcedureCycle cycle;
   final DecisionSubmitter onSubmit;
+
+  /// مساءلة الملاحظة وحدها تسمح للمدير بكتابة تعليق على إفادة المعلّم؛
+  /// النماذج الأخرى لا تملك الحقل فتُخفى الخانة عندها.
+  final bool showManagerNote;
+  final String? initialManagerNote;
 
   @override
   State<ManagerDecisionPage> createState() => _ManagerDecisionPageState();
@@ -38,6 +45,7 @@ class ManagerDecisionPage extends StatefulWidget {
 
 class _ManagerDecisionPageState extends State<ManagerDecisionPage> {
   String? _decision;
+  final TextEditingController _managerNote = TextEditingController();
   bool _notifyTeacher = false;
   bool _notifyApp = false;
   bool _notifyWhatsapp = false;
@@ -48,6 +56,7 @@ class _ManagerDecisionPageState extends State<ManagerDecisionPage> {
     super.initState();
     // فتح الشاشة على قرار سابق يجعل التعديل عليه ممكنًا دون إعادة إدخاله.
     _decision = widget.cycle.managerDecision;
+    _managerNote.text = widget.initialManagerNote ?? '';
     _notifyTeacher = widget.cycle.notifyTeacher;
     _notifyApp = widget.cycle.notifyApp;
     _notifyWhatsapp = widget.cycle.notifyWhatsapp;
@@ -68,6 +77,7 @@ class _ManagerDecisionPageState extends State<ManagerDecisionPage> {
     final result = await widget.onSubmit(ManagerDecisionEntity(
       id: widget.procedureId,
       decision: _decision!,
+      managerNote: widget.showManagerNote ? _managerNote.text.trim() : null,
       notifyTeacher: _notifyTeacher,
       notifyApp: _notifyApp,
       notifyWhatsapp: _notifyWhatsapp,
@@ -109,6 +119,12 @@ class _ManagerDecisionPageState extends State<ManagerDecisionPage> {
   }
 
   @override
+  void dispose() {
+    _managerNote.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -137,6 +153,23 @@ class _ManagerDecisionPageState extends State<ManagerDecisionPage> {
                 ),
               ],
             ),
+            if (widget.showManagerNote) ...[
+              const SizedBox(height: 12),
+              _SectionCard(
+                icon: 'assets/icons/hugeicons_chat-notification.svg',
+                title: 'manager_note'.tr(),
+                children: [
+                  TextField(
+                    controller: _managerNote,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'manager_note_hint'.tr(),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 12),
             _SectionCard(
               icon: 'assets/icons/mdi_arrow-decision-outline.svg',

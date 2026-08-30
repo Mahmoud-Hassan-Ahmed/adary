@@ -1,6 +1,7 @@
 import 'package:adary/core/conts/images.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
+import 'package:adary/features/adary/presentation/pages/dialy_task.dart';
 import 'package:adary/features/adary/presentation/pages/duty_roster_page.dart';
 import 'package:adary/features/adary/presentation/pages/examination.dart';
 import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
@@ -67,7 +68,7 @@ class MainScreen extends StatelessWidget {
             }
           },
         ),
-      // المناوبة والإشراف — حلّت محل "المهام" التي أُلغيت.
+      // المناوبة والإشراف — تعمل جنبًا إلى جنب مع "المهام".
       if (AppUtils.checkPermission(['/pro/pro_duty_roster/']))
         HomeTileData(
           title: "duty_supervision",
@@ -75,6 +76,19 @@ class MainScreen extends StatelessWidget {
           onTap: () {
             if (_smartTableActive) {
               AppUtils.go(const DutyRosterPage());
+            } else {
+              _showNotSubsription(context);
+            }
+          },
+        ),
+      if (AppUtils.checkPermission(
+          ['/daily-supervision/', '/daily-supervision/add-task/']))
+        HomeTileData(
+          title: "SchedualedTasks",
+          iconPath: 'assets/icons/file-07.svg',
+          onTap: () {
+            if (_smartTableActive) {
+              AppUtils.go(const DialyTask());
             } else {
               _showNotSubsription(context);
             }

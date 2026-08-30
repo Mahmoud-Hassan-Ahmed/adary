@@ -11,6 +11,7 @@ import 'package:adary/features/adary/data/models/evaluation_model.dart';
 import 'package:adary/features/adary/data/models/evidence_model.dart';
 import 'package:adary/features/adary/data/models/exam_model.dart';
 import 'package:adary/features/adary/data/models/health_model.dart';
+import 'package:adary/features/adary/data/models/note_accountability_model.dart';
 import 'package:adary/features/adary/data/models/model18.dart';
 import 'package:adary/features/adary/data/models/model_19.dart';
 import 'package:adary/features/adary/data/models/model_20.dart';
@@ -22,6 +23,7 @@ import 'package:adary/features/adary/data/models/student_model.dart';
 import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
 import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
+import 'package:adary/features/adary/data/models/circular_signature_model.dart';
 import 'package:adary/features/adary/data/models/teacher_circular.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/data/models/visits_model.dart';
@@ -80,6 +82,11 @@ abstract class Db {
 
   /// اعتماد رأي مدير المدرسة على الإجراء الإداري وإشعار المعلّم بالقنوات المختارة.
   Future<void> sendModel18Decision(ManagerDecisionEntity entity);
+
+  /// مساءلات الملاحظات — قائمة، وإنشاء من ملاحظة، واعتماد رأي المدير.
+  Future<PageinationModel<NoteAccountabilityModel>> getNoteAccountabilities(
+      PaginationEntity entity);
+  Future<void> sendNoteAccountabilityDecision(ManagerDecisionEntity entity);
   Future<void> sendModel20Decision(ManagerDecisionEntity entity);
   Future<List<Classroom>> getClassRooms();
   Future<PageinationModel<StudentModel>> getStudents(PaginationEntity entity);
@@ -108,6 +115,9 @@ abstract class Db {
   Future<PageinationModel<TeacherCircular>> teachersCirculars(
       PaginationEntity entity);
   Future<List<TeacherCircular>> getAllTeachers(PaginationEntity entity);
+
+  /// توقيعات المعلمين على تعميم واحد؛ `classId` هو معرّف التعميم.
+  Future<CircularSignatures> circularSignatures(PaginationEntity entity);
 
   Future<PageinationModel<Plan>> getWeekPan(PaginationEntity entity);
   Future<void> deletePlan(DeleteEntity entity);

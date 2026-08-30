@@ -5,6 +5,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/presentation/pages/delayed_alert.dart';
 import 'package:adary/features/adary/presentation/pages/model19.dart';
 import 'package:adary/features/adary/presentation/pages/model20.dart';
+import 'package:adary/features/adary/presentation/pages/note_accountability_page.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_delayed_alert.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_model19.dart';
 import 'package:adary/features/adary/presentation/widgets/admin_prepation/add_model20.dart';
@@ -22,7 +23,7 @@ class AdminPrepation extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Builder(builder: (context) {
           final TabController tabController = DefaultTabController.of(context)!;
 
@@ -123,6 +124,13 @@ class AdminPrepation extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      Tab(
+                        child: Text(
+                          'note_accountabilities'.tr(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -156,6 +164,13 @@ class AdminPrepation extends StatelessWidget {
                                   p.contains('api/notes/model20/download/')) ||
                           AppUtils.permissions.isEmpty)
                         const Model19Page(),
+                      // مساءلات الملاحظات: تُنشأ من الموقع، ودور التطبيق هنا
+                      // قراءة الإفادة واعتماد الرأي، فلا شرط إضافة عليها.
+                      if (AppUtils.permissions.isNotEmpty &&
+                              AppUtils.permissions.any((p) =>
+                                  p.contains('api/notes/note-accountability/')) ||
+                          AppUtils.permissions.isEmpty)
+                        const NoteAccountabilityPage(),
                     ],
                   ),
                 ),

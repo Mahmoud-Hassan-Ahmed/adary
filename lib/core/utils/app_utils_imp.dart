@@ -13,6 +13,7 @@ import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart' show Level;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppUtilsImp extends AppUtils {
@@ -120,11 +121,21 @@ class AppUtilsImp extends AppUtils {
 
   @override
   AppUser? getUser() {
-    if (prefs.containsKey('user')) {
-      final data = jsonDecode(prefs.getString('user') ?? '');
-
-      return AppUser.fromJson(data);
-    } else {
+    final raw = prefs.getString('user');
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      return AppUser.fromJson(jsonDecode(raw));
+    } catch (e) {
+      // `AppUser` أكثر حقوله مطلوبة غير قابلة للعدم، فمخزَّنٌ كتبته نسخة أقدم
+      // من التطبيق تنقصه حقول أُضيفت بعدها يرمي عند القراءة. وكان يرمي داخل
+      // `SplashPage` بلا حماية فيبقى الجهاز على صورة البدء ولا يفتح أبدًا —
+      // وهذا وحده يفسّر «يعمل على جهاز ولا يعمل على آخر»: من ثبّت التطبيق
+      // حديثًا سليم، ومن حدّثه من نسخة أقدم عالق.
+      // يُمسح ليُعاد تسجيل الدخول، لا ليُقفل التطبيق على حساب لا يُقرأ.
+      AppUtils.log(
+          'بيانات المستخدم المحفوظة غير صالحة، سيُعاد تسجيل الدخول: $e',
+          levelLog: Level.error);
+      prefs.remove('user');
       return null;
     }
   }

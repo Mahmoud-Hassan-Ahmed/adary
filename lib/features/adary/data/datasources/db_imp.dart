@@ -27,6 +27,8 @@ import 'package:adary/features/adary/data/models/student_model.dart';
 import 'package:adary/features/adary/data/models/student_per.dart';
 import 'package:adary/features/adary/data/models/task_model.dart';
 import 'package:adary/features/adary/data/models/task_teacher_mdel.dart';
+import 'package:adary/features/adary/data/models/circular_signature_model.dart';
+import 'package:adary/features/adary/data/models/note_accountability_model.dart';
 import 'package:adary/features/adary/data/models/teacher_circular.dart';
 import 'package:adary/features/adary/data/models/teacher_model.dart';
 import 'package:adary/features/adary/data/models/user_app.dart';
@@ -229,6 +231,22 @@ class DbImp implements Db {
   }
 
   @override
+  Future<PageinationModel<NoteAccountabilityModel>> getNoteAccountabilities(
+      PaginationEntity entity) async {
+    final response =
+        await dio.get('${Api.noteAccountability}?page=${entity.page}');
+    return PageinationModel.fromJson(
+        response.data, NoteAccountabilityModel.fromJson);
+  }
+
+  @override
+  Future<void> sendNoteAccountabilityDecision(
+      ManagerDecisionEntity entity) async {
+    await dio.post('${Api.noteAccountability}${entity.id}/decision/',
+        data: entity.toJson());
+  }
+
+  @override
   Future<void> sendModel20Decision(ManagerDecisionEntity entity) async {
     await dio.post('${Api.model20}${entity.id}/decision/',
         data: entity.toJson());
@@ -418,6 +436,13 @@ class DbImp implements Db {
     final response = await dio
         .get("${Api.circulars}${entity.classId}/teacher-circulars/list_all/");
     return AppUtils.generateList(response.data, TeacherCircular.fromJson);
+  }
+
+  @override
+  Future<CircularSignatures> circularSignatures(PaginationEntity entity) async {
+    final response =
+        await dio.get("${Api.circulars}${entity.classId}/signatures/");
+    return CircularSignatures.fromJson(response.data);
   }
 
   @override

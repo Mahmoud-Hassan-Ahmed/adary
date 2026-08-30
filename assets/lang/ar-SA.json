@@ -1168,5 +1168,14 @@
   "error_happened": "حدث خطأ، حاول مرة أخرى",
   "terms_conditions_title": "الشروط والأحكام",
   "privacy_policy_title": "سياسة الخصوصية",
-  "contact_us_too_short": "العنوان والرسالة يجب ألا يقلا عن 3 أحرف"
+  "contact_us_too_short": "العنوان والرسالة يجب ألا يقلا عن 3 أحرف",
+  "signatures": "التوقيعات",
+  "signatures_count": "عدد الموقّعين",
+  "no_signature_image": "لا توجد صورة توقيع",
+  "viewed": "تم الاطلاع",
+  "note_accountabilities": "مساءلات الملاحظات",
+  "no_note_accountabilities": "لا توجد مساءلات ملاحظات",
+  "manager_note": "ملاحظة المدير",
+  "manager_note_hint": "اكتب ملاحظتك على إفادة المعلم",
+  "show_details": "عرض التفاصيل"
 }

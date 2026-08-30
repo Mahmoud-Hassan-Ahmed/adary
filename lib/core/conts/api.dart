@@ -17,6 +17,9 @@ class Api {
       'dashboard-mobile/manager-signature/update/';
   static String deleteManagerSignature =
       'dashboard-mobile/manager-signature/delete/';
+  /// مساءلات الملاحظات — النموذج الرابع بجانب ١٨ و١٩ و٢٠، مصدره ملاحظة
+  /// مسجّلة على المعلّم في المتابع الإداري لا إدخال يدوي.
+  static String noteAccountability = 'api/notes/note-accountability/';
   static String model18 = 'api/notes/model18/';
   static String weekly = 'api/weekly-plan/week-info/';
   static String model19 = 'api/notes/model19/';

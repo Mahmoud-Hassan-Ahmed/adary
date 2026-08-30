@@ -1128,5 +1128,14 @@
   "error_happened": "Something went wrong, please try again",
   "terms_conditions_title": "Terms & Conditions",
   "privacy_policy_title": "Privacy Policy",
-  "contact_us_too_short": "Title and message must be at least 3 characters"
+  "contact_us_too_short": "Title and message must be at least 3 characters",
+  "signatures": "Signatures",
+  "signatures_count": "Signed",
+  "no_signature_image": "No signature image",
+  "viewed": "Viewed",
+  "note_accountabilities": "Notes accountabilities",
+  "no_note_accountabilities": "No notes accountabilities",
+  "manager_note": "Manager note",
+  "manager_note_hint": "Write your note on the teacher statement",
+  "show_details": "Show details"
 }

@@ -9,6 +9,7 @@ import 'package:adary/features/adary/data/models/circular_model.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/circular/circular_bloc.dart';
 import 'package:adary/features/adary/presentation/pages/add_circale.dart';
+import 'package:adary/features/adary/presentation/widgets/visits/circular_signatures_widget.dart';
 import 'package:adary/features/adary/presentation/widgets/visits/list_teachers_widget.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -74,8 +75,12 @@ class ItemCicular extends StatelessWidget {
                 height: 20,
               ),
               ContainerBtns(
-                content: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // خمسة أزرار لا تتسع في صف واحد على شاشة الهاتف، فتنزل إلى
+                // سطر ثانٍ بدل أن تفيض.
+                content: Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  spacing: 16,
+                  runSpacing: 12,
                   children: [
                     if (AppUtils.permissions.isNotEmpty &&
                             AppUtils.permissions
@@ -135,6 +140,21 @@ class ItemCicular extends StatelessWidget {
                               builder: (context) {
                                 return ListTeachersWidget(
                                   classId: visitModel,
+                                );
+                              },
+                            );
+                          }),
+                    if (AppUtils.checkPermission(['/circular/api/circular/']))
+                      BtnIcon(
+                          label: 'signatures'.tr(),
+                          icon: 'assets/icons/edit-contained.svg',
+                          onTap: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return CircularSignaturesWidget(
+                                  circular: visitModel,
                                 );
                               },
                             );

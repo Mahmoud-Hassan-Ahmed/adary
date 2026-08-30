@@ -1,15 +1,15 @@
+import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:adary/core/conts/app_colors.dart';
 import 'package:adary/core/conts/text.dart';
 import 'package:adary/core/services/push_notifications_service.dart';
+import 'package:adary/core/share/widgets/startup_error_screen.dart';
 import 'package:adary/core/theme/theme_app.dart';
 import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/domain/usecases/get_hijri_date.dart';
-import 'package:adary/features/adary/presentation/pages/login_screen.dart';
-import 'package:adary/features/adary/presentation/pages/start_page.dart';
 import 'package:adary/features/table/helper/route_helper.dart';
-import 'package:adary/features/table/view/screen/dashboard/dashboardScreen.dart';
 import 'package:adary/injections/injection_main.dart';
 import 'package:adary/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -18,36 +18,105 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart' show Level;
 import 'package:adary/features/table/helper/get_di.dart' as di;
 
-void main() async {
+/// كل ما يُنتظر قبل `runApp` يحبس الشاشة بيضاء حتى ينتهي — وإن لم ينتهِ بقيت
+/// بيضاء إلى الأبد بلا رسالة. فلا يُنتظر هنا إلا ما يلزم أول إطار، وبمهلة،
+/// وما عداه يؤجَّل إلى ما بعد ظهور الشاشة.
+const _bootTimeout = Duration(seconds: 20);
+
+void main() => runZonedGuarded(_bootstrap, (error, stack) {
+      AppUtils.log('خطأ غير ملتقط: $error\n$stack', levelLog: Level.error);
+    });
+
+Future<void> _bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await findSystemLocale();
+  _installErrorHandlers();
+
   await EasyLocalization.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
+
+  // لا يُنتظر: قفل الاتجاهات لا شأن له بأول إطار.
+  unawaited(SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
-  ]);
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  ]));
 
-  await init();
-  await di.init();
-  await PushNotificationsService.instance.init();
-  final locale = AppUtils.instance.getLocale();
+  Object? bootError;
+  try {
+    // `isRegistered` لأن شاشة الخطأ تعيد المحاولة، و get_it يرمي على تسجيل مكرّر.
+    if (!AppUtils.sl.isRegistered<AppUtils>()) await init();
+    // `init` يسجّل SharedPreferences تسجيلًا غير متزامن ولا ينتظره، بينما
+    // `AppUtils.instance` يُبنى منه مباشرة. بلا هذا السطر يصير فتح التطبيق
+    // سباقًا مع قناة المنصّة: من يخسره يرى شاشة بيضاء دائمة.
+    await AppUtils.sl.allReady(timeout: _bootTimeout);
+    await di.init().timeout(_bootTimeout);
+  } catch (e, s) {
+    bootError = e;
+    AppUtils.log('تعذّرت تهيئة التطبيق: $e\n$s', levelLog: Level.error);
+  }
 
-  AppUtils.sl<GetHijriDate>().call();
+  if (bootError != null) {
+    runApp(StartupErrorScreen(error: bootError, onRetry: _bootstrap));
+    return;
+  }
+
   runApp(EasyLocalization(
-      supportedLocales: const [
-        Locale('en', 'US'), // English
-        Locale('ar', 'SA'), // A
-      ],
-      path: ConstsApp.pathTranslate,
-      startLocale: locale,
-      saveLocale: true,
-      fallbackLocale: locale,
-      child: const MyApp()));
+    supportedLocales: const [
+      Locale('en', 'US'),
+      Locale('ar', 'SA'),
+    ],
+    path: ConstsApp.pathTranslate,
+    startLocale: _readLocale(),
+    saveLocale: true,
+    // لا يصلح أن يكون البديل هو اللغة المحفوظة نفسها: إن كانت هي التالفة
+    // بقي التطبيق بلا ترجمة يسقط عليها.
+    fallbackLocale: const Locale('ar', 'SA'),
+    child: const MyApp(),
+  ));
+
+  // بعد أول إطار. الإشعارات تطلب شبكة ورمز APNs وربما نافذة إذن، وانتظارها
+  // قبل `runApp` كان يحبس الإقلاع عشرات الثواني على الأجهزة التي تعوزها
+  // خدمات Google (Honor/Huawei) أو التي شبكتها بطيئة.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    unawaited(_guard(
+        'تهيئة الإشعارات', () => PushNotificationsService.instance.init()));
+    unawaited(_guard(
+        'جلب التاريخ الهجري', () async => AppUtils.sl<GetHijriDate>().call()));
+  });
+}
+
+/// عمل جانبي لا يصحّ أن يُسقط التطبيق إن فشل.
+Future<void> _guard(String what, Future<dynamic> Function() task) async {
+  try {
+    await task();
+  } catch (e, s) {
+    AppUtils.log('تعذّر $what: $e\n$s', levelLog: Level.error);
+  }
+}
+
+void _installErrorHandlers() {
+  final previous = FlutterError.onError;
+  FlutterError.onError = (details) {
+    previous?.call(details);
+    AppUtils.log('خطأ واجهة: ${details.exception}', levelLog: Level.error);
+  };
+  // خطأ غير متزامن خارج شجرة الودجات: يُسجَّل ولا يُسقط التطبيق.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    AppUtils.log('خطأ غير متزامن: $error\n$stack', levelLog: Level.error);
+    return true;
+  };
+}
+
+Locale _readLocale() {
+  try {
+    return AppUtils.instance.getLocale();
+  } catch (e) {
+    AppUtils.log('تعذّرت قراءة اللغة المحفوظة: $e', levelLog: Level.error);
+    return const Locale('ar', 'SA');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -56,8 +125,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     configLoading();
     AppUtils.contextApp = context;
-    AppUtils.appUser = AppUtils.instance.getUser();
-    AppUtils.permissions = AppUtils.instance.getLogin()?.permissions ?? [];
+    // مخزَّن تالف أو نموذج تغيّر شكله لا يصحّ أن يمنع التطبيق من الفتح.
+    try {
+      AppUtils.appUser = AppUtils.instance.getUser();
+      AppUtils.permissions = AppUtils.instance.getLogin()?.permissions ?? [];
+    } catch (e) {
+      AppUtils.log('تعذّرت قراءة بيانات المستخدم المحفوظة: $e',
+          levelLog: Level.error);
+      AppUtils.appUser = null;
+      AppUtils.permissions = [];
+    }
     AppUtils.log("permissions: ${AppUtils.permissions}");
     return ScreenUtilInit(
       designSize: const Size(430, 932),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:adary/core/conts/api.dart';
@@ -37,6 +38,10 @@ class PushNotificationsService {
 
   static const String _packageName = 'com.smartable.tables';
 
+  /// سقفٌ لكل نداء يعبر قناة المنصّة أو الشبكة هنا: هذه الخدمة تعمل بعد ظهور
+  /// الشاشة، ولا يصحّ أن يبقى نداءٌ منها معلّقًا يستهلك الجهاز بلا نهاية.
+  static const Duration _channelTimeout = Duration(seconds: 15);
+
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'high_importance_channel',
     'إشعارات هامة',
@@ -57,12 +62,15 @@ class PushNotificationsService {
   Future<void> init() async {
     if (_initialized) return;
     try {
-      await Firebase.initializeApp();
-      await _initLocalNotifications();
-      await _requestPermission();
-      await _initPushHandlers();
+      // بمهلة: على جهاز بلا خدمات Google (Honor/Huawei) لا ترمي التهيئة بل
+      // تتعلّق، وبلا مهلة يبقى المستدعي معلّقًا معها بلا نهاية.
+      await Firebase.initializeApp().timeout(_channelTimeout);
+      await _initLocalNotifications().timeout(_channelTimeout);
+      await _requestPermission().timeout(_channelTimeout);
+      await _initPushHandlers().timeout(_channelTimeout);
       _initialized = true;
-      await syncToken();
+      // لا يُنتظر: تسجيل الرمز طلبُ شبكةٍ خلفيٌّ، وانتظاره كان يطيل الإقلاع.
+      unawaited(syncToken());
     } catch (e) {
       AppUtils.log('تعذّرت تهيئة الإشعارات: $e', levelLog: Level.error);
     }
@@ -170,6 +178,23 @@ class PushNotificationsService {
     }
   }
 
+  /// ينتظر رمز APNs بمحاولات قصيرة متتابعة.
+  ///
+  /// النظام لا يسلّم الرمز فور الإذن: يحتاج ذهابًا وإيابًا مع خوادم أبل قد
+  /// يتجاوز الثواني على شبكة بطيئة أو عند أول تشغيل بعد التثبيت. وانتظارٌ
+  /// واحد ثابت كان يمرّ قبل وصوله فيعود `getToken` بـ null ولا يُسجَّل الجهاز
+  /// أبدًا حتى تُشغَّل النسخة مرة أخرى.
+  Future<String?> _awaitApnsToken() async {
+    for (var attempt = 0; attempt < 6; attempt++) {
+      final token = await FirebaseMessaging.instance
+          .getAPNSToken()
+          .timeout(_channelTimeout, onTimeout: () => null);
+      if (token != null && token.isNotEmpty) return token;
+      await Future.delayed(const Duration(seconds: 2));
+    }
+    return null;
+  }
+
   /// يرسل رمز الجهاز إلى الخادم. تُستدعى بعد تسجيل الدخول وعند كل إقلاع
   /// وعند تجديد الرمز — الرمز يتغيّر بإعادة تثبيت التطبيق أو مسح بياناته.
   Future<void> syncToken() async {
@@ -177,15 +202,16 @@ class PushNotificationsService {
     if (login == null) return; // بلا حساب لا يُعرف لأي مدرسة يُنسب الجهاز
 
     try {
-      if (Platform.isIOS) {
-        // بلا رمز APNs يرجع getToken بـ null على iOS.
-        final apns = await FirebaseMessaging.instance.getAPNSToken();
-        if (apns == null) {
-          await Future.delayed(const Duration(seconds: 2));
-        }
+      if (Platform.isIOS && await _awaitApnsToken() == null) {
+        // بلا رمز APNs يرجع getToken بـ null، فلا فائدة من إكمال التسجيل.
+        AppUtils.log('لم يصل رمز APNs بعد؛ سيُعاد التسجيل لاحقًا.',
+            levelLog: Level.warning);
+        return;
       }
 
-      _token ??= await FirebaseMessaging.instance.getToken();
+      _token ??= await FirebaseMessaging.instance
+          .getToken()
+          .timeout(_channelTimeout, onTimeout: () => null);
       if (_token == null || _token!.isEmpty) return;
       AppUtils.log('FCM token: $_token');
 
