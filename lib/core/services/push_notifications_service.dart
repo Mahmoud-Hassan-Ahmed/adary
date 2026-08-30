@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show MethodChannel;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart' show Level;
 
@@ -41,6 +42,9 @@ class PushNotificationsService {
   /// سقفٌ لكل نداء يعبر قناة المنصّة أو الشبكة هنا: هذه الخدمة تعمل بعد ظهور
   /// الشاشة، ولا يصحّ أن يبقى نداءٌ منها معلّقًا يستهلك الجهاز بلا نهاية.
   static const Duration _channelTimeout = Duration(seconds: 15);
+
+  /// يقرأ سبب رفض أبل من `AppDelegate` — لا تكشفه واجهة firebase_messaging.
+  static const MethodChannel _apnsChannel = MethodChannel('adary/apns');
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'high_importance_channel',
@@ -204,6 +208,15 @@ class PushNotificationsService {
     }
   }
 
+  /// سبب الرفض كما ورد من أبل إلى `AppDelegate`، أو null إن لم يرد رفض.
+  Future<String?> _apnsFailureReason() async {
+    try {
+      return await _apnsChannel.invokeMethod<String>('lastFailure');
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// ينتظر رمز APNs بمحاولات قصيرة متتابعة.
   ///
   /// النظام لا يسلّم الرمز فور الإذن: يحتاج ذهابًا وإيابًا مع خوادم أبل قد
@@ -239,6 +252,10 @@ class PushNotificationsService {
           // provisioning profile لا يحمل الـ entitlement. ونافذة الإذن تظهر
           // في الحالتين، فظهورها ليس دليلًا على نجاح التسجيل.
           _note('رمز APNs لم يصدر — تسجيل الجهاز لدى أبل فشل.', bad: true);
+          final reason = await _apnsFailureReason();
+          _note(reason == null
+              ? 'أبل لم تردّ بخطأ: التسجيل لم يُطلب أصلًا.'
+              : 'نصّ رفض أبل: $reason');
           return;
         }
         _note('رمز APNs صدر.');
