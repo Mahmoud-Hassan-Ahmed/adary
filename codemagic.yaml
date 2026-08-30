@@ -72,6 +72,35 @@ workflows:
               cp "$profile" ~/Library/MobileDevice/Provisioning\ Profiles/
             done
 
+        # الـ profile هو ما يقرّر أي الحقوق تبقى في التطبيق بعد التوقيع.
+        # فإن خلا من خاصية Push جُرّد aps-environment صامتًا عند التصدير،
+        # وخرجت نسخةٌ تعمل ولا تصلها إشعارات. يُكشف هنا قبل البناء لا بعده.
+        - name: Verify provisioning profile supports Push
+          script: |
+            DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+            FOUND=0
+            for profile in "$DIR"/*.mobileprovision; do
+              [ -f "$profile" ] || continue
+              PLIST=$(security cms -D -i "$profile" 2>/dev/null || true)
+              echo "$PLIST" | grep -q "$BUNDLE_ID" || continue
+              FOUND=1
+              if echo "$PLIST" | grep -q 'aps-environment'; then
+                echo "✓ الـ profile يحمل خاصية Push لـ $BUNDLE_ID"
+                exit 0
+              fi
+            done
+            if [ "$FOUND" = "0" ]; then
+              echo "!! لم يُعثر على profile لـ $BUNDLE_ID"
+            else
+              echo "!! الـ profile الخاص بـ $BUNDLE_ID لا يحمل خاصية Push."
+            fi
+            echo ""
+            echo "الحل — على developer.apple.com:"
+            echo "  ١. Identifiers ← $BUNDLE_ID ← فعّل Push Notifications ← Save"
+            echo "  ٢. Profiles ← احذف profile التوزيع القديم لهذا المعرّف"
+            echo "     (Codemagic يولّد بديلًا يحمل الخاصية في البناء التالي)"
+            exit 1
+
         - name: Configure Xcode project
           script: |
             cd ios
@@ -96,9 +125,15 @@ workflows:
         - name: Verify push notification setup
           script: |
             set -e
-            APP=$(find build/ios/archive -maxdepth 4 -name 'Runner.app' | head -1)
-            [ -n "$APP" ] || { echo "!! لم يُعثر على Runner.app"; exit 1; }
-            echo "الحزمة: $APP"
+            # الأرشيف قد يحمل الحقّ ويجرّده التصدير عند إعادة التوقيع، فالعبرة
+            # بالـ IPA المرفوع فعلًا إلى TestFlight لا بما قبله.
+            IPA=$(find build/ios/ipa -name '*.ipa' | head -1)
+            [ -n "$IPA" ] || { echo "!! لم يُعثر على ملف IPA"; exit 1; }
+            rm -rf /tmp/ipa_check && mkdir -p /tmp/ipa_check
+            unzip -q "$IPA" -d /tmp/ipa_check
+            APP=$(find /tmp/ipa_check/Payload -maxdepth 1 -name '*.app' | head -1)
+            [ -n "$APP" ] || { echo "!! لم يُعثر على .app داخل الـ IPA"; exit 1; }
+            echo "الحزمة المُصدَّرة: $APP"
 
             # ١) بلا هذا الملف داخل الحزمة يفشل Firebase.initializeApp وقت
             #    التشغيل، فلا يصدر رمز جهاز أصلًا.
