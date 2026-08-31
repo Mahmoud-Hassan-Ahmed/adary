@@ -50,21 +50,31 @@ class _PerformanceIndicatorsState extends State<PerformanceIndicators> {
     super.initState();
   }
 
+  /// يتغيّر مع كل تغيير فلتر ليطَرح ردّ الطلب السابق.
+  int _requestId = 0;
+
   Future<void> _fetchPage(int pageKey) async {
-    var result = await getModel20useCase(entity..page = pageKey);
-    try {
-      result.fold((l) => null, (paginationModel) {
-        final isLastPage = paginationModel.next == null;
-        if (isLastPage) {
-          _pagingController.appendLastPage(paginationModel.results);
+    final requestId = ++_requestId;
+    final result = await getModel20useCase(entity.forPage(pageKey));
+    // ردّ لفلتر قديم وصل بعد refresh — إلحاقه يخلط نتائج فلترين في الشبكة.
+    if (!mounted || requestId != _requestId) return;
+    result.fold(
+      (failure) {
+        // بلا هذا يبقى المؤشّر يلفّ إلى الأبد عند خطأ الخادم (500) بلا أي رسالة.
+        _pagingController.error = failure;
+        AppUtils.log(failure.toString());
+      },
+      (paginationModel) {
+        // احتياط لو تجاهل الخادم `ordering` — الترتيب داخل الصفحة على الأقل.
+        final items = paginationModel.results
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        if (paginationModel.next == null) {
+          _pagingController.appendLastPage(items);
         } else {
-          _pagingController.appendPage(paginationModel.results, pageKey + 1);
+          _pagingController.appendPage(items, pageKey + 1);
         }
-      });
-    } catch (error) {
-      _pagingController.error = error;
-      AppUtils.log(error.toString());
-    }
+      },
+    );
   }
 
   int selectIndex = 0;
@@ -94,12 +104,15 @@ class _PerformanceIndicatorsState extends State<PerformanceIndicators> {
             if (state.type == 'teacher') {
               selectedTeacher = state.model;
               entity.teacher = state.model.id;
-              _pagingController.refresh();
             } else if (state.type == 'category') {
               selectedCategory = state.model;
               entity.category = state.model.id;
-              _pagingController.refresh();
             }
+            // refresh() أثناء build يعيد بناء الشبكة وهي تُبنى، فيصل الردّ
+            // القديم بعد الجديد ويظهر الخليط كأنّ العرض غير مرتّب.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _pagingController.refresh();
+            });
           }
           return SafeArea(
             child: Scaffold(
@@ -288,6 +301,15 @@ class _PerformanceIndicatorsState extends State<PerformanceIndicators> {
                                           child: Image.asset(
                                               'assets/images/add.png'),
                                         ),
+                                    firstPageErrorIndicatorBuilder: (context) =>
+                                        _ErrorRetry(
+                                          onRetry: _pagingController.refresh,
+                                        ),
+                                    newPageErrorIndicatorBuilder: (context) =>
+                                        _ErrorRetry(
+                                          onRetry: _pagingController
+                                              .retryLastFailedRequest,
+                                        ),
                                     itemBuilder: (context, item, index) {
                                       return FileCard(
                                         model: item,
@@ -309,5 +331,31 @@ class _PerformanceIndicatorsState extends State<PerformanceIndicators> {
   void dispose() {
     _pagingController.dispose();
     super.dispose();
+  }
+}
+
+/// رسالة خطأ الشبكة/الخادم مع إعادة المحاولة — بديل مؤشّر الحزمة الإنجليزي.
+class _ErrorRetry extends StatelessWidget {
+  const _ErrorRetry({required this.onRetry});
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'تعذّر تحميل شواهد الأداء',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: onRetry,
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
+    );
   }
 }
