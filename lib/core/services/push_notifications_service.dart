@@ -219,6 +219,16 @@ class PushNotificationsService {
       // حين يتعارض الاثنان.
       final aps = await _apnsChannel.invokeMethod<String>('apsFromProfile');
       _note('profile الحزمة: ${aps ?? "غير معروف"}');
+      if (aps != null && aps.contains('بلا aps-environment')) {
+        // منصّات اختبار الأجهزة (Sauce Labs وأمثالها) تعيد توقيع الـ IPA
+        // بـ profile خاص بها لتركّبه على أجهزتها، فيسقط aps-environment: هو
+        // حقٌّ مربوط بمعرّف حزمتك في حساب أبل لا يملك أحدٌ سواك منحَه. فلا
+        // تعمل الإشعارات هناك مهما صحّ البناء — والاختبار يكون على جهاز
+        // حقيقي عبر TestFlight.
+        _note('الاسم أعلاه ليس profile بنائك؟ إذن أُعيد توقيع التطبيق — '
+            'منصّات اختبار الأجهزة تفعل ذلك، والإشعارات لا تعمل عليها. '
+            'اختبرها على جهاز حقيقي من TestFlight.');
+      }
 
       final registered =
           await _apnsChannel.invokeMethod<bool>('isRegistered') ?? false;
