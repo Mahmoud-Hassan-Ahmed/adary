@@ -9,6 +9,10 @@ workflows:
         - teacher_credentials
       vars:
         BUNDLE_ID: "com.smartapleP.in"
+        # اسم الـ provisioning profile المطلوب كما هو في حساب أبل وCodemagic.
+        # يُسمّى صراحةً لأن آلة البناء تركّب كل profile مطابق، فيقع الاختيار
+        # على أحدها اعتباطًا — وقد وُقّع التطبيق مرّةً بـ «testobject56».
+        PROFILE_NAME: "manager"
         BUILD_VERSION: "2.0.26"
         BUILD_NUMBER: "2"
 
@@ -72,47 +76,6 @@ workflows:
               cp "$profile" ~/Library/MobileDevice/Provisioning\ Profiles/
             done
 
-        # الـ profile هو ما يقرّر أي الحقوق تبقى في التطبيق بعد التوقيع.
-        # فإن خلا من خاصية Push جُرّد aps-environment صامتًا عند التصدير،
-        # وخرجت نسخةٌ تعمل ولا تصلها إشعارات. يُكشف هنا قبل البناء لا بعده.
-        - name: Verify provisioning profile supports Push
-          script: |
-            DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-            FOUND=0
-            WITHOUT=0
-            # تُسرد كلها لا أوّلُ صالحٍ فيها: بقاء profile قديم بلا Push إلى
-            # جانب الجديد يجعل البناء يلتقط أحدهما، فيمرّ الفحص ويخرج تطبيق
-            # بلا إشعارات. ووجود واحد ناقص وحده سببٌ للوقوف.
-            for profile in "$DIR"/*.mobileprovision; do
-              [ -f "$profile" ] || continue
-              PLIST=$(security cms -D -i "$profile" 2>/dev/null || true)
-              echo "$PLIST" | grep -q "$BUNDLE_ID" || continue
-              FOUND=$((FOUND + 1))
-              NAME=$(echo "$PLIST" | plutil -extract Name raw - 2>/dev/null || echo '?')
-              if echo "$PLIST" | grep -q 'aps-environment'; then
-                echo "  ✓ $NAME — يحمل Push"
-              else
-                echo "  ✗ $NAME — بلا Push"
-                WITHOUT=$((WITHOUT + 1))
-              fi
-            done
-            echo "عدد الـ profiles المطابقة لـ $BUNDLE_ID: $FOUND (بلا Push: $WITHOUT)"
-            if [ "$FOUND" != "0" ] && [ "$WITHOUT" = "0" ]; then
-              echo "✓ كل الـ profiles المطابقة تحمل خاصية Push"
-              exit 0
-            fi
-            if [ "$FOUND" = "0" ]; then
-              echo "!! لم يُعثر على profile لـ $BUNDLE_ID"
-            else
-              echo "!! يوجد $WITHOUT profile بلا Push — احذفه، فقد يلتقطه البناء."
-            fi
-            echo ""
-            echo "الحل — على developer.apple.com:"
-            echo "  ١. Identifiers ← $BUNDLE_ID ← فعّل Push Notifications ← Save"
-            echo "  ٢. Profiles ← احذف profile التوزيع القديم لهذا المعرّف"
-            echo "     (Codemagic يولّد بديلًا يحمل الخاصية في البناء التالي)"
-            exit 1
-
         - name: Configure Xcode project
           script: |
             cd ios
@@ -140,6 +103,14 @@ workflows:
               exit 1
             fi
             echo "✓ الهدف مربوط بـ Runner.entitlements"
+            cd ..
+
+        # يُنتقى الـ profile صراحةً بدل ترك الاختيار للتوفيق: انظر تعليق
+        # السكربت. يجري بعد كل ما يعيد كتابة إعدادات المشروع كي لا يُنقض.
+        - name: Pin the provisioning profile that supports Push
+          script: |
+            cd ios
+            ruby scripts/pin_push_profile.rb "$BUNDLE_ID" "$PROFILE_NAME"
             cd ..
 
         # `xcode-project` يعيد كتابة إعدادات المشروع، وكان فيه قفلٌ شرطي
