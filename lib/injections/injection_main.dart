@@ -92,6 +92,7 @@ import 'package:adary/features/adary/domain/usecases/get_weekly_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_weeks_group.dart';
 import 'package:adary/features/adary/domain/usecases/login_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/me_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/notifications_use_cases.dart';
 import 'package:adary/features/adary/domain/usecases/note_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/rate_file_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/register_students_use_case.dart';
@@ -925,6 +926,12 @@ Future<void> init() async {
       db: sl(),
     ),
   );
+  sl.registerLazySingleton(
+      () => GetNotificationsUseCase(repo: sl(), db: sl()));
+  sl.registerLazySingleton(
+      () => GetNewNotificationsCountUseCase(repo: sl(), db: sl()));
+  sl.registerLazySingleton(
+      () => DeleteNotificationUseCase(repo: sl(), db: sl()));
   sl.registerLazySingleton(
     () => GetHijriDate(
       repo: sl(),

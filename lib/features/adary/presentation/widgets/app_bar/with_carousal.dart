@@ -5,6 +5,7 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart'
     show StringTranslateExtension;
+import 'package:adary/features/adary/presentation/widgets/dashboard/notifications_bell.dart';
 import 'package:flutter/material.dart';
 import 'package:adary/features/adary/presentation/widgets/text/label_main_text.dart';
 
@@ -105,7 +106,8 @@ class WithCarousalBar extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
-                SizedBox(width: logoSize),
+                // الشمال في الاتجاه العربي — كان فراغًا موازنًا للشعار.
+                NotificationsBell(size: logoSize),
               ],
             ),
             const SizedBox(height: 10),

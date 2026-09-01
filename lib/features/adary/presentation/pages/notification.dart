@@ -1,173 +1,181 @@
-import 'package:adary/core/conts/images.dart';
-import 'package:adary/core/conts/style.dart';
-import 'package:adary/core/share/widgets/navBar.dart';
+import 'package:adary/core/conts/app_colors.dart';
+import 'package:adary/core/conts/app_text_styles.dart';
+import 'package:adary/features/adary/data/models/app_notification.dart';
+import 'package:adary/features/adary/presentation/bloc/notifications/notifications_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// قائمة إشعارات المدير كما يحفظها الخادم.
+///
+/// الخادم يعلّمها مقروءةً بمجرّد ردّه على `notifications/`، فالدخول إلى هذه
+/// الشاشة هو ما يصفّر الشارة — لا فعلٌ منفصل.
 class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  double hight = 165;
+  final _cubit = NotificationsCubit.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit.load();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 15,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.APP_COLOR,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text('notifications_title'.tr(), style: AppTextStyles.appBarTitle),
+      ),
+      body: BlocBuilder<NotificationsCubit, NotificationsState>(
+        bloc: _cubit,
+        builder: (context, state) {
+          if (state.loading && state.items.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state.failed && state.items.isEmpty) {
+            return _Message(
+              icon: Icons.wifi_off_rounded,
+              text: 'تعذّر جلب الإشعارات. تأكّد من اتصالك ثم أعد المحاولة.',
+              onRetry: _cubit.load,
+            );
+          }
+          if (state.items.isEmpty) {
+            return const _Message(
+              icon: Icons.notifications_none_rounded,
+              text: 'لا توجد إشعارات بعد.',
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: _cubit.load,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              itemCount: state.items.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) => _NotificationCard(
+                data: state.items[index],
+                onDelete: () => _cubit.remove(state.items[index].id),
               ),
-              AppNavBar(
-                  imagePath: Images.APP_ICON, headerTxt: "التنبيهات".tr()),
-              SizedBox(height: 16),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("مسح الكل",
-                        style: AbhayaLibreBold.copyWith(
-                            fontSize: 18, decoration: TextDecoration.underline))
-                  ],
-                ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _NotificationCard extends StatelessWidget {
+  const _NotificationCard({required this.data, required this.onDelete});
+
+  final AppNotification data;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey(data.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onDelete(),
+      background: Container(
+        alignment: AlignmentDirectional.centerEnd,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: const Icon(Icons.delete_outline, color: Colors.red),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 7),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              margin: const EdgeInsets.only(top: 6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                // نقطة للجديد فقط: القائمة تُقرأ دفعةً واحدة فلا يبقى غيرها
+                // ما يميّز ما لم يُقرأ قبل فتح الشاشة.
+                color: data.newMessage
+                    ? AppColors.APP_COLOR
+                    : Colors.transparent,
               ),
-              SizedBox(
-                height: 16,
-              ),
-              ExpansionTile(
-                iconColor: Color(0xff1A6A7D),
-                collapsedIconColor: Color(0xffD9D9D9),
-                title: Row(
-                  children: [
-                    Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(35),
-                            color: Color(0xffFFFFFF),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 4,
-                                offset: Offset(-1, 8), // Shadow position
-                              ),
-                            ]),
-                        child: Center(
-                            child: Padding(
-                                padding: EdgeInsets.all(15),
-                                child: Image.asset(
-                                  Images.APP_ICON,
-                                  width: 30,
-                                  height: 30,
-                                )))),
-                    SizedBox(
-                      width: 10,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(data.message,
+                      style: AppTextStyles.secondaryBold
+                          .copyWith(color: AppColors.triblethree)),
+                  if (data.createdAt != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('yyyy/MM/dd — hh:mm a')
+                          .format(data.createdAt!.toLocal()),
+                      style: AppTextStyles.captionText
+                          .copyWith(color: AppColors.GREYFONTCOLOR),
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          'SchoolTable'.tr(),
-                          style: AbhayaLibreBold.copyWith(fontSize: 19),
-                        ),
-                      ],
-                    )
                   ],
-                ),
-                subtitle: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 65),
-                    child: Text(
-                      " 16/5/1445 هـ يوم 2 قبل ",
-                      style: AbhayaLibre.copyWith(color: Color(0xff5C5C5C)),
-                    )),
-                trailing: SvgPicture.asset(
-                  Images.MoreDown,
-                ),
-                children: <Widget>[
-                  ListTile(
-                      title: Text(
-                          'الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار الاشعار...  ')),
-                  GestureDetector(
-                      onTap: () {
-                        _showMyDialog();
-                      },
-                      child: ListTile(title: SvgPicture.asset(Images.TRASH))),
                 ],
               ),
-              SizedBox(
-                height: 16,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                  'هل انت متأكد من حذف الشعار؟',
-                  style: AbhayaLibre.copyWith(
-                      color: Color(0xff060606), fontSize: 20),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xff060606),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextButton(
-                    child: Text(
-                      'نعم',
-                      style: AbhayaLibre.copyWith(
-                          color: Colors.white, fontSize: 19),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Color(0xff95989A))),
-                  child: TextButton(
-                    child: Text(
-                      'لا',
-                      style: AbhayaLibre.copyWith(
-                          color: Color(0xff060606), fontSize: 19),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-              ],
-            )
+class _Message extends StatelessWidget {
+  const _Message({required this.icon, required this.text, this.onRetry});
+
+  final IconData icon;
+  final String text;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 56, color: AppColors.BORDERGREYCOLOR),
+            const SizedBox(height: 12),
+            Text(text,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.secondary
+                    .copyWith(color: AppColors.GREYFONTCOLOR)),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              TextButton(onPressed: onRetry, child: const Text('إعادة المحاولة')),
+            ],
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:adary/features/adary/domain/entities/student_conduct_entity.dart';
+import 'package:adary/features/adary/data/models/app_notification.dart';
 import 'package:adary/features/adary/data/models/student_conduct.dart';
 import 'package:adary/features/adary/data/models/attendance_statistics_model.dart';
 import 'package:adary/features/adary/data/models/behavior_statistics_model.dart';
@@ -104,6 +105,12 @@ abstract class Db {
   Future<void> deketeHealth(DeleteEntity entity);
   Future<void> updateHealth(HealthEntity entity);
   Future<List<ClassHealth>> classsHealth();
+  /// إشعارات المدير. `notifications` تُعلّم المقروء في الخادم بمجرّد القراءة،
+  /// فيُجلب `newNotificationsCount` قبلها لا بعدها.
+  Future<List<AppNotification>> notifications(dynamic entity);
+  Future<int> newNotificationsCount(dynamic entity);
+  Future<void> deleteNotification(DeleteEntity entity);
+
   Future<void> addNore(BaseEnity entity);
   Future<PageinationModel<NoteModel>> notes(PaginationEntity entity);
   Future<PageinationModel<NotesTeacher>> noteTeacher(PaginationEntity entity);

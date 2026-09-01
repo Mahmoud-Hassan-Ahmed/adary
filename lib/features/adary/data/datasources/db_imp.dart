@@ -1,4 +1,5 @@
 import 'package:adary/features/adary/domain/entities/student_conduct_entity.dart';
+import 'package:adary/features/adary/data/models/app_notification.dart';
 import 'package:adary/features/adary/data/models/student_conduct.dart';
 import 'dart:convert';
 
@@ -385,6 +386,29 @@ class DbImp implements Db {
   @override
   Future<void> updateNote(NoteEntity entity) async {
     await dio.patch("${Api.notes}${entity.id}/", data: entity.toJson());
+  }
+
+  @override
+  Future<List<AppNotification>> notifications(dynamic entity) async {
+    final response = await dio.get(Api.notifications);
+    // ردّ dashboard_mobile مغلَّف: {success, msg, data:{notifications:[…]}}،
+    // بخلاف واجهات DRF المرقَّمة في بقية التطبيق.
+    final list = response.data?['data']?['notifications'] as List? ?? [];
+    return list
+        .map((e) => AppNotification.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<int> newNotificationsCount(dynamic entity) async {
+    final response = await dio.get(Api.newNotificationsCount);
+    final count = response.data?['data']?['count'];
+    return count is int ? count : int.tryParse('$count') ?? 0;
+  }
+
+  @override
+  Future<void> deleteNotification(DeleteEntity entity) async {
+    await dio.delete(Api.deleteNotification(entity.id));
   }
 
   @override

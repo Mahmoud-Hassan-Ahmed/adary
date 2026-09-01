@@ -42,7 +42,20 @@ def main() -> int:
 
     message = {"token": token}
 
-    if data_only:
+    if "--server-shape" in sys.argv:
+        # نسخة طبق الأصل مما يبنيه الخادم في
+        # api/utilities.py::send_fcm_bulk_notif — ليُختبر مسارُه هو لا رسالةٌ
+        # عامة قد تنجح حيث يفشل.
+        message["notification"] = {
+            "title": "تأمين حصة",
+            "body": "طلب تأمين حصة جديد بانتظار موافقتك.",
+        }
+        message["data"] = {"action_id": "secure_class_0"}
+        message["android"] = {"priority": "high"}
+        message["apns"] = {
+            "payload": {"aps": {"sound": "default", "mutable-content": 1}}
+        }
+    elif data_only:
         # بلا كتلة notification: يفيد في اختبار ما إذا كان الخادم يرسل رسائل
         # بيانات فقط — وتلك لا يعرضها iOS من تلقائه أصلًا.
         message["data"] = {"action_id": "secure_class_0"}

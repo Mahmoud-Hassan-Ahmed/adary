@@ -46,6 +46,9 @@ abstract class AppUtils {
     Get.to(page);
   }
 
+  /// كـ `go` لكنها تُنتظر إلى أن تُغلق الشاشة — لمن يحدّث حالته بعد العودة.
+  static Future<T?> goWait<T>(Widget page) async => await Get.to<T>(page);
+
   static void goAndReplace(Widget page) {
     Get.offAll(page);
   }

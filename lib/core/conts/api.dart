@@ -63,6 +63,14 @@ class Api {
   /// للحصول على بطاقاته.
   static String wishTeachers = 'daily-supervision/wishes/teachers/';
 
+  /// إشعارات تطبيق المدير (dashboard_mobile/api.py). القراءة تُعلّم المقروء
+  /// فورًا في الخادم، فالعدّاد يُجلب قبلها لا بعدها.
+  static String notifications = 'dashboard-mobile/notifications/';
+  static String newNotificationsCount =
+      'dashboard-mobile/new-notifications-count/';
+  static String deleteNotification(int id) =>
+      'dashboard-mobile/delete-notification/$id/';
+
   /// المواظبة والسلوك — الإجراءات المتخذة بحق الطالب وسجلّاه (قسم 7).
   static String studentProcedures = 'api/notes/student-procedures/';
   static String studentAttendanceRecord(int studentId) =>

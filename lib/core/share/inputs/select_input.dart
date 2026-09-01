@@ -47,13 +47,19 @@ class SelectInput extends StatelessWidget {
           ),
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: icon ?? Container(),
-              ),
+              // بلا أيقونة لا مساحة لها: الحقل يضيق في الشاشات ذات الحقلين
+              // جنبًا إلى جنب، فكل بكسل يُحسب لاسم المعلّم.
+              if (icon != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: icon,
+                ),
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton2<SelectModel>(
+                    // يملأ الزرّ عرض الحقل بدل عرضٍ ثابت أوسع منه، فينزاح
+                    // الاسم المختار إلى الجنب ويُقصّ.
+                    isExpanded: true,
                     iconStyleData: IconStyleData(
                         icon: SvgPicture.asset(
                       AppIcon.dropDown,
@@ -62,8 +68,10 @@ class SelectInput extends StatelessWidget {
                     // selectedItemBuilder: (context) => [const Text('')],
                     hint: Text(
                       label,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: fontSize,
                       ),
                     ),
                     items: items
@@ -71,6 +79,8 @@ class SelectInput extends StatelessWidget {
                               value: item,
                               child: Text(
                                 item.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelMedium!
@@ -81,9 +91,8 @@ class SelectInput extends StatelessWidget {
                     value: selectedValue,
                     onChanged: onChanged,
                     buttonStyleData: const ButtonStyleData(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 12),
                       height: 55,
-                      width: 200,
                     ),
                     dropdownStyleData: const DropdownStyleData(
                       maxHeight: 200,

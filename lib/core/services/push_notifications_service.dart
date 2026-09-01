@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:adary/core/conts/api.dart';
 import 'package:adary/core/utils/app_utils.dart';
+import 'package:adary/features/adary/presentation/bloc/notifications/notifications_cubit.dart';
 import 'package:adary/features/adary/presentation/pages/delayed_alert.dart';
 import 'package:adary/features/adary/presentation/pages/model20.dart';
 import 'package:adary/features/adary/presentation/pages/secure_sessions.dart';
@@ -161,6 +162,10 @@ class PushNotificationsService {
 
   /// أندرويد لا يعرض إشعار FCM والتطبيق مفتوح، فيُبنى محليًا.
   void _showForegroundNotification(RemoteMessage message) {
+    // الخادم حفظ صفّ الإشعار قبل إرساله، فتحديث العدّاد هنا يُظهر الشارة
+    // فورًا بدل انتظار إعادة بناء الرأس.
+    unawaited(NotificationsCubit.instance.refreshCount());
+
     final notification = message.notification;
     if (notification == null) return;
     // iOS يعرضه بنفسه بعد setForegroundNotificationPresentationOptions،
@@ -196,6 +201,8 @@ class PushNotificationsService {
   /// الشاشات تُفتح على قوائمها لا على السجل بعينه: المدير يصل إليه منها،
   /// وفتحه مباشرة يحتاج جلبه أولًا وقد يكون حُذف قبل فتح الإشعار.
   void _openTarget(String? actionId) {
+    // فتحُ الإشعار قراءةٌ له فعليًا، والعدّاد يُقرأ من الخادم لا يُنقص محليًا.
+    unawaited(NotificationsCubit.instance.refreshCount());
     if (actionId == null) return;
     if (actionId.startsWith('secure_class_')) {
       AppUtils.go(const SecureSessions());
