@@ -21,20 +21,19 @@ import 'package:flutter/material.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  void _showNotSubsription(BuildContext context, {String des = 'not_sub_des'}) {
+  /// كل أقسام هذه الشاشة تتبع اشتراك الجدول الذكي، فالرسالة واحدة لا تُمرَّر.
+  /// تمرير وصفٍ مختلف هو ما جعل أقسامًا هنا تشكو من اشتراك المتابع الإداري.
+  void _showNotSubsription(BuildContext context) {
     AwesomeDialog(
       dialogType: DialogType.warning,
       context: context,
       title: 'not_subscription'.tr(),
-      desc: des.tr(),
+      desc: 'table_sub'.tr(),
     ).show();
   }
 
   bool get _smartTableActive =>
       AppUtils.appUser != null && AppUtils.appUser!.isSmartbleActive;
-
-  bool get _followerActive =>
-      AppUtils.appUser != null && AppUtils.appUser!.isFollowerActive;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,7 @@ class MainScreen extends StatelessWidget {
             if (_smartTableActive) {
               AppUtils.go(const DashBoardScreen());
             } else {
-              _showNotSubsription(context, des: 'table_sub');
+              _showNotSubsription(context);
             }
           },
         ),
@@ -64,7 +63,7 @@ class MainScreen extends StatelessWidget {
             if (_smartTableActive) {
               AppUtils.go(const Waiting());
             } else {
-              _showNotSubsription(context, des: 'table_sub');
+              _showNotSubsription(context);
             }
           },
         ),
@@ -99,7 +98,7 @@ class MainScreen extends StatelessWidget {
           title: "exams_halls",
           iconPath: "assets/icons/test.svg",
           onTap: () {
-            if (_followerActive) {
+            if (_smartTableActive) {
               AppUtils.go(Examination());
             } else {
               _showNotSubsription(context);
@@ -110,7 +109,7 @@ class MainScreen extends StatelessWidget {
         title: "secure_sessions",
         iconPath: "assets/icons/scure_session.svg",
         onTap: () {
-          if (_followerActive) {
+          if (_smartTableActive) {
             AppUtils.go(const SecureSessions());
           } else {
             _showNotSubsription(context);
@@ -126,7 +125,7 @@ class MainScreen extends StatelessWidget {
           if (_smartTableActive) {
             AppUtils.go(const WishesPage());
           } else {
-            _showNotSubsription(context, des: 'table_sub');
+            _showNotSubsription(context);
           }
         },
       ),
