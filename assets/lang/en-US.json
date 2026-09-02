@@ -1137,5 +1137,9 @@
   "no_note_accountabilities": "No notes accountabilities",
   "manager_note": "Manager note",
   "manager_note_hint": "Write your note on the teacher statement",
-  "show_details": "Show details"
+  "show_details": "Show details",
+  "send_accountability": "Assign accountability",
+  "sure_send_accountability": "Assign an accountability to the teacher for this note?",
+  "accountability_sent": "The accountability was assigned successfully",
+  "clear_filter": "Clear filter"
 }

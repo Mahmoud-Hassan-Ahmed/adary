@@ -1177,5 +1177,9 @@
   "no_note_accountabilities": "لا توجد مساءلات ملاحظات",
   "manager_note": "ملاحظة المدير",
   "manager_note_hint": "اكتب ملاحظتك على إفادة المعلم",
-  "show_details": "عرض التفاصيل"
+  "show_details": "عرض التفاصيل",
+  "send_accountability": "إسناد مساءلة",
+  "sure_send_accountability": "هل تريد إسناد مساءلة للمعلم على هذه الملاحظة؟",
+  "accountability_sent": "تم إسناد المساءلة بنجاح",
+  "clear_filter": "مسح الفلتر"
 }

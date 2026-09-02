@@ -1,6 +1,7 @@
 import 'package:adary/core/bloc/base_bloc.dart';
 import 'package:adary/core/conts/app_colors.dart' show AppColors;
 import 'package:adary/core/conts/icons.dart';
+import 'package:adary/core/enums/snack_bar_type_enum.dart';
 import 'package:adary/core/share/widgets/btn_icon.dart';
 import 'package:adary/core/share/widgets/container_btns.dart';
 import 'package:adary/core/share/widgets/expansion_widget.dart';
@@ -8,7 +9,9 @@ import 'package:adary/core/utils/app_utils.dart';
 import 'package:adary/features/adary/data/models/note_teacher.dart';
 import 'package:adary/features/adary/domain/entities/delete_entity.dart';
 import 'package:adary/features/adary/presentation/bloc/teacher_note/teacher_notes_bloc.dart';
+import 'package:adary/features/adary/domain/usecases/create_note_accountability_use_case.dart';
 import 'package:adary/features/adary/presentation/widgets/note_teacher/send_note_teacher.dart';
+import 'package:adary/injections/injection_main.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +23,31 @@ class ItemTeacherWidget extends StatelessWidget {
       {super.key, required this.visitModel, required this.pagingController});
   final NotesTeacher visitModel;
   final PagingController pagingController;
+
+  /// إسناد مساءلة على هذه الملاحظة — نظير زرّ «إرسال مساءلة» في الموقع.
+  /// الخادم ينسخ نصّ الملاحظة وتاريخها من السجلّ، فلا يُرسل إلا معرّفها،
+  /// ثم تظهر المساءلة في «مساءلات الملاحظات» بانتظار إفادة المعلّم.
+  void _assignAccountability(BuildContext context) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.question,
+      title: 'send_accountability'.tr(),
+      desc: 'sure_send_accountability'.tr(),
+      btnCancelText: 'no'.tr(),
+      btnOkText: 'yes'.tr(),
+      btnCancelOnPress: () {},
+      btnOkOnPress: () async {
+        final result =
+            await sl<CreateNoteAccountabilityUseCase>()(visitModel.id ?? 0);
+        result.fold(
+          (failure) =>
+              AppUtils.showCustomSnackbar(failure.message, SnackType.FAILURE),
+          (_) => AppUtils.showCustomSnackbar(
+              'accountability_sent'.tr(), SnackType.SUCESS),
+        );
+      },
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +234,21 @@ class ItemTeacherWidget extends StatelessWidget {
                       children: [
                         Row(
                           children: [
+                            IconButton(
+                                tooltip: 'send_accountability'.tr(),
+                                onPressed: () => _assignAccountability(context),
+                                icon: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFEF7EE),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.assignment_late_outlined,
+                                    size: 18,
+                                    color: Color(0xFFBD5126),
+                                  ),
+                                )),
                             IconButton(
                                 onPressed: () {
                                   showModalBottomSheet(

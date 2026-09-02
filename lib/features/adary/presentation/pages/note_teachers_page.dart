@@ -61,7 +61,11 @@ class _NoteTeachersPageState extends State<NoteTeachersPage> {
   Future<void> _fetchPage(int pageKey) async {
     var result = await getModel20useCase(entity..page = pageKey);
     try {
-      result.fold((l) => null, (paginationModel) {
+      result.fold((failure) {
+        // بلا هذا يبقى المؤشّر يلفّ إلى الأبد عند خطأ الخادم بلا أي رسالة.
+        _pagingController.error = failure;
+        AppUtils.log(failure.toString());
+      }, (paginationModel) {
         final isLastPage = paginationModel.next == null;
         if (isLastPage) {
           _pagingController.appendLastPage(paginationModel.results);
@@ -73,6 +77,89 @@ class _NoteTeachersPageState extends State<NoteTeachersPage> {
       _pagingController.error = error;
       AppUtils.log(error.toString());
     }
+  }
+
+  /// فلتر الملاحظات: معلّم، نوع ملاحظة، ومدى تاريخين — نظير فلتر الموقع.
+  ///
+  /// `StatefulBuilder` ضروريّ هنا: جسم `AwesomeDialog` لا يُعاد بناؤه مع
+  /// `setState` الصفحة، وكان الحلّ السابق إغلاق النافذة بعد كل اختيار ليرى
+  /// المستخدم أثره — فتعذّر ضبط معلّم ونوع ملاحظة في فتحةٍ واحدة.
+  void _openFilter(BuildContext context) {
+    AwesomeDialog(
+      dialogType: DialogType.noHeader,
+      context: context,
+      body: StatefulBuilder(
+        builder: (dialogContext, setSheetState) {
+          void apply(VoidCallback mutate) {
+            mutate();
+            entity.page = 1;
+            setSheetState(() {});
+            setState(() {});
+            _pagingController.refresh();
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                DateWidget(
+                  selectDate: selectDate,
+                  isRange: true,
+                  onChange: (value) {
+                    // إغلاق نافذة التقويم وحدها؛ نافذة الفلتر تبقى مفتوحة.
+                    Navigator.pop(dialogContext);
+                    apply(() {
+                      selectDate = '${value.hijriDate} ${value.hijriDate2}';
+                      entity.startDate = AppUtils.convertToWesternNumerals(
+                          DateFormat('yyyy-MM-dd').format(value.gregorianDate));
+                      entity.endDate = AppUtils.convertToWesternNumerals(
+                          DateFormat('yyyy-MM-dd')
+                              .format(value.gregorianDate2!));
+                    });
+                  },
+                ),
+                Titile(label: 'choose_teachers'.tr()),
+                SelectInput(
+                  selectedValue: selected,
+                  items: teachers,
+                  label: 'choose_teachers'.tr(),
+                  onChanged: (value) => apply(() {
+                    selected = value;
+                    entity.teacher = value!.id.toString();
+                  }),
+                ),
+                Titile(label: 'choose_note'.tr()),
+                SelectInput(
+                  selectedValue: selected2,
+                  items: notes,
+                  label: 'choose_note'.tr(),
+                  onChanged: (value) => apply(() {
+                    selected2 = value;
+                    entity.note = value!.id.toString();
+                  }),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      btnOkOnPress: () {
+        setState(() {
+          selected2 = null;
+          selected = null;
+          selectDate = 'start_end'.tr();
+          entity.endDate = '';
+          entity.note = '';
+          entity.startDate = '';
+          entity.teacher = '';
+          entity.page = 1;
+          _pagingController.refresh();
+        });
+      },
+      btnOkText: 'clear_filter'.tr(),
+    ).show();
   }
 
   @override
@@ -117,99 +204,8 @@ class _NoteTeachersPageState extends State<NoteTeachersPage> {
                       ),
                     ),
                     IconButton(
-                        onPressed: () {
-                          AwesomeDialog(
-                                  dialogType: DialogType.noHeader,
-                                  context: context,
-                                  body: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        DateWidget(
-                                          selectDate: selectDate,
-                                          onChange: (value) {
-                                            setState(() {
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-
-                                              selectDate =
-                                                  '${value.hijriDate} ${value.hijriDate2}';
-
-                                              entity.startDate = AppUtils
-                                                  .convertToWesternNumerals(
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(value
-                                                              .gregorianDate));
-                                              entity.endDate = AppUtils
-                                                  .convertToWesternNumerals(
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(value
-                                                              .gregorianDate2!));
-                                              _pagingController.refresh();
-                                            });
-                                          },
-                                          isRange: true,
-                                        ),
-                                        Titile(
-                                          label: 'choose_teachers'.tr(),
-                                        ),
-                                        SelectInput(
-                                          selectedValue: selected,
-                                          items: teachers,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              Navigator.pop(context);
-                                              selected = value;
-                                              entity.teacher =
-                                                  value!.id.toString();
-                                              entity.page = 1;
-                                              _pagingController.refresh();
-                                            });
-                                          },
-                                          label: 'choose_teachers'.tr(),
-                                        ),
-                                        Titile(
-                                          label: 'choose_note'.tr(),
-                                        ),
-                                        SelectInput(
-                                          selectedValue: selected2,
-                                          items: notes,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              Navigator.pop(context);
-                                              selected2 = value;
-                                              entity.note =
-                                                  value!.id.toString();
-                                              entity.page = 1;
-                                              _pagingController.refresh();
-                                            });
-                                          },
-                                          label: 'choose_note'.tr(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  btnOkOnPress: () {
-                                    setState(() {
-                                      selected2 = null;
-                                      selected = null;
-                                      selectDate = 'start_end'.tr();
-                                      entity.endDate = '';
-                                      entity.note = '';
-                                      entity.startDate = '';
-                                      entity.teacher = '';
-                                      entity.page = 1;
-                                      _pagingController.refresh();
-                                    });
-                                  },
-                                  btnOkText: 'delete'.tr())
-                              .show();
-                        },
+                        tooltip: 'filter'.tr(),
+                        onPressed: () => _openFilter(context),
                         icon: SvgPicture.asset("assets/icons/icon-search.svg"))
                   ],
                 ),

@@ -87,6 +87,10 @@ abstract class Db {
   /// مساءلات الملاحظات — قائمة، وإنشاء من ملاحظة، واعتماد رأي المدير.
   Future<PageinationModel<NoteAccountabilityModel>> getNoteAccountabilities(
       PaginationEntity entity);
+
+  /// إسناد مساءلة على ملاحظة قائمة. الخادم ينسخ نصّ الملاحظة وتاريخها من
+  /// السجلّ، فلا يُرسل إلا معرّفها.
+  Future<void> createNoteAccountability(int notesTeacherId);
   Future<void> sendNoteAccountabilityDecision(ManagerDecisionEntity entity);
   Future<void> sendModel20Decision(ManagerDecisionEntity entity);
   Future<List<Classroom>> getClassRooms();

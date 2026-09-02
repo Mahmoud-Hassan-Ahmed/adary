@@ -241,6 +241,12 @@ class DbImp implements Db {
   }
 
   @override
+  Future<void> createNoteAccountability(int notesTeacherId) async {
+    await dio.post(Api.noteAccountability,
+        data: {'notes_teacher_id': notesTeacherId});
+  }
+
+  @override
   Future<void> sendNoteAccountabilityDecision(
       ManagerDecisionEntity entity) async {
     await dio.post('${Api.noteAccountability}${entity.id}/decision/',

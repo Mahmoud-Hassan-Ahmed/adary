@@ -53,6 +53,7 @@ import 'package:adary/features/adary/domain/usecases/export_visitis_use_case.dar
 import 'package:adary/features/adary/domain/usecases/file_download_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_all_teachers_circular_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_circular_signatures_use_case.dart';
+import 'package:adary/features/adary/domain/usecases/create_note_accountability_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_note_accountabilities_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/send_note_accountability_decision_use_case.dart';
 import 'package:adary/features/adary/domain/usecases/get_attendence_statistics_use_case.dart';
@@ -569,6 +570,12 @@ Future<void> init() async {
   );
   sl.registerLazySingleton(
     () => GetNoteAccountabilitiesUseCase(
+      repo: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => CreateNoteAccountabilityUseCase(
       repo: sl(),
       db: sl(),
     ),
