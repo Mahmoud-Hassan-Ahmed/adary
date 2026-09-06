@@ -10,11 +10,16 @@ class ReportSegment {
     required this.value,
     required this.color,
     required this.label,
+    this.inLegend = true,
   });
 
   final int value;
   final Color color;
   final String label;
+
+  /// شريحة تلوّن الشريط بلا عدّاد في الليجند — للحالة الافتراضية التي لا
+  /// تُسجَّل ولا تُقرأ كرقم، وحضورُها هو الأصل.
+  final bool inLegend;
 }
 
 /// بطاقة فصل: الاسم، ثم الشريط المجزّأ، ثم الليجند بنقاطه الملوّنة.
@@ -53,7 +58,10 @@ class ReportClassCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: segments.reversed.map(_legendItem).toList(),
+            children: segments.reversed
+                .where((s) => s.inLegend)
+                .map(_legendItem)
+                .toList(),
           ),
         ],
       ),

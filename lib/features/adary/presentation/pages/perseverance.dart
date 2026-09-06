@@ -77,12 +77,12 @@ class _PerseveranceState extends State<Perseverance>
               ConductMode.registerNote, 'تقارير السلوك', _registerIcon),
         ];
       default:
+        // «تسجيل ملاحظة» ليس من المواظبة: مكانه تبويب السلوك، ووجوده هنا
+        // كان يفتح شاشة ملاحظات داخل تبويب الحضور.
         return const [
           _BottomOption(ConductMode.list, 'قائمة الطلاب', _listIcon),
           _BottomOption(
               ConductMode.registerAttendance, 'تسجيل حضور', _registerIcon),
-          _BottomOption(
-              ConductMode.registerNote, 'تسجيل ملاحظة', _registerIcon),
         ];
     }
   }

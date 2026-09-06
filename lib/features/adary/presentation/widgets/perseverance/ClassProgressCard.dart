@@ -11,11 +11,14 @@ class ClassProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ترتيب الشرائح من اليمين كما في التصميم: حضور، غياب، تأخر.
+    // الحضور يلوّن الشريط ولا عدّاد له: يوم العمل أصله أن الطالب حاضر،
+    // فالمعروض هو الاستثناء — الغياب والتأخّر.
     final segments = [
       ReportSegment(
         value: classStatistics.present.count,
         color: const Color(0xFF3FBF5F),
         label: 'حضور',
+        inLegend: false,
       ),
       ReportSegment(
         value: classStatistics.absent.count,

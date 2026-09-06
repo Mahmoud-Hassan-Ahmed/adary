@@ -13,7 +13,7 @@ workflows:
         # يُسمّى صراحةً لأن آلة البناء تركّب كل profile مطابق، فيقع الاختيار
         # على أحدها اعتباطًا — وقد وُقّع التطبيق مرّةً بـ «testobject56».
         PROFILE_NAME: "manager"
-        BUILD_VERSION: "2.0.28"
+        BUILD_VERSION: "2.0.29"
         BUILD_NUMBER: "2"
 
       ios_signing:
